@@ -1,0 +1,28 @@
+<html>
+	<head>
+		<title>Checkers AI</title>
+
+		<script>
+			var sock;
+
+			function main() {
+				sock = new WebSocket(`ws://${window.location.hostname}:${window.location.port}`);
+
+				sock.onmessage = function(event) {
+					console.log(event.data);
+				}
+			}
+
+			function send(id) {
+				let elem = document.getElementById(id)
+				sock.send(elem.value);
+				elem.value = "";
+			}
+		</script>
+	</head>
+	<body onload="main();">
+		<input type="text" id="message">
+		<button onclick="send('message');">Send</button>
+	</body>
+</html>
+
