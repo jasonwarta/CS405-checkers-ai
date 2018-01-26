@@ -1,7 +1,12 @@
 # CS405 Checkers AI
 
-This project requires [uWebSockets](https://github.com/uNetworking/uWebSockets)
+Edited by:
+  Jason Warta
+  Rachel Crosley
+  Jim Samson
+  Cameron Showalter
 
+This project requires [uWebSockets](https://github.com/uNetworking/uWebSockets)
 
 ## Board Encoding  
 Binary to tile conversion
@@ -40,5 +45,10 @@ rrrrrrrrrrrr________bbbbbbbbbbbb
 As a binary string
 ```
 100100100100100100100100100100100100001001001001001001001001010010010010010010010010010010010010
+```
+##### How To Install
+```
+$ make
+
 ```
 
