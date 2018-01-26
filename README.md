@@ -49,6 +49,5 @@ As a binary string
 ##### How To Install
 ```
 $ make
-
 ```
 
