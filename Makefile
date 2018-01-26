@@ -3,7 +3,7 @@ UNAME := $(shell uname)
 LIBS := -lz -lssl -luv -luWS
 
 ifeq ($(UNAME), Darwin)
-	LIBS += -I/usr/local/include
+	LIBS += -I/usr/local/include -I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib
 endif
 
 default:
