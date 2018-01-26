@@ -1,6 +1,9 @@
 # CS405 Checkers AI
 
+This project requires [uWebSockets](https://github.com/uNetworking/uWebSockets)
 
+
+## Board Encoding  
 Binary to tile conversion
 
 1 = 001 => _  
