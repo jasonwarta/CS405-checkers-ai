@@ -7,6 +7,10 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
 
 		<style type="text/css">
+			td {
+				width:64;
+				height:64;
+			}
 			.buff {
 				background-color: #f0dc82;
 			}
@@ -30,13 +34,7 @@
 		<script type="text/javascript">
 			var sock;
 
-			const TILES = { 
-				'001': <td className=""></td>, 
-				'010': <td className="b"></td>, 
-				'011': <td className="B"></td>, 
-				'100': <td className="r"></td>, 
-				'101': <td className="R"></td>
-			}
+			
 		</script>
 
 		
@@ -49,7 +47,9 @@
 				constructor(props) {
 					super(props);
 
-					this.state = {}
+					this.state = {
+						board: []
+					}
 				}
 
 				componentWillMount() {
@@ -58,24 +58,49 @@
 
 					sock.onmessage = function(event) {
 						let board = event.data.split(' ')[1].match(/.{3}/g);
-						reactParent.setState({boardData:board});
+						reactParent.setState({board:board});
 					}
 				}
 
 				render(){
+					const TILES = { 
+						'001': '', 
+						'010': 'b', 
+						'011': 'B', 
+						'100': 'r', 
+						'101': 'R'
+					}
+
 					return (
-						<Board board={this.state.board} />
+						<Board board={this.state.board} tiles={TILES} />
 					);
 				}
 			}
 
 			function Board(props) {
+				let boardArray = [];
+				let toggle = true;
+				let boardRow = [];
+				props.board.forEach( (val,key) => {
+					if (toggle) {
+						boardRow.push(<td key={key} className={`green ${props.tiles[val]}`}></td>);
+						boardRow.push(<td key={`{${key}_}`} className="buff"></td>);
+					}
+					else {
+						boardRow.push(<td key={`{${key}_}`} className="buff"></td>);
+						boardRow.push(<td key={key} className={`green ${props.tiles[val]}`}></td>);
+					}
+					if(boardRow.length == 8) {
+						boardArray.push(<tr>{boardRow}</tr>);
+						toggle = !toggle;
+						boardRow = [];
+					}
+				});
+
 				return (
-					{
-						this.state.board.forEach( (k,v) => {
-							console.log(k,v);
-							return <div></div>;
-					})}
+					<table>
+						<tbody>{boardArray}</tbody>
+					</table>
 				);
 			}
 
