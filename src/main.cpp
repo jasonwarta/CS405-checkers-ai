@@ -5,6 +5,8 @@
 #include <sstream>
 #include <cstdint>
 #include <bitset>
+#include <algorithm>
+#include <iterator>
 
 #include "def.h"
 
@@ -12,6 +14,11 @@ using std::cout;
 using std::endl;
 using std::string;
 using std::bitset;
+using std::istringstream;
+using std::stringstream;
+using std::copy;
+using std::vector;
+using std::istream_iterator;
 
 std::stringstream indexHtml;
 
@@ -50,7 +57,7 @@ void loadHtml() {
 	indexHtml << std::ifstream ("index.html").rdbuf();
 }
 
-int main() {
+int main(int argc, char const *argv[]) {
 	uWS::Hub h;
 
 	h.onHttpRequest([](uWS::HttpResponse *res, uWS::HttpRequest req, char *data, size_t, size_t) {
@@ -81,7 +88,16 @@ int main() {
 	h.onMessage([&h](uWS::WebSocket<uWS::SERVER> *ws, char *data, size_t length, uWS::OpCode opCode) {
 		cout << "onMessage" << endl;
 		if (length && length < 4096) {
-			cout << string(data,length) << endl;
+			istringstream iss(string(data,length));
+			vector<string> tokens{
+				istream_iterator<string>{iss},
+				istream_iterator<string>{}};
+
+			cout << iss.str() << endl;
+			
+			if(tokens[0] == "checkMove"){
+				cout << "Check Move" << endl;
+			}
 		}
 	});
 
