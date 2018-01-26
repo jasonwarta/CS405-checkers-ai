@@ -46,8 +46,16 @@ As a binary string
 ```
 100100100100100100100100100100100100001001001001001001001001010010010010010010010010010010010010
 ```
-# How To Install
+## How To Install
+Clone the repository (HTTPS) 
+```
+$ git clone https://github.com/jasonwarta/CS405-checkers-ai.git
+```
+Change to the project directory
+```
+$ cd CS405-checkers-ai.git
+```
+"Make" the project
 ```
 $ make
 ```
-
