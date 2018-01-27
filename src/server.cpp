@@ -20,10 +20,16 @@ int getKb() {
 	return vmData - vmStk - vmPte;
 }
 
-Message prepareBoard(const bitset<96> board) {
+void Message::prepareBoard(const bitset<96> board){
 	string msg = "board " + board.to_string();
-	return { (char*)(msg.c_str()), msg.size() };
+	vec = vector<char>(msg.length() + 1);
+	strcpy(&vec[0], msg.c_str());
+
+	data = &vec[0];
+	size = msg.length();
 }
+
+
 
 void createServerInstance(uWS::Hub &h) {
 
@@ -44,7 +50,8 @@ void createServerInstance(uWS::Hub &h) {
 
 	h.onConnection([&h](uWS::WebSocket<uWS::SERVER> *ws, uWS::HttpRequest req) {
 		cout << "onConnection" << endl;
-		Message reply = prepareBoard(START);
+		Message reply;
+		reply.prepareBoard(START);
 		uWS::WebSocket<uWS::SERVER>::PreparedMessage *preparedMessage = 
 			uWS::WebSocket<uWS::SERVER>::prepareMessage(reply.data, reply.size, uWS::TEXT, false);
 		ws->sendPrepared(preparedMessage);

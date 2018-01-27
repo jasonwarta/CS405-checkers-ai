@@ -22,11 +22,18 @@ using std::stringstream;
 using std::copy;
 using std::vector;
 using std::istream_iterator;
+using std::basic_string;
+using std::strcpy;
 
 struct Message {
 	char* data;
 	size_t size;
+	vector<char> vec;
+
+	void prepareBoard(const bitset<96> board);
 };
+
+typedef basic_string<wchar_t> wstring;
 
 const bitset<96> START("100100100100100100100100100100100100001001001001001001001001010010010010010010010010010010010010");
 

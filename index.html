@@ -68,8 +68,19 @@
 					sock = new WebSocket(`ws://${window.location.hostname}:${window.location.port}`);
 
 					sock.onmessage = function(event) {
-						let board = event.data.split(' ')[1].match(/.{3}/g);
-						reactParent.setState({board:board});
+						if(event){
+							console.log(event);
+							if (event.data) {
+								console.log(event.data);
+								let msg = event.data.split(' ');
+								if(msg[0] == "board") {
+									console.log(msg);
+									let board = event.data.split(' ')[1].match(/.{3}/g);
+									reactParent.setState({board:board});
+								}
+							}
+						}
+						
 					}
 				}
 
