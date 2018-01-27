@@ -9,7 +9,7 @@
 
 #include <vector>
 #include <iostream>
-
+#include <memory>
 
 void makeStartBoard(std::vector<char> &v);
 
@@ -51,7 +51,7 @@ class CheckerBoard
 {
 public:
 	// startBoard is the 32 vector
-	CheckerBoard(std::vector<char> startBoard, bool redPlayerTurn, std::vector<std::vector<int>> &redMoveBoard, std::vector<std::vector<int>> &redJumpBoard)
+	CheckerBoard(std::vector<char> startBoard, bool redPlayerTurn, std::vector<std::vector<int>> redMoveBoard, std::vector<std::vector<int>> redJumpBoard)
 	{
 		piecesOnRedTeam_ = 0;
 		piecesOnBlackTeam_ = 0;
@@ -61,8 +61,6 @@ public:
 		// that weird vector resize command here later
 
 
-		// Im manually adding this to try to find the bug. its not ACTUALLY a possible move...
-
 		for(int i=0; i<startBoard.size(); ++i)
 		{
 			// later, break at space first for speedup?
@@ -70,27 +68,27 @@ public:
 			// might condence the if tree later.... lazy atm
 			if(startBoard[i] == 'r')
 			{
-				checkers_.push_back(new TheChecker(true, piecesOnRedTeam_, false) );
+				checkers_.push_back(std::make_shared<TheChecker>(TheChecker(true, piecesOnRedTeam_, false)) );
 				piecesOnRedTeam_++;
 			}
 			else if(startBoard[i] == 'R')
 			{
-				checkers_.push_back(new TheChecker(true, piecesOnRedTeam_, true) );
+				checkers_.push_back(std::make_shared<TheChecker>(TheChecker(true, piecesOnRedTeam_, true)) );
 				piecesOnRedTeam_++;
 			}
 			else if(startBoard[i] == 'b')
 			{
-				checkers_.push_back(new TheChecker(false, piecesOnBlackTeam_, false) );
+				checkers_.push_back(std::make_shared<TheChecker>(TheChecker(false, piecesOnBlackTeam_, false)) );
 				piecesOnBlackTeam_++;
 			}
 			else if(startBoard[i] == 'B')
 			{
-				checkers_.push_back(new TheChecker(false, piecesOnBlackTeam_, true) );
+				checkers_.push_back(std::make_shared<TheChecker>(TheChecker(false, piecesOnBlackTeam_, true)) );
 				piecesOnBlackTeam_++;
 			}
 			else if(startBoard[i] == ' ')// nothing there
 			{
-				checkers_.push_back(NULL); //NULL or *NULL? test later....
+				checkers_.push_back(nullptr); //NULL or *NULL? test later....
 			}
 			else
 			{
@@ -104,7 +102,7 @@ public:
 		std::vector<char> returnMe;
 		for(int i=0; i<checkers_.size(); i++)
 		{
-			if(checkers_[i] == NULL)
+			if(checkers_[i] == nullptr)
 			{
 				returnMe.push_back(' ');
 			}
@@ -144,75 +142,71 @@ public:
 */
 	/*
 		I might cut the length of updatePosibleMoves in half later by switching the tables back
-		and forth as variables, but for now im too tired and this is easier to debug....
+		and forth as variables, but for now im too tired and this is easier....
 	*/
 	void updatePossibleMoves()
 	{
+		
 		std::cout << "test";
 		bool firstJumpFound = false;
 		for(int i=0; i<checkers_.size(); ++i)
 		{
-			std::cout << " X: " << i;
-			// If no checker on that square, do nothing....
-			if(checkers_[i] == NULL)
+			// If no checker on that square, or wrong teams checker, do nothing....
+			if(checkers_[i] == nullptr || checkers_[i]->isTeamRed() != redTeamTurn)
 			{
 				continue;
 			}
-			// Check only the checkers on the currPlayers team
-			else if(checkers_[i]->isTeamRed() == redTeamTurn)
+			// Kings can do whatever they want. Otherwise, stick to your own tables
+			if(checkers_[i]->isKing() == true || redTeamTurn == true)
 			{
-				// Kings can do whatever they want. Otherwise, stick to your own tables
-				if(checkers_[i]->isKing() == true || redTeamTurn == true)
-				{
-					//for loop because 0 deals with left, and 1 deals with right
-					//check both sides independently
-					for(int j=0; i<2; j++)
+				//for loop because 0 deals with left, and 1 deals with right
+				//check both sides independently
+				for(int j=0; j<2; j++)
+				{					
+					if(redMoveBoard_[i][j] != -1)
 					{
-						if(redMoveBoard_[i][j] != -1)
+						
+						if(checkers_[redMoveBoard_[i][j]] == nullptr) 
 						{
-							if(checkers_[redMoveBoard_[i][j]] == NULL) 
+							if(firstJumpFound == false)
 							{
-								if(firstJumpFound == false)
-								{
-									possibleMoves_.push_back(turnBoardtoVec());
-								}
-							}
-							else if(checkers_[redMoveBoard_[i][j]]->isTeamRed() != redTeamTurn)
-							{
-								if(redJumpBoard_[i][j] != -1 && checkers_[redJumpBoard_[i][j]] == NULL)
-								{
-									// Jump found
-									if(firstJumpFound == false)
-									{
-										//everything in possibleMoves are not jumps, so wipe it
-										possibleMoves_.clear();
-										firstJumpFound = true;
-									}
-									possibleMoves_.push_back(turnBoardtoVec());
-
-									//----
-									// recurse on Jump here
-									// Note to self: Recurse WILL have to take into account both tables at all times for kings
-									// since a king can jump up, down, and up again.
-									//----
-								}
+								possibleMoves_.push_back(turnBoardtoVec());
 							}
 						}
+						else if(checkers_[redMoveBoard_[i][j]]->isTeamRed() != redTeamTurn)
+						{
+							if(redJumpBoard_[i][j] != -1 && checkers_[redJumpBoard_[i][j]] == nullptr)
+							{
+								// Jump found
+								if(firstJumpFound == false)
+								{
+									//everything in possibleMoves are not jumps, so wipe it
+									possibleMoves_.clear();
+									firstJumpFound = true;
+								}
+								possibleMoves_.push_back(turnBoardtoVec());
 
+								//----
+								// recurse on Jump here
+								// Note to self: Recurse WILL have to take into account both tables at all times for kings
+								// since a king can jump up, down, and up again.
+								//----
+							}
+						}
+						
 					}
+					
 
 				}
-				if(checkers_[i]->isKing() == true || redTeamTurn == false)
-				{
 
-				}
 			}
+			if(checkers_[i]->isKing() == true || redTeamTurn == false)
+			{
+
+			}
+
 		}
-
-
-
-
-
+		
 	}
 
 	std::vector<std::vector<char>> getPossibleMoves()
@@ -221,7 +215,7 @@ public:
 	}
 private:
 	// pointers to all the checkers
-	std::vector<TheChecker *> checkers_;
+	std::vector<std::shared_ptr<TheChecker>> checkers_;
 	// to set ID of each piece. (0-11 on each side)
 	int piecesOnRedTeam_;
 	int piecesOnBlackTeam_;

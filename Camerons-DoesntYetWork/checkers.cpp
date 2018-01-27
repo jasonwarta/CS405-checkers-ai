@@ -35,97 +35,81 @@ void makeStartBoard(std::vector<char> &v1)
 	v1=v2;
 }
 
-void populateRedMoveBoard(std::vector<std::vector<int>> &v1)
-{
-	std::vector<std::vector<int>> v2 { {-1, 4},	//0
-									   {4, 5},
-									   {5, 6},
-									   {6, 7},
-									   {8, 9},
-									   {9, 10},	//5
-									   {10, 11},
-									   {11, -1},
-									   {-1, 12},
-									   {12, 13},
-									   {13, 14},	//10
-									   {14, 15},
-									   {16, 17},
-									   {17, 18},
-									   {18, 19},
-									   {19, -1},	//15
-									   {-1, 20},
-									   {20, 21},
-									   {21, 22},
-									   {22, 23},
-									   {24, 25},	//20
-									   {25, 26},
-									   {26, 27},
-									   {27, -1},
-									   {-1, 28},
-									   {28, 29},	//25
-									   {29, 30},
-									   {30, 31},
-									   {-1, -1},
-									   {-1, -1},
-									   {-1, -1},	//30
-									   {-1, -1}	};
-	v1 = v2;
-}
-
-void populateRedJumpBoard(std::vector<std::vector<int>> &v1)
-{
-	std::vector<std::vector<int>> v2 { {-1, 9},	//0
-									   {8, 10},
-									   {9, 11},
-									   {10, -1},
-									   {-1, 13},
-									   {12, 14},	//5
-									   {13, 15},
-									   {14, -1},
-									   {-1, 17},
-									   {16, 18},
-									   {17, 19},	//10
-									   {18, -1},
-									   {-1, 21},
-									   {20, 22},
-									   {21, 23},
-									   {22, -1},	//15
-									   {-1, 25},
-									   {24, 26},
-									   {25, 27},
-									   {26, -1},
-									   {-1, 29},	//20
-									   {28, 30},
-									   {29, 31},
-									   {30, -1},
-									   {-1, -1},
-									   {-1, -1},	//25
-									   {-1, -1},
-									   {-1, -1},
-									   {-1, -1},
-									   {-1, -1},
-									   {-1, -1},	//30
-									   {-1, -1} };
-	v1 = v2;
-}
-void populateBlackMoveBoard(std::vector<std::vector<int>> &v1)
-{
-	// coming soon (I have it on paper, but too lazy to type it in....)
-}
-
-void populateBlackJumpBoard(std::vector<std::vector<int>> &v1)
-{
-	// coming soon (I have it on paper, but too lazy to type it in....)
-}
 void tempTester()
 {
 	std::vector<char> boardVec;
 
 	//Ill put a better way to do this later, but this is fast and easy
-	std::vector<std::vector<int>> redMoveBoard;
-	populateRedMoveBoard(redMoveBoard);
-	std::vector<std::vector<int>> redJumpBoard;
-	populateRedJumpBoard(redJumpBoard);
+	std::vector<std::vector<int>> redMoveBoard { {-1, 4},	//0
+								 				{4, 5},
+												{5, 6},
+											    {6, 7},
+											    {8, 9},
+											    {9, 10},	//5
+											    {10, 11},
+											    {11, -1},
+											    {-1, 12},
+											    {12, 13},
+											    {13, 14},	//10
+											    {14, 15},
+											    {16, 17},
+											    {17, 18},
+											    {18, 19},
+											    {19, -1},	//15
+											    {-1, 20},
+											    {20, 21},
+											    {21, 22},
+											    {22, 23},
+											    {24, 25},	//20
+											    {25, 26},
+											    {26, 27},
+											    {27, -1},
+											    {-1, 28},
+											    {28, 29},	//25
+											    {29, 30},
+											    {30, 31},
+											    {-1, -1},
+											    {-1, -1},
+											    {-1, -1},	//30
+											    {-1, -1}	};
+
+	std::vector<std::vector<int>> redJumpBoard { {-1, 9},	//0
+											   {8, 10},
+											   {9, 11},
+											   {10, -1},
+											   {-1, 13},
+											   {12, 14},	//5
+											   {13, 15},
+											   {14, -1},
+											   {-1, 17},
+											   {16, 18},
+											   {17, 19},	//10
+											   {18, -1},
+											   {-1, 21},
+											   {20, 22},
+											   {21, 23},
+											   {22, -1},	//15
+											   {-1, 25},
+											   {24, 26},
+											   {25, 27},
+											   {26, -1},
+											   {-1, 29},	//20
+											   {28, 30},
+											   {29, 31},
+											   {30, -1},
+											   {-1, -1},
+											   {-1, -1},	//25
+											   {-1, -1},
+											   {-1, -1},
+											   {-1, -1},
+											   {-1, -1},
+											   {-1, -1},	//30
+											   {-1, -1} };
+
+	// Ill populate the next two vecs later. I have it on paper, but im lazy
+	std::vector<std::vector<int>> blackMoveBoard;
+	std::vector<std::vector<int>> blackJumpBoard;
+
 
 	std::vector<std::vector<char>> possibleMoves;
 
@@ -134,7 +118,7 @@ void tempTester()
 
 	bool redPlayerTurn = true;
 	CheckerBoard theCheckerBoard(boardVec, redPlayerTurn, redMoveBoard, redJumpBoard); // bestNameEver....
-	//theCheckerBoard.updatePossibleMoves();
+	theCheckerBoard.updatePossibleMoves();
 	possibleMoves = theCheckerBoard.getPossibleMoves();
 
 
