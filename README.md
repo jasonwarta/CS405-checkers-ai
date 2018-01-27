@@ -3,7 +3,7 @@
 ## Authors:
   - Jason Warta 
   - Rachel Crosley
-  - Jim Samson @FromAlaska
+  - Jim Samson
   - Cameron Showalter
 
 ***This project requires [uWebSockets](https://github.com/uNetworking/uWebSockets)***
