@@ -1,15 +1,16 @@
 # CS405 Checkers AI
 
-Edited by:
-  Jason Warta
-  Rachel Crosley
-  Jim Samson
-  Cameron Showalter
+## Authors:
+  - Jason Warta 
+  - Rachel Crosley
+  - Jim Samson @FromAlaska
+  - Cameron Showalter
 
-This project requires [uWebSockets](https://github.com/uNetworking/uWebSockets)
+***This project requires [uWebSockets](https://github.com/uNetworking/uWebSockets)***
 
 # Running the Project
 Before you start: (For Mac Users)
+
 Your Xcode tools needs to be updated. Note, it will take time for it to download.
 ```
 $ xcode-select --install
@@ -21,7 +22,7 @@ $ git clone https://github.com/jasonwarta/CS405-checkers-ai.git
 ```
 Change to the project directory
 ```
-$ cd CS405-checkers-ai.git
+$ cd CS405-checkers-ai
 ```
 Build the project using the Makefile
 ```
