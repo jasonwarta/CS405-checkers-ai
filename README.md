@@ -9,6 +9,11 @@ Edited by:
 This project requires [uWebSockets](https://github.com/uNetworking/uWebSockets)
 
 # Running the Project
+Before you start: (For Mac Users)
+Your Xcode tools needs to be updated. Note, it will take time for it to download.
+```
+$ xcode-select --install
+```
 
 Clone the repository (HTTPS) 
 ```
