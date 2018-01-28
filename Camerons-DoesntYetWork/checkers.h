@@ -39,6 +39,10 @@ public:
 	{
 		return isKing_;
 	}
+	void setKing(bool b)
+	{
+		isKing_ = b;
+	}
 private:
 	bool isOnRed_;
 	bool isKing_;
@@ -183,7 +187,27 @@ public:
 		// if at tail of jump sequence, board is a possible answer
 		if(jumpNeverFound == true)
 		{
+
+			//isAlreadyKing default to true so that it bypasses checks if it doesn't get changed
+			bool isAlreadyKing = true;
+			if(currTeamDirection)
+			{
+				isAlreadyKing = checkers_[currTeamJumpBoard_[i][j]]->isKing();
+				if(!isAlreadyKing && (redTeamTurn_ && currTeamJumpBoard_[i][j]>27) || (!redTeamTurn_ && currTeamJumpBoard_[i][j]<4))
+				{
+					checkers_[currTeamJumpBoard_[i][j]]->setKing(true);
+
+				}
+
+			}
+
 			possibleMoves_.push_back(turnBoardtoVec());
+
+			if(currTeamDirection && !isAlreadyKing && (redTeamTurn_ && currTeamJumpBoard_[i][j]>27) || (!redTeamTurn_ && currTeamJumpBoard_[i][j]<4))
+			{
+				checkers_[currTeamJumpBoard_[i][j]]->setKing(false);
+
+			}
 		}
 
 
@@ -216,11 +240,26 @@ public:
 					//move the checker to the new spot
 					checkers_[teamMoveBoard[i][j]] = checkers_[i];
 					checkers_[i] = nullptr;
-					//update possible moves, Add check to update King here later...
+
+					//If already a king, dont change it. If not, change it and change it back
+					bool isAlreadyKing = checkers_[teamMoveBoard[i][j]]->isKing();
+					if(!isAlreadyKing && (redTeamTurn_ && teamMoveBoard[i][j]>27) || (!redTeamTurn_ && teamMoveBoard[i][j]<4))
+					{
+						checkers_[teamMoveBoard[i][j]]->setKing(true);
+					}
+
 					possibleMoves_.push_back(turnBoardtoVec());
+
+					if(!isAlreadyKing && (redTeamTurn_ && teamMoveBoard[i][j]>27) || (!redTeamTurn_ && teamMoveBoard[i][j]<4))
+					{
+						checkers_[teamMoveBoard[i][j]]->setKing(false);
+					}
+
 					//put the checker back
 					checkers_[i] = checkers_[teamMoveBoard[i][j]];
 					checkers_[teamMoveBoard[i][j]] = nullptr;
+
+
 				}
 			}
 			else if(checkers_[teamMoveBoard[i][j]]->isTeamRed() != redTeamTurn_)

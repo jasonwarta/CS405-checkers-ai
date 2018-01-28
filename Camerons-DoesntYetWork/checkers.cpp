@@ -37,15 +37,16 @@ void makeStartBoard(std::vector<char> &v1)
 	*/
 
 	//testing board:
-	std::vector<char> v2 { 'b',' ',' ',' ',
-						   'R',' ',' ',' ',
+	std::vector<char> v2 { ' ',' ',' ',' ',
+						   ' ',' ',' ',' ',
 						   ' ',' ',' ',' ',
 						   ' ','r',' ',' ',
 						   ' ','b',' ',' ',
-						   'R',' ',' ',' ',
-						   ' ',' ',' ','r',
+						   ' ',' ',' ',' ',
+						   ' ','b',' ','r',
 						   ' ',' ',' ','B' };
 	/*
+	Note to self: check for a bouncing king later
 				_X_X_X_X
 				X_X_X_X_
 				_X_X_X_X
