@@ -8,6 +8,26 @@
 
 ***This project requires [uWebSockets](https://github.com/uNetworking/uWebSockets)***
 
+# Installing uWebSockets
+#### Ubuntu
+```
+sudo apt-get install libssl-dev libuv1-dev zlib1g-dev
+git clone https://github.com/uNetworking/uWebSockets.git
+cd uWebSockets
+make
+sudo make install
+```
+
+#### Mac
+Install Homebrew
+```
+brew install openssl zlib libuv
+git clone https://github.com/uNetworking/uWebSockets.git
+cd uWebSockets
+make
+sudo make install
+```
+
 # Running the Project
 Before you start: (For Mac Users)
 
