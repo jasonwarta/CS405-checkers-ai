@@ -13,16 +13,11 @@
 
 void makeStartBoard(std::vector<char> &v);
 
-
 void printTempBoard(std::vector<char> &v);
-
-std::vector<std::vector<char>> generatePossibleMoves(std::vector<char> currentBoard, std::string TeamName);
 
 void tempTester();
 
-
-
-// boardPosition may not be needed. Look into later. (Just use vector element)
+// May change from class to something else later...
 class TheChecker
 {
 public:
@@ -75,8 +70,6 @@ public:
 		for(int i=0; i<startBoard.size(); ++i)
 		{
 			// later, break at space first for speedup?
-			// also, change pointers to sharedpointers later
-			// might condence the if tree later.... lazy atm
 			if(startBoard[i] == 'r')
 			{
 				checkers_[i] = std::make_shared<TheChecker>(TheChecker(true, false));
@@ -124,7 +117,7 @@ public:
 					returnMe[i] = 'r';
 				}
 			}
-			else
+			else // black team
 			{
 				if(checkers_[i]->isKing() == true)
 				{
@@ -140,7 +133,7 @@ public:
 		return returnMe;
 	}
 
-	void updatePossibleMovesRecurse(int i, int j, bool currTeamDirection)
+	void JumpingRecursion(int i, int j, bool currTeamDirection)
 	{
 		std::shared_ptr<TheChecker> pieceJumped;
 		int k;
@@ -169,7 +162,7 @@ public:
 			if(currTeamMoveBoard_[k][l] != -1 && checkers_[currTeamMoveBoard_[k][l]] != nullptr && 
 				checkers_[currTeamMoveBoard_[k][l]]->isTeamRed() != redTeamTurn_ && checkers_[currTeamJumpBoard_[k][l]] == nullptr)
 			{
-				updatePossibleMovesRecurse(k, l, true);
+				JumpingRecursion(k, l, true);
 				jumpNeverFound = false;
 			}
 
@@ -179,7 +172,7 @@ public:
 				if(oppTeamMoveBoard_[k][l] != -1 && checkers_[oppTeamMoveBoard_[k][l]] != nullptr && 
 					checkers_[oppTeamMoveBoard_[k][l]]->isTeamRed() != redTeamTurn_ && checkers_[oppTeamJumpBoard_[k][l]] == nullptr)
 				{
-					updatePossibleMovesRecurse(k, l, false);
+					JumpingRecursion(k, l, false);
 					jumpNeverFound = false;
 				}
 			}
@@ -198,7 +191,6 @@ public:
 					checkers_[currTeamJumpBoard_[i][j]]->setKing(true);
 
 				}
-
 			}
 
 			possibleMoves_.push_back(turnBoardtoVec());
@@ -230,64 +222,61 @@ public:
 
 	void updateBoardWithDirection(int &i, int &j, bool &firstJumpFound, bool goingRightWay, std::vector<std::vector<int>> &teamMoveBoard, std::vector<std::vector<int>> &teamJumpBoard)
 	{
-		if(teamMoveBoard[i][j] != -1)
+		// if you can't even move that direction, don't check for other options
+		if(teamMoveBoard[i][j] == -1)
 		{
+			return;
+		}
 			
-			if(checkers_[teamMoveBoard[i][j]] == nullptr) 
+
+		if(checkers_[teamMoveBoard[i][j]] == nullptr) 
+		{
+			if(firstJumpFound == false)
 			{
+				//move the checker to the new spot
+				checkers_[teamMoveBoard[i][j]] = checkers_[i];
+				checkers_[i] = nullptr;
+
+				//If already a king, dont change it. If not, change it and change it back
+				bool isAlreadyKing = checkers_[teamMoveBoard[i][j]]->isKing();
+				if(!isAlreadyKing && (redTeamTurn_ && teamMoveBoard[i][j]>27) || (!redTeamTurn_ && teamMoveBoard[i][j]<4))
+				{
+					checkers_[teamMoveBoard[i][j]]->setKing(true);
+				}
+
+				possibleMoves_.push_back(turnBoardtoVec());
+
+				if(!isAlreadyKing && (redTeamTurn_ && teamMoveBoard[i][j]>27) || (!redTeamTurn_ && teamMoveBoard[i][j]<4))
+				{
+					checkers_[teamMoveBoard[i][j]]->setKing(false);
+				}
+
+				//put the checker back
+				checkers_[i] = checkers_[teamMoveBoard[i][j]];
+				checkers_[teamMoveBoard[i][j]] = nullptr;
+
+
+			}
+		}
+		else if(checkers_[teamMoveBoard[i][j]]->isTeamRed() != redTeamTurn_)
+		{
+			// if it wont jump off the board, and the spot it can jump to is empty
+			if(teamJumpBoard[i][j] != -1 && checkers_[teamJumpBoard[i][j]] == nullptr)
+			{
+				// Jump found
 				if(firstJumpFound == false)
 				{
-					//move the checker to the new spot
-					checkers_[teamMoveBoard[i][j]] = checkers_[i];
-					checkers_[i] = nullptr;
-
-					//If already a king, dont change it. If not, change it and change it back
-					bool isAlreadyKing = checkers_[teamMoveBoard[i][j]]->isKing();
-					if(!isAlreadyKing && (redTeamTurn_ && teamMoveBoard[i][j]>27) || (!redTeamTurn_ && teamMoveBoard[i][j]<4))
-					{
-						checkers_[teamMoveBoard[i][j]]->setKing(true);
-					}
-
-					possibleMoves_.push_back(turnBoardtoVec());
-
-					if(!isAlreadyKing && (redTeamTurn_ && teamMoveBoard[i][j]>27) || (!redTeamTurn_ && teamMoveBoard[i][j]<4))
-					{
-						checkers_[teamMoveBoard[i][j]]->setKing(false);
-					}
-
-					//put the checker back
-					checkers_[i] = checkers_[teamMoveBoard[i][j]];
-					checkers_[teamMoveBoard[i][j]] = nullptr;
-
-
+					//everything in possibleMoves are not jumps, so wipe it
+					possibleMoves_.clear();
+					firstJumpFound = true;
 				}
-			}
-			else if(checkers_[teamMoveBoard[i][j]]->isTeamRed() != redTeamTurn_)
-			{
-				// if it wont jump off the board, and the spot it can jump to is empty
-				if(teamJumpBoard[i][j] != -1 && checkers_[teamJumpBoard[i][j]] == nullptr)
-				{
-					// Jump found
-					if(firstJumpFound == false)
-					{
-						//everything in possibleMoves are not jumps, so wipe it
-						possibleMoves_.clear();
-						firstJumpFound = true;
-					}
-					//possibleMoves_.push_back(turnBoardtoVec());
-					updatePossibleMovesRecurse(i, j, goingRightWay);
+				//possibleMoves_.push_back(turnBoardtoVec());
+				JumpingRecursion(i, j, goingRightWay);
 
-				}
 			}
-			
 		}
 	}
 
-
-	/*
-		I might cut the length of updatePosibleMoves in half later by switching the tables back
-		and forth as variables, but for now im too tired and this is easier....
-	*/
 	void updatePossibleMoves()
 	{
 		bool firstJumpFound = false;
