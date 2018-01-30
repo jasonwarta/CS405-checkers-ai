@@ -1,3 +1,6 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+
 const TILES = { 
 	'_': '', 
 	'b': 'b', 
