@@ -38,13 +38,13 @@ void makeStartBoard(std::vector<char> &v1)
 
 	//testing board:
 	std::vector<char> v2 { ' ',' ',' ',' ',
+						   ' ','R',' ',' ',
+						   ' ','b','b',' ',
 						   ' ',' ',' ',' ',
+						   ' ','b','b',' ',
 						   ' ',' ',' ',' ',
-						   ' ','r',' ',' ',
-						   ' ','b',' ',' ',
-						   ' ',' ',' ',' ',
-						   ' ','b',' ','r',
-						   ' ',' ',' ','B' };
+						   ' ',' ','b',' ',
+						   ' ',' ',' ',' ' };
 	/*
 	Note to self: check for a bouncing king later
 				_X_X_X_X
@@ -205,7 +205,7 @@ void tempTester()
 
 	bool redPlayerTurn = true;
 	CheckerBoard theCheckerBoard(boardVec, redPlayerTurn, redMoveBoard, redJumpBoard, blackMoveBoard, blackJumpBoard); // bestNameEver....
-	theCheckerBoard.updatePossibleMoves();
+	theCheckerBoard.updatePossibleMoves(); // note to self: make it so you don't have to update. Put this line in the constructor maybe
 	possibleMoves = theCheckerBoard.getPossibleMoves();
 
 
