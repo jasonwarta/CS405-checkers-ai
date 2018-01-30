@@ -19,8 +19,10 @@ using std::string;
 using std::bitset;
 using std::istringstream;
 using std::stringstream;
+using std::ostringstream;
 using std::copy;
 using std::vector;
+using std::ostream_iterator;
 using std::istream_iterator;
 using std::basic_string;
 using std::strcpy;
@@ -30,16 +32,23 @@ struct Message {
 	size_t size;
 	vector<char> vec;
 
-	void prepareBoard(const bitset<96> board);
+	void prepareBoard(const vector<char> & board);
 };
 
 typedef basic_string<wchar_t> wstring;
 
-const bitset<96> START("100100100100100100100100100100100100001001001001001001001001010010010010010010010010010010010010");
+const vector<char> START_BOARD { 
+	'r','r','r','r',
+	'r','r','r','r',
+	'r','r','r','r',
+	'_','_','_','_',
+	'_','_','_','_',
+	'b','b','b','b',
+	'b','b','b','b',
+	'b','b','b','b' };
 
 int getKb();
 void createServerInstance(uWS::Hub &h);
-Message prepareBoard(const bitset<96> board);
 void loadHtml();
 
 #endif

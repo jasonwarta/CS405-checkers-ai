@@ -69,13 +69,11 @@
 
 					sock.onmessage = function(event) {
 						if(event){
-							console.log(event);
 							if (event.data) {
-								console.log(event.data);
 								let msg = event.data.split(' ');
 								if(msg[0] == "board") {
-									console.log(msg);
-									let board = event.data.split(' ')[1].match(/.{3}/g);
+									let board = msg[1].split('');
+									console.log(board);
 									reactParent.setState({board:board});
 								}
 							}
@@ -98,11 +96,11 @@
 
 				render(){
 					const TILES = { 
-						'001': '', 
-						'010': 'b', 
-						'011': 'bk', 
-						'100': 'r', 
-						'101': 'rk'
+						'_': '', 
+						'b': 'b', 
+						'B': 'bk', 
+						'r': 'r', 
+						'R': 'rk'
 					}
 
 					return (
