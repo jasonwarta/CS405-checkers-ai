@@ -7,6 +7,9 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
 
 		<style type="text/css">
+			table {
+				display:inline;
+			}
 			td {
 				width:62;
 				height:64;
@@ -25,6 +28,13 @@
 			}
 			.green {
 				background-color: #53A37B;
+			}
+			.turnMarker {
+				display:inline;
+				float:right;
+				width:30px;
+				height:30px;
+				border-radius:15px;
 			}
 			.b {
 				background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABmJLR0QA0gAAAAAKdpdGAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAB3RJTUUH4gEaBwoutup9ogAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAACEklEQVR42u2bsU7CUBSGv14YXAwOxsTBHQYji12ZWHkAZzdm38Cxj+BTwIu4sbAxmKiDxIUECA6915Sbghppafv3S87UQvsf7r2ce885AdnTAC6BDtC11gGugDN7zwcwAybAs7UJ8AKsKSEtYACMgM0/bWS/q1V00QEQHkj0PmeE9lmFEt4H3jIU7tubfebRHXEDTHMU7tvUvkPunADREYX7Ftl3yoU2sCyQeGdL+26ZMiigcN8GWYkflkC8s+GhxT+USLyzB8Vf/uAjYVBi8f9eE9oVEO+svS+K2/U//wk0qQYr4BRY+BfMjg88Vkg8VsvjX8LbTUXtx7A5OHJsn8feYe8Gql9h8c76uxbBAHgFzqk278CFdcbWIngrIB6r8Tbtwkhg+CdPlramQMseTCpxBszdFOihRy+5BtwLOuDeTYGGDRUVaRqbtFDl0hBnaVTpGOJUlSrd2gH1FIiztKpcBcQJhaaoA1YGcYzgHiDJhyGuzFBlZohLUVSZGOJ6HFWeaweoT4F6O0xchzcWFD8G1i4QehJ0wBPUh6Lfh6JzsWkwtpq3CNHJC4ROdJ0aS1zYAHcCw//OiU9DPj0O4gUSjqiC4qNdQz4N+SKpBXBdoYXvOk38b5AulHRIl8o6pIulyzgShlktJtINEw7plplknCDbNOWHzZJtc340Kds46TtCsnU2jdI0T+fhyUK3z38B11pMqjjllAsAAAAASUVORK5CYII=');
@@ -51,16 +61,27 @@
 		<div id="root"></div>
 
 		<script type="text/babel">
-			class BoardContainer extends React.Component {
+			const TILES = { 
+				'_': '', 
+				'b': 'b', 
+				'B': 'bk', 
+				'r': 'r', 
+				'R': 'rk'
+			}
+
+			class GameContainer extends React.Component {
 				constructor(props) {
 					super(props);
 
 					this.state = {
 						board: [],
-						selectedTile: null
+						selectedTile: null, 
+						turn: 'red',
+						playerColor: 'black'
 					}
 
 					this.clickTile = this.clickTile.bind(this);
+					this.changePlayerColor = this.changePlayerColor.bind(this);
 				}
 
 				componentWillMount() {
@@ -83,8 +104,12 @@
 				}
 
 				clickTile(element, tile) {
-					if (this.state.selectedTile == null)
+					let ownerColor = element.classList.contains('red') ? 'red' : 'black';
+
+					if (this.state.selectedTile == null) {
+
 						this.setState({selectedTile:tile});
+					}
 					else if (this.state.selectedTile == tile)
 						this.setState({selectedTile:null});
 					else {
@@ -94,17 +119,24 @@
 
 				}
 
+				changePlayerColor(element) {
+					console.log(element);
+				}
+
 				render(){
-					const TILES = { 
-						'_': '', 
-						'b': 'b', 
-						'B': 'bk', 
-						'r': 'r', 
-						'R': 'rk'
-					}
+					
 
 					return (
-						<Board board={this.state.board} tiles={TILES} clickTile={this.clickTile} focus={this.state.selectedTile} />
+						<div>
+							<Board board={this.state.board} clickTile={this.clickTile} focus={this.state.selectedTile} />
+							<div className="playerColor">
+								<input onChange={(event) => this.changePlayerColor(event.target)} type="radio" id="red" name="playerColor" value="red" />
+								
+								<input onChange={(event) => this.changePlayerColor(event.target)} type="radio" id="black" name="playerColor" value="black" />
+							</div>
+							<div className="turnMarker" style={{backgroundColor: this.state.turn}}></div>
+						</div>
+						
 					);
 				}
 			}
@@ -118,8 +150,8 @@
 					if (toggle) {
 						boardRow.push(
 							<td key={key} 
-								className={`green ${props.tiles[val]} ${props.focus == (key+1) ? 'focus' : ''}`}
-								onClick={() => props.clickTile(this,key+1)}>
+								className={`green ${TILES[val][0] == 'r' ? 'red' : 'black'} ${TILES[val]} ${props.focus == (key+1) ? 'focus' : ''}`}
+								onClick={(event) => props.clickTile(event.target,key+1)}>
 								<p>{key+1}</p>
 							</td>);
 						boardRow.push(<td key={`${key}_`} className="buff"></td>);
@@ -128,8 +160,8 @@
 						boardRow.push(<td key={`${key}_`} className="buff"></td>);
 						boardRow.push(
 							<td key={key} 
-								className={`green ${props.tiles[val]} ${props.focus == (key+1) ? 'focus' : ''}`}
-								onClick={() => props.clickTile(this,key+1)}>
+								className={`green ${TILES[val][0] == 'r' ? 'red' : 'black'} ${TILES[val]} ${props.focus == (key+1) ? 'focus' : ''}`}
+								onClick={(event) => props.clickTile(event.target,key+1)}>
 								<p>{key+1}</p>
 							</td>);
 					}
@@ -148,7 +180,7 @@
 			}
 
 			ReactDOM.render(
-				<BoardContainer />,
+				<GameContainer />,
 				document.getElementById('root')
 			);
 		</script>
