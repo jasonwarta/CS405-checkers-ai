@@ -49,6 +49,6 @@ const vector<char> START_BOARD {
 
 int getKb();
 void createServerInstance(uWS::Hub &h);
-void loadHtml();
+void loadFile(string fname = "index.html");
 
 #endif

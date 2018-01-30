@@ -1,6 +1,6 @@
 #include "server.h"
 
-stringstream indexHtml;
+stringstream fileData;
 
 int getKb() {
 	std::string line;
@@ -37,17 +37,42 @@ void createServerInstance(uWS::Hub &h) {
 
 	h.onHttpRequest([](uWS::HttpResponse *res, uWS::HttpRequest req, char *data, size_t, size_t) {
 		cout << "onHttpRequest" << endl;
-		if (req.getUrl().valueLength == 1) {
 
-			loadHtml();
-			if (!indexHtml.str().length()) {
-				cout << "Failed to load index.html" << endl;
+		// cout << req.getUrl().toString() << endl;
+		string requestedFile = req.getUrl().toString();
+		cout << requestedFile << endl;
+
+		if (requestedFile.at(0) == '/'){
+			if (requestedFile.length() == 1) {
+				loadFile("./index.html");
+			} else {
+				loadFile("."+requestedFile);
 			}
-
-			res->end(indexHtml.str().data(), indexHtml.str().length());
-		} else {
-			res->end(nullptr, 0);
 		}
+
+		if (fileData.str().length())
+			res->end(fileData.str().data(), fileData.str().length());
+		else
+			res->end(nullptr, 0);
+
+
+		// loadFile(requestedFile);
+		
+
+		// cout << req.getHeader("get").value << endl;
+		// cout << req.getHeader("").key << endl;
+
+		// if (req.getUrl().valueLength == 1) {
+
+			// loadFile();
+			// if (!fileData.str().length()) {
+			// 	cout << "Failed to load index.html" << endl;
+			// }
+
+			
+		// } else {
+			
+		// }
 	});
 
 	h.onConnection([&h](uWS::WebSocket<uWS::SERVER> *ws, uWS::HttpRequest req) {
@@ -89,7 +114,11 @@ void createServerInstance(uWS::Hub &h) {
 	}
 }
 
-void loadHtml() {
-	indexHtml.str("");
-	indexHtml << std::ifstream ("index.html").rdbuf();
+void loadFile(string fname) {
+	fileData.str("");
+	fileData << std::ifstream (fname).rdbuf();
+	if (fileData.str().length() > 1)
+		cout << fname << " loaded successfully. " << fileData.str().length() << " bytes loaded." << endl;
+	else 
+		cout << "Could not load " << fname << endl;
 }
