@@ -12,6 +12,7 @@
 #include <iterator>
 
 #include "def.h"
+// #include "server.h"
 
 using std::cout;
 using std::endl;
@@ -26,6 +27,7 @@ using std::ostream_iterator;
 using std::istream_iterator;
 using std::basic_string;
 using std::strcpy;
+using std::ifstream;
 
 struct Message {
 	char* data;
@@ -50,6 +52,5 @@ const vector<char> START_BOARD {
 int getKb();
 void createServerInstance(uWS::Hub &h);
 void loadFile(stringstream & fileData, string fname = "index.html");
-void sendMessage(uWS::WebSocket<uWS::SERVER> *ws, Message & message);
 
 #endif

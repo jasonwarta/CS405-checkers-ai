@@ -41,6 +41,7 @@ void sendMessage(uWS::WebSocket<uWS::SERVER> *ws, Message & message) {
 void createServerInstance(uWS::Hub &h) {
 
 	h.onHttpRequest([](uWS::HttpResponse *res, uWS::HttpRequest req, char *data, size_t, size_t) {
+
 		cout << "onHttpRequest" << endl;
 
 		string requestedFile = req.getUrl().toString();
