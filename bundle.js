@@ -942,6 +942,16 @@ module.exports = focusNode;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+var _extends = Object.assign || function (target) {
+	for (var i = 1; i < arguments.length; i++) {
+		var source = arguments[i];for (var key in source) {
+			if (Object.prototype.hasOwnProperty.call(source, key)) {
+				target[key] = source[key];
+			}
+		}
+	}return target;
+};
+
 var _createClass = function () {
 	function defineProperties(target, props) {
 		for (var i = 0; i < props.length; i++) {
@@ -983,12 +993,16 @@ function _inherits(subClass, superClass) {
 }
 
 var TILES = {
-	'_': '',
-	'b': 'b',
-	'B': 'bk',
-	'r': 'r',
-	'R': 'rk'
+	'_': ['', ''],
+	'b': ['b', 'black'],
+	'B': ['bk', 'black'],
+	'r': ['r', 'red'],
+	'R': ['rk', 'red']
 };
+
+function replaceAt(string, idx, newChar) {
+	return '' + string.substr(0, idx) + newChar + string.substr(idx + 1);
+}
 
 var GameContainer = function (_React$Component) {
 	_inherits(GameContainer, _React$Component);
@@ -1001,8 +1015,8 @@ var GameContainer = function (_React$Component) {
 		_this.state = {
 			board: [],
 			selectedTile: null,
-			turn: 'red',
-			playerColor: 'black'
+			turnColor: 'red',
+			playerColor: 'red'
 		};
 
 		_this.clickTile = _this.clickTile.bind(_this);
@@ -1020,9 +1034,9 @@ var GameContainer = function (_React$Component) {
 				if (event) {
 					if (event.data) {
 						var msg = event.data.split(' ');
+
 						if (msg[0] == "board") {
 							var board = msg[1].split('');
-							console.log(board);
 							reactParent.setState({ board: board });
 						}
 					}
@@ -1032,36 +1046,53 @@ var GameContainer = function (_React$Component) {
 	}, {
 		key: 'clickTile',
 		value: function clickTile(element, tile) {
-			var ownerColor = element.classList.contains('red') ? 'red' : 'black';
+			var ownerColor = '';
+			if (element.classList.contains('red')) ownerColor = 'red';else if (element.classList.contains('black')) ownerColor = 'black';
 
-			if (this.state.selectedTile == null) {
+			console.log('ownerColor: ' + ownerColor);
 
-				this.setState({ selectedTile: tile });
-			} else if (this.state.selectedTile == tile) this.setState({ selectedTile: null });else {
-				sock.send('checkMove ' + this.state.selectedTile + ' ' + tile);
+			if (this.state.turnColor == ownerColor && this.state.turnColor == this.state.playerColor) {
+				if (this.state.selectedTile == null) {
+					this.setState({ selectedTile: tile });
+				} else if (this.state.selectedTile == tile) {
+					this.setState({ selectedTile: null });
+				}
+			} else if (ownerColor == '') {
+				var tempBoard = this.state.board.join('');
+				var tempVar = tempBoard[this.state.selectedTile - 1];
+				tempBoard = replaceAt(tempBoard, this.state.selectedTile - 1, this.state.board[tile - 1]);
+				tempBoard = replaceAt(tempBoard, tile - 1, tempVar);
+
+				sock.send('checkMove ' + tempBoard + ' ' + this.state.turnColor);
 				this.setState({ selectedTile: null });
-			}
+			} else console.log("You can't move that tile!");
 		}
 	}, {
 		key: 'changePlayerColor',
-		value: function changePlayerColor(element) {
-			console.log(element);
+		value: function changePlayerColor(color) {
+			this.setState({ playerColor: color }, function () {
+				sock.send('resetGame');
+			});
 		}
 	}, {
 		key: 'render',
 		value: function render() {
 			var _this2 = this;
 
-			return _react2.default.createElement('div', null, _react2.default.createElement(Board, { board: this.state.board, clickTile: this.clickTile, focus: this.state.selectedTile }), _react2.default.createElement('div', { className: 'playerColor' }, _react2.default.createElement('input', { onChange: function onChange(event) {
-					return _this2.changePlayerColor(event.target);
-				}, type: 'radio', id: 'red', name: 'playerColor', value: 'red' }), _react2.default.createElement('input', { onChange: function onChange(event) {
-					return _this2.changePlayerColor(event.target);
-				}, type: 'radio', id: 'black', name: 'playerColor', value: 'black' })), _react2.default.createElement('div', { className: 'turnMarker', style: { backgroundColor: this.state.turn } }));
+			return _react2.default.createElement('div', null, _react2.default.createElement(Board, { board: this.state.board, clickTile: this.clickTile, focus: this.state.selectedTile }), _react2.default.createElement('div', { className: 'playerColor' }, _react2.default.createElement('label', null, _react2.default.createElement('input', { checked: '' + (this.state.playerColor == 'red' ? 'true' : ''), onChange: function onChange(event) {
+					return _this2.changePlayerColor(event.target.value);
+				}, type: 'radio', id: 'red', name: 'playerColor', value: 'red' }), _react2.default.createElement(Color, { className: 'color', color: 'red' })), _react2.default.createElement('label', null, _react2.default.createElement('input', { checked: '' + (this.state.playerColor == 'black' ? 'true' : ''), onChange: function onChange(event) {
+					return _this2.changePlayerColor(event.target.value);
+				}, type: 'radio', id: 'black', name: 'playerColor', value: 'black' }), _react2.default.createElement(Color, { className: 'color', color: 'black' }))), _react2.default.createElement(Color, { className: 'color turnMarker', color: this.state.turnColor }));
 		}
 	}]);
 
 	return GameContainer;
 }(_react2.default.Component);
+
+function Color(props) {
+	return _react2.default.createElement('div', _extends({ style: { backgroundColor: props.color } }, props));
+}
 
 function Board(props) {
 	var boardArray = [];
@@ -1071,18 +1102,18 @@ function Board(props) {
 	props.board.forEach(function (val, key) {
 		if (toggle) {
 			boardRow.push(_react2.default.createElement('td', { key: key,
-				className: 'green ' + (TILES[val][0] == 'r' ? 'red' : 'black') + ' ' + TILES[val] + ' ' + (props.focus == key + 1 ? 'focus' : ''),
+				className: 'green ' + TILES[val][1] + ' ' + TILES[val][0] + ' ' + (props.focus == key + 1 ? 'focus' : ''),
 				onClick: function onClick(event) {
 					return props.clickTile(event.target, key + 1);
-				} }, _react2.default.createElement('p', null, key + 1)));
+				} }, _react2.default.createElement('p', { className: 'tileLabel' }, key + 1)));
 			boardRow.push(_react2.default.createElement('td', { key: key + '_', className: 'buff' }));
 		} else {
 			boardRow.push(_react2.default.createElement('td', { key: key + '_', className: 'buff' }));
 			boardRow.push(_react2.default.createElement('td', { key: key,
-				className: 'green ' + (TILES[val][0] == 'r' ? 'red' : 'black') + ' ' + TILES[val] + ' ' + (props.focus == key + 1 ? 'focus' : ''),
+				className: 'green ' + TILES[val][1] + ' ' + TILES[val][0] + ' ' + (props.focus == key + 1 ? 'focus' : ''),
 				onClick: function onClick(event) {
 					return props.clickTile(event.target, key + 1);
-				} }, _react2.default.createElement('p', null, key + 1)));
+				} }, _react2.default.createElement('p', { className: 'tileLabel' }, key + 1)));
 		}
 		if (boardRow.length == 8) {
 			boardArray.push(_react2.default.createElement('tr', { key: 'r' + rowCounter++ }, boardRow));

@@ -1,7 +1,5 @@
 #include "server.h"
 
-stringstream fileData;
-
 int getKb() {
 	std::string line;
 	std::ifstream self("/proc/self/status");
@@ -33,20 +31,27 @@ void Message::prepareBoard(const vector<char> & board){
 	size = msg.length();
 }
 
+void sendMessage(uWS::WebSocket<uWS::SERVER> *ws, Message & message) {
+	uWS::WebSocket<uWS::SERVER>::PreparedMessage *preparedMessage = 
+			uWS::WebSocket<uWS::SERVER>::prepareMessage(message.data, message.size, uWS::TEXT, false);
+	ws->sendPrepared(preparedMessage);
+	ws->finalizeMessage(preparedMessage);
+}
+
 void createServerInstance(uWS::Hub &h) {
 
 	h.onHttpRequest([](uWS::HttpResponse *res, uWS::HttpRequest req, char *data, size_t, size_t) {
 		cout << "onHttpRequest" << endl;
 
-		// cout << req.getUrl().toString() << endl;
 		string requestedFile = req.getUrl().toString();
 		cout << requestedFile << endl;
 
+		stringstream fileData;
 		if (requestedFile.at(0) == '/'){
 			if (requestedFile.length() == 1) {
-				loadFile("./index.html");
+				loadFile(fileData,"./index.html");
 			} else {
-				loadFile("."+requestedFile);
+				loadFile(fileData,"."+requestedFile);
 			}
 		}
 
@@ -54,25 +59,6 @@ void createServerInstance(uWS::Hub &h) {
 			res->end(fileData.str().data(), fileData.str().length());
 		else
 			res->end(nullptr, 0);
-
-
-		// loadFile(requestedFile);
-		
-
-		// cout << req.getHeader("get").value << endl;
-		// cout << req.getHeader("").key << endl;
-
-		// if (req.getUrl().valueLength == 1) {
-
-			// loadFile();
-			// if (!fileData.str().length()) {
-			// 	cout << "Failed to load index.html" << endl;
-			// }
-
-			
-		// } else {
-			
-		// }
 	});
 
 	h.onConnection([&h](uWS::WebSocket<uWS::SERVER> *ws, uWS::HttpRequest req) {
@@ -80,10 +66,7 @@ void createServerInstance(uWS::Hub &h) {
 		Message reply;
 		reply.prepareBoard(START_BOARD);
 		cout << reply.data << endl;
-		uWS::WebSocket<uWS::SERVER>::PreparedMessage *preparedMessage = 
-			uWS::WebSocket<uWS::SERVER>::prepareMessage(reply.data, reply.size, uWS::TEXT, false);
-		ws->sendPrepared(preparedMessage);
-		ws->finalizeMessage(preparedMessage);
+		sendMessage(ws,reply);
 	});
 
 	h.onMessage([&h](uWS::WebSocket<uWS::SERVER> *ws, char *data, size_t length, uWS::OpCode opCode) {
@@ -95,9 +78,15 @@ void createServerInstance(uWS::Hub &h) {
 				istream_iterator<string>{}};
 
 			cout << iss.str() << endl;
-			
+
 			if(tokens[0] == "checkMove"){
+				vector<char> board(tokens[1].begin(), tokens[1].end());
+				// Put function call to check move here
 				cout << "Check Move" << endl;
+
+				Message reply;
+				reply.prepareBoard(board);
+				sendMessage(ws,reply);
 			}
 		}
 	});
@@ -114,8 +103,8 @@ void createServerInstance(uWS::Hub &h) {
 	}
 }
 
-void loadFile(string fname) {
-	fileData.str("");
+void loadFile(stringstream & fileData, string fname) {
+	fileData = stringstream("");
 	fileData << std::ifstream (fname).rdbuf();
 	if (fileData.str().length() > 1)
 		cout << fname << " loaded successfully. " << fileData.str().length() << " bytes loaded." << endl;

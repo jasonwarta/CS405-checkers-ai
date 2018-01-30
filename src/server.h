@@ -49,6 +49,7 @@ const vector<char> START_BOARD {
 
 int getKb();
 void createServerInstance(uWS::Hub &h);
-void loadFile(string fname = "index.html");
+void loadFile(stringstream & fileData, string fname = "index.html");
+void sendMessage(uWS::WebSocket<uWS::SERVER> *ws, Message & message);
 
 #endif
