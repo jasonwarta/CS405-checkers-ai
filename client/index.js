@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+require('./styles.css')
 
 var sock;
 const TILES = { 

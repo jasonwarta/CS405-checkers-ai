@@ -9,17 +9,21 @@
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
+    "babel-minify-webpack-plugin": "^0.2.0",
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-env": "^1.6.1",
     "babel-preset-es2015": "^6.24.1",
+    "babel-preset-minify": "^0.3.0",
     "babel-preset-react": "^6.24.1",
+    "css-loader": "^0.28.9",
     "eslint": "^4.16.0",
     "eslint-plugin-react": "^7.6.1",
     "html-webpack-plugin": "^2.30.1",
+    "style-loader": "^0.20.1",
     "webpack": "^3.10.0"
   },
   "scripts": {
-    "build": "npx webpack",
+    "build": "npx webpack &",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
