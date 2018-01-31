@@ -13,9 +13,9 @@ void Message::prepareReply(string messageType, const vector<char> & board, strin
 	size = msg.length();
 }
 
-void sendMessage(uWS::WebSocket<uWS::SERVER> *ws, Message & message) {
-	uWS::WebSocket<uWS::SERVER>::PreparedMessage *preparedMessage = 
-			uWS::WebSocket<uWS::SERVER>::prepareMessage(message.data, message.size, uWS::TEXT, false);
+void sendMessage(WebSocket *ws, Message & message) {
+	WebSocket::PreparedMessage *preparedMessage = 
+			WebSocket::prepareMessage(message.data, message.size, uWS::TEXT, false);
 	ws->sendPrepared(preparedMessage);
 	ws->finalizeMessage(preparedMessage);
 }
@@ -44,7 +44,7 @@ void createServerInstance(uWS::Hub &h) {
 			res->end(nullptr, 0);
 	});
 
-	h.onConnection([&h](uWS::WebSocket<uWS::SERVER> *ws, uWS::HttpRequest req) {
+	h.onConnection([&h](WebSocket *ws, uWS::HttpRequest req) {
 		cout << "onConnection" << endl;
 		Message reply;
 		reply.prepareReply("board",START_BOARD);
@@ -52,7 +52,7 @@ void createServerInstance(uWS::Hub &h) {
 		sendMessage(ws,reply);
 	});
 
-	h.onMessage([&h](uWS::WebSocket<uWS::SERVER> *ws, char *data, size_t length, uWS::OpCode opCode) {
+	h.onMessage([&h](WebSocket *ws, char *data, size_t length, uWS::OpCode opCode) {
 		cout << "onMessage" << endl;
 		if (length && length < 4096) {
 			istringstream iss(string(data,length));
@@ -75,12 +75,17 @@ void createServerInstance(uWS::Hub &h) {
 			}
 
 			else if (tokens[0] == "computerMove") {
+				// convert board from string to vector<char>
 				vector<char> board(tokens[1].begin(), tokens[1].end());
+
+				// get computer's color
 				string computerColor = tokens[2];
 
-				// trigger computer move then send another msg
-				
+				// generate computer move
+				// at the moment, this is just swapping two elements in the board so we can see that something changed
 				iter_swap(board.begin()+19, board.begin()+23);
+
+				// stringify and send new board to client
 				reply.prepareReply("move",board,"black");
 				sendMessage(ws,reply);	
 			}
@@ -96,7 +101,7 @@ void createServerInstance(uWS::Hub &h) {
 		}
 	});
 
-	h.onDisconnection([&h](uWS::WebSocket<uWS::SERVER> *ws, int code, char *message, size_t length) {
+	h.onDisconnection([&h](WebSocket *ws, int code, char *message, size_t length) {
 		cout << "onDisconnection" << endl;
 	});
 
