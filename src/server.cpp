@@ -1,29 +1,11 @@
 #include "server.h"
 
-int getKb() {
-	std::string line;
-	std::ifstream self("/proc/self/status");
-	int vmData, vmStk, vmPte;
-	while(!self.eof()) {
-		std::getline(self, line, ':');
-		if (line == "VmPTE") {
-			self >> vmPte;
-		} else if (line == "VmData") {
-			self >> vmData;
-		} else if (line == "VmStk") {
-			self >> vmStk;
-		}
-		std::getline(self, line);
-	}
-	return vmData - vmStk - vmPte;
-}
-
-void Message::prepareBoard(const vector<char> & board){
+void Message::prepareReply(string messageType, const vector<char> & board, string playerColor){
 	ostringstream oss;
 	copy(board.begin(),board.end(),ostream_iterator<char>(oss));
 	string boardString = oss.str();
 
-	string msg = "board " + boardString;
+	string msg = messageType + " " + boardString + " " + playerColor;
 	vec = vector<char>(msg.length() + 1);
 	strcpy(&vec[0], msg.c_str());
 
@@ -65,7 +47,7 @@ void createServerInstance(uWS::Hub &h) {
 	h.onConnection([&h](uWS::WebSocket<uWS::SERVER> *ws, uWS::HttpRequest req) {
 		cout << "onConnection" << endl;
 		Message reply;
-		reply.prepareBoard(START_BOARD);
+		reply.prepareReply("board",START_BOARD);
 		cout << reply.data << endl;
 		sendMessage(ws,reply);
 	});
@@ -80,15 +62,37 @@ void createServerInstance(uWS::Hub &h) {
 
 			cout << iss.str() << endl;
 
-			if(tokens[0] == "checkMove"){
-				vector<char> board(tokens[1].begin(), tokens[1].end());
-				// Put function call to check move here
-				cout << "Check Move" << endl;
+			Message reply;
 
-				Message reply;
-				reply.prepareBoard(board);
+			if (tokens[0] == "checkMove") {
+				vector<char> board(tokens[1].begin(), tokens[1].end());
+				string playerColor = tokens[2];
+				// Put function call to check move here
+				cout << "Check Move for " << playerColor << endl;
+
+				reply.prepareReply("confirmMove",board,"red");
 				sendMessage(ws,reply);
 			}
+
+			else if (tokens[0] == "computerMove") {
+				vector<char> board(tokens[1].begin(), tokens[1].end());
+				string computerColor = tokens[2];
+
+				// trigger computer move then send another msg
+				
+				iter_swap(board.begin()+19, board.begin()+23);
+				reply.prepareReply("move",board,"black");
+				sendMessage(ws,reply);	
+			}
+
+			else if (tokens[0] == "resetGame") {
+				
+				reply.prepareReply("board",START_BOARD);
+				sendMessage(ws,reply);
+			}
+
+			cout << "Sent reply" << endl;
+			cout << reply.data << endl;
 		}
 	});
 

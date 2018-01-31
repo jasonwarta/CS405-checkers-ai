@@ -11,9 +11,6 @@
 #include <algorithm>
 #include <iterator>
 
-#include "def.h"
-// #include "server.h"
-
 using std::cout;
 using std::endl;
 using std::string;
@@ -28,13 +25,14 @@ using std::istream_iterator;
 using std::basic_string;
 using std::strcpy;
 using std::ifstream;
+using std::iter_swap;
 
 struct Message {
 	char* data;
 	size_t size;
 	vector<char> vec;
 
-	void prepareBoard(const vector<char> & board);
+	void prepareReply(string messageType, const vector<char> & board, string playerColor = "");
 };
 
 typedef basic_string<wchar_t> wstring;

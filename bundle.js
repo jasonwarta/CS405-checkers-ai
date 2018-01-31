@@ -992,6 +992,7 @@ function _inherits(subClass, superClass) {
 	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
+var sock;
 var TILES = {
 	'_': ['', ''],
 	'b': ['b', 'black'],
@@ -1021,23 +1022,39 @@ var GameContainer = function (_React$Component) {
 
 		_this.clickTile = _this.clickTile.bind(_this);
 		_this.changePlayerColor = _this.changePlayerColor.bind(_this);
+		_this.resetBoard = _this.resetBoard.bind(_this);
 		return _this;
 	}
 
 	_createClass(GameContainer, [{
 		key: 'componentWillMount',
 		value: function componentWillMount() {
-			var reactParent = this;
+			var self = this;
 			sock = new WebSocket('ws://' + window.location.hostname + ':' + window.location.port);
 
 			sock.onmessage = function (event) {
 				if (event) {
 					if (event.data) {
 						var msg = event.data.split(' ');
+						var board = msg[1].split('');
+						console.log(msg);
 
-						if (msg[0] == "board") {
-							var board = msg[1].split('');
-							reactParent.setState({ board: board });
+						if (msg[0] == 'board') {
+							self.setState({ board: board });
+						} else if (msg[0] == 'confirmMove') {
+							var nextPlayer = msg[2] == 'red' ? 'black' : 'red';
+							self.setState({
+								board: board,
+								turnColor: nextPlayer
+							}, function () {
+								sock.send('computerMove ' + self.state.board.join('') + ' ' + nextPlayer);
+							});
+						} else if (msg[0] == 'move') {
+							var _nextPlayer = msg[2] == 'red' ? 'black' : 'red';
+							self.setState({
+								board: board,
+								turnColor: _nextPlayer
+							});
 						}
 					}
 				}
@@ -1049,8 +1066,6 @@ var GameContainer = function (_React$Component) {
 			var ownerColor = '';
 			if (element.classList.contains('red')) ownerColor = 'red';else if (element.classList.contains('black')) ownerColor = 'black';
 
-			console.log('ownerColor: ' + ownerColor);
-
 			if (this.state.turnColor == ownerColor && this.state.turnColor == this.state.playerColor) {
 				if (this.state.selectedTile == null) {
 					this.setState({ selectedTile: tile });
@@ -1058,37 +1073,65 @@ var GameContainer = function (_React$Component) {
 					this.setState({ selectedTile: null });
 				}
 			} else if (ownerColor == '') {
-				var tempBoard = this.state.board.join('');
-				var tempVar = tempBoard[this.state.selectedTile - 1];
-				tempBoard = replaceAt(tempBoard, this.state.selectedTile - 1, this.state.board[tile - 1]);
-				tempBoard = replaceAt(tempBoard, tile - 1, tempVar);
+				if (this.state.selectedTile == null) {
+					console.log("You must select a piece first");
+				} else {
+					var tempBoard = this.state.board.join('');
+					var tempVar = tempBoard[this.state.selectedTile - 1];
+					tempBoard = replaceAt(tempBoard, this.state.selectedTile - 1, this.state.board[tile - 1]);
+					tempBoard = replaceAt(tempBoard, tile - 1, tempVar);
 
-				sock.send('checkMove ' + tempBoard + ' ' + this.state.turnColor);
-				this.setState({ selectedTile: null });
+					sock.send('checkMove ' + tempBoard + ' ' + this.state.turnColor);
+					this.setState({ selectedTile: null });
+				}
 			} else console.log("You can't move that tile!");
+		}
+	}, {
+		key: 'resetBoard',
+		value: function resetBoard() {
+			this.setState({
+				turnColor: 'red'
+			}, function () {
+				sock.send('resetGame');
+			});
 		}
 	}, {
 		key: 'changePlayerColor',
 		value: function changePlayerColor(color) {
+			var _this2 = this;
+
 			this.setState({ playerColor: color }, function () {
-				sock.send('resetGame');
+				_this2.resetBoard();
 			});
 		}
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this2 = this;
-
-			return _react2.default.createElement('div', null, _react2.default.createElement(Board, { board: this.state.board, clickTile: this.clickTile, focus: this.state.selectedTile }), _react2.default.createElement('div', { className: 'playerColor' }, _react2.default.createElement('label', null, _react2.default.createElement('input', { checked: '' + (this.state.playerColor == 'red' ? 'true' : ''), onChange: function onChange(event) {
-					return _this2.changePlayerColor(event.target.value);
-				}, type: 'radio', id: 'red', name: 'playerColor', value: 'red' }), _react2.default.createElement(Color, { className: 'color', color: 'red' })), _react2.default.createElement('label', null, _react2.default.createElement('input', { checked: '' + (this.state.playerColor == 'black' ? 'true' : ''), onChange: function onChange(event) {
-					return _this2.changePlayerColor(event.target.value);
-				}, type: 'radio', id: 'black', name: 'playerColor', value: 'black' }), _react2.default.createElement(Color, { className: 'color', color: 'black' }))), _react2.default.createElement(Color, { className: 'color turnMarker', color: this.state.turnColor }));
+			return _react2.default.createElement('div', null, _react2.default.createElement('h1', null, 'Checkers AI'), _react2.default.createElement('button', {
+				onClick: this.resetBoard }, 'Reset Board'), _react2.default.createElement(PlayerColor, {
+				playerColor: this.state.playerColor,
+				changePlayerColor: this.changePlayerColor
+			}), _react2.default.createElement(Board, {
+				board: this.state.board,
+				clickTile: this.clickTile,
+				focus: this.state.selectedTile
+			}), _react2.default.createElement(Color, {
+				className: 'color turnMarker',
+				color: this.state.turnColor
+			}));
 		}
 	}]);
 
 	return GameContainer;
 }(_react2.default.Component);
+
+function PlayerColor(props) {
+	return _react2.default.createElement('div', { className: 'playerColor' }, _react2.default.createElement('span', { className: 'playerColorLabel' }, 'Player Color: '), _react2.default.createElement('label', null, _react2.default.createElement('input', { checked: '' + (props.playerColor == 'red' ? 'true' : ''), onChange: function onChange(event) {
+			return props.changePlayerColor(event.target.value);
+		}, type: 'radio', id: 'red', name: 'playerColor', value: 'red' }), _react2.default.createElement(Color, { className: 'color', color: 'red' })), _react2.default.createElement('label', null, _react2.default.createElement('input', { checked: '' + (props.playerColor == 'black' ? 'true' : ''), onChange: function onChange(event) {
+			return props.changePlayerColor(event.target.value);
+		}, type: 'radio', id: 'black', name: 'playerColor', value: 'black' }), _react2.default.createElement(Color, { className: 'color', color: 'black' })));
+}
 
 function Color(props) {
 	return _react2.default.createElement('div', _extends({ style: { backgroundColor: props.color } }, props));
@@ -1101,19 +1144,19 @@ function Board(props) {
 	var rowCounter = 0;
 	props.board.forEach(function (val, key) {
 		if (toggle) {
+			boardRow.push(_react2.default.createElement('td', { key: key + '_', className: 'buff' }));
 			boardRow.push(_react2.default.createElement('td', { key: key,
 				className: 'green ' + TILES[val][1] + ' ' + TILES[val][0] + ' ' + (props.focus == key + 1 ? 'focus' : ''),
 				onClick: function onClick(event) {
 					return props.clickTile(event.target, key + 1);
 				} }, _react2.default.createElement('p', { className: 'tileLabel' }, key + 1)));
-			boardRow.push(_react2.default.createElement('td', { key: key + '_', className: 'buff' }));
 		} else {
-			boardRow.push(_react2.default.createElement('td', { key: key + '_', className: 'buff' }));
 			boardRow.push(_react2.default.createElement('td', { key: key,
 				className: 'green ' + TILES[val][1] + ' ' + TILES[val][0] + ' ' + (props.focus == key + 1 ? 'focus' : ''),
 				onClick: function onClick(event) {
 					return props.clickTile(event.target, key + 1);
 				} }, _react2.default.createElement('p', { className: 'tileLabel' }, key + 1)));
+			boardRow.push(_react2.default.createElement('td', { key: key + '_', className: 'buff' }));
 		}
 		if (boardRow.length == 8) {
 			boardArray.push(_react2.default.createElement('tr', { key: 'r' + rowCounter++ }, boardRow));
