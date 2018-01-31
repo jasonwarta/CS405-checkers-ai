@@ -46,7 +46,7 @@ void makeStartBoard(std::vector<char> &v1)
 						   ' ',' ','b',' ',
 						   ' ',' ',' ',' ' };
 	/*
-	Note to self: check for a bouncing king later
+				X_X_X_X_	
 				_X_X_X_X
 				X_X_X_X_
 				_X_X_X_X
@@ -54,7 +54,6 @@ void makeStartBoard(std::vector<char> &v1)
 				_X_X_X_X
 				X_X_X_X_
 				_X_X_X_X
-				X_X_X_X_
 	*/
 
 	v1=v2;
@@ -65,7 +64,7 @@ void tempTester()
 	std::vector<char> boardVec;
 
 	//Ill put a better way to do this later, but this is fast and easy
-    std::vector<std::vector<int>> redMoveBoard {{4, 5},     //0
+    std::vector<std::vector<int>> redMoveBoard { {4, 5},     //0
 												{5, 6},
 											    {6, 7},
                                                 {7, -1},
@@ -131,7 +130,7 @@ void tempTester()
 											   {-1, -1},	//30
 											   {-1, -1} };
 
-	std::vector<std::vector<int>> blackMoveBoard {{-1, -1},	//0
+	std::vector<std::vector<int>> blackMoveBoard { {-1, -1},	//0
 											    {-1, -1},
 											    {-1, -1},
 											    {-1, -1},
@@ -205,7 +204,6 @@ void tempTester()
 
 	bool redPlayerTurn = true;
 	CheckerBoard theCheckerBoard(boardVec, redPlayerTurn, redMoveBoard, redJumpBoard, blackMoveBoard, blackJumpBoard); // bestNameEver....
-	theCheckerBoard.updatePossibleMoves(); // note to self: make it so you don't have to update. Put this line in the constructor maybe
 	possibleMoves = theCheckerBoard.getPossibleMoves();
 
 
@@ -238,100 +236,4 @@ temp key:
 	B = blackKing
 	spa = nothingThere
 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-
-
-
-
-
-
-
-
-
-
-
-std::vector<std::vector<char>> generatePossibleMoves(std::vector<char> currentBoard, std::string teamName)
-{
-	std::vector<std::vector<char>> returnMe;
-	int teamCheckerCount = 0;
-	// it's going to add checkers every recursive call. move outside recursion later
-	for(int i=0; i<currentBoard.size(); ++i)
-	{
-		if((teamName == "Red" && (currentBoard[i] == 'r' || currentBoard[i] == 'R')) ||
-		   (teamName == "Black" && (currentBoard[i] == 'b' || currentBoard[i] == 'B'))  )
-		{
-			teamCheckerCount++;
-		}
-	}
-	
-		bool firstJumpFound = false;
-		For each checker that matches teamName
-		{
-			if(red || king)
-			{
-				if(firstJumpFound == false && checker movable)
-				{
-					add this to moves list
-				}
-				if(firstJumpFound == true && checker movable)
-				{
-					do nothing
-				}
-				if(firstJumpFound == false && checker jumpable)
-				{
-					delete all moves before this
-					firstJumpFound = true
-					add this to moves list
-					recurse on new board, but have firstJumpFound == true
-				}
-				if(firstJumpFound == true && checker jumpable)
-				{
-					add this to moves list
-					recurse on new board, but have firstJumpFound == ture
-				}
-			}
-			if(black || king)
-			{
-				Same thing as red, use different tables.
-			}
-		}
-	
-	return returnMe;
-}
-
-
-/*
-
-	00..01..02..03..
-	..04..05..06..07
-	08..09..10..11..
-	..12..13..14..15
-	16..17..18..19..
-	..20..21..22..23
-	24..25..26..27..
-	..28..29..30..31
-
-temp key:
-	r = red
-	R = redKing
-	b = black
-	B = blackKing
-	spa = nothingThere
-// */
 

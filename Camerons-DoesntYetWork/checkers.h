@@ -50,6 +50,8 @@ public:
 	CheckerBoard(std::vector<char> startBoard, bool redPlayerTurn, std::vector<std::vector<int>> &redMove, std::vector<std::vector<int>> &redJump, std::vector<std::vector<int>> &blackMove, std::vector<std::vector<int>> &blackJump)
 	{
 		redTeamTurn_ = redPlayerTurn;
+		firstJumpFound_ = false;
+
 		if(redTeamTurn_)
 		{
 			currTeamMoveBoard_ = redMove;
@@ -95,6 +97,8 @@ public:
 				std::cout << "FINALLY FOUND THAT FUCKKKING BUGGGGG!!!!!!!" << std::endl; // nope....
 			}
 		}
+		// Start figuring out what can go where...
+		updatePossibleMoves();
 	}
 
 	std::vector<char> turnBoardtoVec()
@@ -219,19 +223,34 @@ public:
 		pieceJumped = nullptr; //necessary?
 	}
 
-
-	void updateBoardWithDirection(int &i, int &j, bool &firstJumpFound, bool goingRightWay, std::vector<std::vector<int>> &teamMoveBoard, std::vector<std::vector<int>> &teamJumpBoard)
+	// You can also not include the teamMoveBoard and teamJumpBoard, and just say if goingRightWay == true, use currTeamBoard, else use oppTeamBoard.
+	// 
+	void updateBoardWithDirection(int &i, int &j, bool goingRightWay)
 	{
+
+		// Use the correct boards:
+		std::vector<std::vector<int>> teamMoveBoard;
+		std::vector<std::vector<int>> teamJumpBoard;
+
+		if(goingRightWay == true)
+		{
+			teamMoveBoard = currTeamMoveBoard_;
+			teamJumpBoard = currTeamJumpBoard_;
+		}
+		else // A king using the other board:
+		{
+			teamMoveBoard = oppTeamMoveBoard_;
+			teamJumpBoard = oppTeamJumpBoard_;
+		}
+		
 		// if you can't even move that direction, don't check for other options
 		if(teamMoveBoard[i][j] == -1)
 		{
 			return;
 		}
-			
-
 		if(checkers_[teamMoveBoard[i][j]] == nullptr) 
 		{
-			if(firstJumpFound == false)
+			if(firstJumpFound_ == false)
 			{
 				//move the checker to the new spot
 				checkers_[teamMoveBoard[i][j]] = checkers_[i];
@@ -264,11 +283,11 @@ public:
 			if(teamJumpBoard[i][j] != -1 && checkers_[teamJumpBoard[i][j]] == nullptr)
 			{
 				// Jump found
-				if(firstJumpFound == false)
+				if(firstJumpFound_ == false)
 				{
 					//everything in possibleMoves are not jumps, so wipe it
 					possibleMoves_.clear();
-					firstJumpFound = true;
+					firstJumpFound_ = true;
 				}
 				//possibleMoves_.push_back(turnBoardtoVec());
 				JumpingRecursion(i, j, goingRightWay);
@@ -279,7 +298,6 @@ public:
 
 	void updatePossibleMoves()
 	{
-		bool firstJumpFound = false;
 		for(int i=0; i<checkers_.size(); ++i)
 		{
 			// If no checker on that square, or wrong teams checker, do nothing....
@@ -293,11 +311,11 @@ public:
 			for(int j=0; j<2; j++)
 			{	
 
-				updateBoardWithDirection(i, j, firstJumpFound, true, currTeamMoveBoard_, currTeamJumpBoard_);
+				updateBoardWithDirection(i, j, true);
 
 				if(checkers_[i]->isKing())
 				{
-					updateBoardWithDirection(i, j, firstJumpFound, false, oppTeamMoveBoard_, oppTeamJumpBoard_);
+					updateBoardWithDirection(i, j, false);
 				}
 
 			}
@@ -317,6 +335,8 @@ private:
 	std::vector<std::vector<char>> possibleMoves_;
 	// which turn
 	bool redTeamTurn_;
+	// should look for moves or not
+	bool firstJumpFound_;
 
 	// May think of a better way of putting these here later... too tired. It works.
 	std::vector<std::vector<int>> currTeamMoveBoard_;
