@@ -1,7 +1,6 @@
 #include <uWS/uWS.h>
 
 #include "server.h"
-// #include "board.h"
 
 int main(int argc, char const *argv[]) {
 

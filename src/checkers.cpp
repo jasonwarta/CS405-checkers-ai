@@ -1,4 +1,49 @@
 #include "checkers.h"
+#include "consts.h"
+
+CheckerBoard::CheckerBoard(std::string startBoard, bool redPlayerTurn) {
+		redTeamTurn_ = redPlayerTurn;
+		firstJumpFound_ = false;
+
+		if(redTeamTurn_) {
+			currTeamMoveBoard_ = redMoveBoard;
+			currTeamJumpBoard_ = redJumpBoard;
+			oppTeamMoveBoard_ = blackMoveBoard;
+			oppTeamJumpBoard_ = blackJumpBoard;
+		}
+		else {
+			currTeamMoveBoard_ = blackMoveBoard;
+			currTeamJumpBoard_ = blackJumpBoard;
+			oppTeamMoveBoard_ = redMoveBoard;
+			oppTeamJumpBoard_ = redJumpBoard;
+		}
+
+
+		checkers_.resize(32);
+		for(int i=0; i<startBoard.size(); ++i) {
+			// later, break at space first for speedup?
+			if(startBoard.at(i) == 'r') {
+				checkers_[i] = std::make_shared<TheChecker>(TheChecker(true, false));
+			}
+			else if(startBoard.at(i) == 'R') {
+				checkers_[i] = std::make_shared<TheChecker>(TheChecker(true, true));
+			}
+			else if(startBoard.at(i) == 'b') {
+				checkers_[i] = std::make_shared<TheChecker>(TheChecker(false, false));
+			}
+			else if(startBoard.at(i) == 'B') {
+				checkers_[i] = std::make_shared<TheChecker>(TheChecker(false, true));
+			}
+			else if(startBoard.at(i) == '_') { // nothing there
+				checkers_[i] = nullptr; //NULL or *NULL? test later....
+			}
+			else {
+				std::cout << "FINALLY FOUND THAT FUCKKKING BUGGGGG!!!!!!!" << std::endl; // nope....
+			}
+		}
+		// Start figuring out what can go where...
+		updatePossibleMoves();
+	}
 
 std::vector<string> CheckerBoard::getPossibleMoves() {
 	return possibleMoves_;
