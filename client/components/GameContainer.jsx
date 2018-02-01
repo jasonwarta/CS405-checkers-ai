@@ -1,7 +1,7 @@
 import React from 'react';
-import Board from './Board.js';
-import Color from './Color.js';
-import PlayerColor from './PlayerColor.js';
+import Board from './Board.jsx';
+import Color from './Color.jsx';
+import PlayerColor from './PlayerColor.jsx';
 
 import MOVE_BOARD from '../static/moveBoard.js'
 
