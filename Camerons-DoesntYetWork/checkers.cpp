@@ -7,6 +7,12 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <random>
+using std::mt19937;
+
+
+
+
 
 void printTempBoard(std::string &v)
 {
@@ -60,7 +66,7 @@ void makeStartBoard(std::string &v1)
 	v1=v2;
 }
 
-void tempTester()
+std::string tempTester()
 {
 	std::string boardVec;
 
@@ -207,7 +213,17 @@ void tempTester()
 	CheckerBoard theCheckerBoard(boardVec, redPlayerTurn, redMoveBoard, redJumpBoard, blackMoveBoard, blackJumpBoard); // bestNameEver....
 	possibleMoves = theCheckerBoard.getPossibleMoves();
 
-
+    std::random_device rd;
+    mt19937 rando(rd());
+    if(possibleMoves.size() == 0) {
+        return "";
+    }
+    else {
+        std::uniform_int_distribution<> movePicked(0, (possibleMoves.size()-1));
+        int temp = movePicked(rando);
+        std::cout << possibleMoves[temp] << std::endl;
+        return possibleMoves[temp];
+    }
 	std::cout << "NUMBER OF POSSIBLE MOVES: " << possibleMoves.size() << std::endl;
 	for(int i=0; i<possibleMoves.size(); ++i)
 	{

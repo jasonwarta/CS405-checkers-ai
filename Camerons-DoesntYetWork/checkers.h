@@ -16,7 +16,7 @@ void makeStartBoard(std::vector<char> &v);
 
 void printTempBoard(std::vector<char> &v);
 
-void tempTester();
+std::string tempTester();
 
 // May change from class to something else later...
 class TheChecker
