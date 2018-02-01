@@ -1,5 +1,5 @@
 import React from 'react';
-import Color from './Color.js';
+import Color from './Color.jsx';
 
 export default function PlayerColor(props) {
 	return (
