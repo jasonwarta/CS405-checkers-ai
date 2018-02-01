@@ -3,7 +3,7 @@ import Board from './Board.jsx';
 import Color from './Color.jsx';
 import PlayerColor from './PlayerColor.jsx';
 
-import MOVE_TABLE from '../static/moveBoard.js'
+import MOVE_TABLE from '../static/moveTable.js'
 
 var sock;
 
