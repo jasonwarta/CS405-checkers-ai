@@ -72,6 +72,17 @@ export default class GameContainer extends React.Component {
 		};
 	}
 
+	// isValidJump(tile) {
+	// 	return (MOVE_TABLE[`${this.state.turnColor}-jump`][this.state.selectedTile].includes(tile) && 
+	// 					MOVE_TABLE[this.state.turnColor][this.state.selectedTile].reduce( (prev,curr) => {
+	// 						if(	this.state.board[curr-1] == (this.state.turnColor == 'red' ? 'b' : 'r') || 
+	// 							this.state.board[curr-1] == (this.state.turnColor == 'red' ? 'B' : 'R') )
+	// 							return prev || MOVE_TABLE[this.state.turnColor][curr].includes(tile);
+	// 						else 
+	// 							return prev ||  false;
+	// 					}, false) );
+	// }
+
 	clickTile(element, tile) {
 		let ownerColor = '';
 		if (element.classList.contains('red'))
