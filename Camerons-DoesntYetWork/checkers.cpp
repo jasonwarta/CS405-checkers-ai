@@ -8,43 +8,44 @@
 #include <iostream>
 #include <string>
 
-void printTempBoard(std::vector<char> &v)
+void printTempBoard(std::string &v)
 {
 	std::string spa = ".";
-	std::cout << spa << v[0] << spa << v[1] << spa << v[2]<< spa << v[3]	<< std::endl <<
-				 v[4]<< spa  << v[5]<< spa << v[6]<< spa << v[7] <<spa      << std::endl <<
-				 spa <<v[8] << spa << v[9] << spa <<v[10]<< spa <<v[11]		<< std::endl <<
-                 v[12]<< spa  <<v[13]<< spa <<v[14]<< spa << v[15]<< spa	<< std::endl <<
-                 spa  <<v[16]<< spa << v[17]<< spa <<v[18]<< spa <<v[19]	<< std::endl <<
-				 v[20]<< spa  <<v[21]<< spa <<v[22]<< spa << v[23] <<spa	<< std::endl <<
-				 spa <<v[24]<< spa << v[25]<< spa <<v[26]<< spa <<v[27]		<< std::endl <<
-				 v[28]<< spa << v[29]<< spa <<v[30]<< spa << v[31] <<spa	<< std::endl;
+
+	std::cout << spa << v.at(0) << spa << v.at(1) << spa << v.at(2)<< spa << v.at(3)	<< std::endl <<
+				 v.at(4)<< spa  << v.at(5)<< spa << v.at(6)<< spa << v.at(7) <<spa      << std::endl <<
+				 spa <<v.at(8) << spa << v.at(9) << spa <<v.at(10)<< spa <<v.at(11)		<< std::endl <<
+                 v.at(12)<< spa  <<v.at(13)<< spa <<v.at(14)<< spa << v.at(15)<< spa	<< std::endl <<
+                 spa  <<v.at(16)<< spa << v.at(17)<< spa <<v.at(18)<< spa <<v.at(19)	<< std::endl <<
+				 v.at(20)<< spa  <<v.at(21)<< spa <<v.at(22)<< spa << v.at(23) <<spa	<< std::endl <<
+				 spa <<v.at(24)<< spa << v.at(25)<< spa <<v.at(26)<< spa <<v.at(27)		<< std::endl <<
+				 v.at(28)<< spa << v.at(29)<< spa <<v.at(30)<< spa << v.at(31) <<spa	<< std::endl;
 }
 
 // Clean up later
-void makeStartBoard(std::vector<char> &v1)
+void makeStartBoard(std::string &v1)
 {
 	//basic start board:
 	/*
-	std::vector<char> v2 { 'r','r','r','r',
-						   'r','r','r','r',
-						   'r','r','r','r',
-						   ' ',' ',' ',' ',
-						   ' ',' ',' ',' ',
-						   'b','b','b','b',
-						   'b','b','b','b',
-						   'b','b','b','b' };
+	std::string v2 { 'r','r','r','r',
+					 'r','r','r','r',
+					 'r','r','r','r',
+					 '_','_','_','_',
+					 '_','_','_','_',
+					 'b','b','b','b',
+			  	     'b','b','b','b',
+					 'b','b','b','b' };
 	*/
 
 	//testing board:
-	std::vector<char> v2 { ' ',' ',' ',' ',
-						   ' ','R',' ',' ',
-						   ' ','b','b',' ',
-						   ' ',' ',' ',' ',
-						   ' ','b','b',' ',
-						   ' ',' ',' ',' ',
-						   ' ',' ','b',' ',
-						   ' ',' ',' ',' ' };
+	std::string v2 { '_','_','_','_',
+					 '_','R','_','_',
+					 '_','b','b','_',
+					 '_','_','_','_',
+					 '_','b','b','_',
+					 '_','_','_','_',
+					 '_','_','b','_',
+					 '_','_','_','_' };
 	/*
 				X_X_X_X_	
 				_X_X_X_X
@@ -61,7 +62,7 @@ void makeStartBoard(std::vector<char> &v1)
 
 void tempTester()
 {
-	std::vector<char> boardVec;
+	std::string boardVec;
 
 	//Ill put a better way to do this later, but this is fast and easy
     std::vector<std::vector<int>> redMoveBoard { {4, 5},     //0
@@ -197,7 +198,7 @@ void tempTester()
 											   {22, -1} };
 
 
-	std::vector<std::vector<char>> possibleMoves;
+	std::vector<std::string> possibleMoves;
 
 	makeStartBoard(boardVec);
 	printTempBoard(boardVec);

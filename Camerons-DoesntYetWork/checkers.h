@@ -10,6 +10,7 @@
 #include <vector>
 #include <iostream>
 #include <memory>
+#include <string>
 
 void makeStartBoard(std::vector<char> &v);
 
@@ -47,7 +48,7 @@ class CheckerBoard
 {
 public:
 	// startBoard is the 32 vector
-	CheckerBoard(std::vector<char> startBoard, bool redPlayerTurn, std::vector<std::vector<int>> &redMove, std::vector<std::vector<int>> &redJump, std::vector<std::vector<int>> &blackMove, std::vector<std::vector<int>> &blackJump)
+	CheckerBoard(std::string startBoard, bool redPlayerTurn, std::vector<std::vector<int>> &redMove, std::vector<std::vector<int>> &redJump, std::vector<std::vector<int>> &blackMove, std::vector<std::vector<int>> &blackJump)
 	{
 		redTeamTurn_ = redPlayerTurn;
 		firstJumpFound_ = false;
@@ -72,23 +73,23 @@ public:
 		for(int i=0; i<startBoard.size(); ++i)
 		{
 			// later, break at space first for speedup?
-			if(startBoard[i] == 'r')
+			if(startBoard.at(i) == 'r')
 			{
 				checkers_[i] = std::make_shared<TheChecker>(TheChecker(true, false));
 			}
-			else if(startBoard[i] == 'R')
+			else if(startBoard.at(i) == 'R')
 			{
 				checkers_[i] = std::make_shared<TheChecker>(TheChecker(true, true));
 			}
-			else if(startBoard[i] == 'b')
+			else if(startBoard.at(i) == 'b')
 			{
 				checkers_[i] = std::make_shared<TheChecker>(TheChecker(false, false));
 			}
-			else if(startBoard[i] == 'B')
+			else if(startBoard.at(i) == 'B')
 			{
 				checkers_[i] = std::make_shared<TheChecker>(TheChecker(false, true));
 			}
-			else if(startBoard[i] == ' ')// nothing there
+			else if(startBoard.at(i) == '_')// nothing there
 			{
 				checkers_[i] = nullptr; //NULL or *NULL? test later....
 			}
@@ -101,37 +102,41 @@ public:
 		updatePossibleMoves();
 	}
 
-	std::vector<char> turnBoardtoVec()
+	std::string turnBoardtoVec()
 	{
-		std::vector<char> returnMe(32);
+		std::string returnMe = "";
 		for(int i=0; i<checkers_.size(); i++)
 		{
 			if(checkers_[i] == nullptr)
 			{
-				returnMe[i] = ' ';
+				returnMe += '_';
 			}
 			else if(checkers_[i]->isTeamRed() == true)
 			{
 				if(checkers_[i]->isKing() == true)
 				{
-					returnMe[i] = 'R';
+					returnMe += 'R';
 				}
 				else
 				{
-					returnMe[i] = 'r';
+					returnMe += 'r';
 				}
 			}
 			else // black team
 			{
 				if(checkers_[i]->isKing() == true)
 				{
-					returnMe[i] = 'B';
+					returnMe += 'B';
 				}
 				else
 				{
-					returnMe[i] = 'b';
+					returnMe += 'b';
 				}
 			}
+		}
+		if(returnMe.size() != 32)
+		{
+			std::cout << "Look closer at this" << std::endl;
 		}
 
 		return returnMe;
@@ -323,7 +328,7 @@ public:
 		
 	}
 
-	std::vector<std::vector<char>> getPossibleMoves()
+	std::vector<std::string> getPossibleMoves()
 	{
 		return possibleMoves_;
 	}
@@ -332,7 +337,7 @@ private:
 	std::vector<std::shared_ptr<TheChecker>> checkers_;
 
 	// will have all possible moves, each vector is a different board
-	std::vector<std::vector<char>> possibleMoves_;
+	std::vector<std::string> possibleMoves_;
 	// which turn
 	bool redTeamTurn_;
 	// should look for moves or not
