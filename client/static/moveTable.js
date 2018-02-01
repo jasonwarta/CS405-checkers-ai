@@ -1,4 +1,4 @@
-const MOVE_BOARD = {
+const MOVE_TABLE = {
 	'red' : {
 		1  : [5,6],
 		2  : [6,7],
@@ -138,4 +138,4 @@ const MOVE_BOARD = {
 	}
 }
 
-module.exports = MOVE_BOARD;
+module.exports = MOVE_TABLE;
