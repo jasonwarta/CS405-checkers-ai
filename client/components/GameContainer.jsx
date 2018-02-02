@@ -7,6 +7,14 @@ import MOVE_TABLE from '../static/moveTable.js'
 
 var sock;
 
+const baseState = {
+	board: [],
+	selectedTile: null, 
+	jumpTiles: [],
+	turnColor: 'red',
+	playerColor: 'red'
+}
+
 function replaceAt(string,idx,newChar) {
 	return `${string.substr(0,idx)}${newChar}${string.substr(idx+1)}`;
 }
@@ -15,12 +23,7 @@ export default class GameContainer extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {
-			board: [],
-			selectedTile: null, 
-			turnColor: 'red',
-			playerColor: 'red'
-		}
+		this.state = baseState;
 
 		this.clickTile = this.clickTile.bind(this);
 		this.changePlayerColor = this.changePlayerColor.bind(this);
@@ -69,6 +72,17 @@ export default class GameContainer extends React.Component {
 		};
 	}
 
+	// isValidJump(tile) {
+	// 	return (MOVE_TABLE[`${this.state.turnColor}-jump`][this.state.selectedTile].includes(tile) && 
+	// 					MOVE_TABLE[this.state.turnColor][this.state.selectedTile].reduce( (prev,curr) => {
+	// 						if(	this.state.board[curr-1] == (this.state.turnColor == 'red' ? 'b' : 'r') || 
+	// 							this.state.board[curr-1] == (this.state.turnColor == 'red' ? 'B' : 'R') )
+	// 							return prev || MOVE_TABLE[this.state.turnColor][curr].includes(tile);
+	// 						else 
+	// 							return prev ||  false;
+	// 					}, false) );
+	// }
+
 	clickTile(element, tile) {
 		let ownerColor = '';
 		if (element.classList.contains('red'))
@@ -76,37 +90,66 @@ export default class GameContainer extends React.Component {
 		else if (element.classList.contains('black'))
 			ownerColor = 'black';
 
+
 		if (this.state.turnColor == ownerColor && this.state.turnColor == this.state.playerColor) {
 			if (this.state.selectedTile == null) {
 				this.setState({selectedTile:tile});
 			}
+
 			else if (this.state.selectedTile == tile) {
 				this.setState({selectedTile:null});
+			}
+
+			else {
+				console.log(`Unhandled state!\nElement:\n${element}\nTile: ${tile}\nState:\n${this.state}`);
 			}
 		}
 
 		else if (ownerColor == '') {
-			if(this.state.selectedTile == null) {
+			if (this.state.selectedTile == null) {
 				console.log("You must select a piece first");
-			} else {
-				let tempBoard = this.state.board.join('');
-				let tempVar = tempBoard[this.state.selectedTile-1];
-				tempBoard = replaceAt(tempBoard, this.state.selectedTile-1, this.state.board[tile-1]);
-				tempBoard = replaceAt(tempBoard, tile-1, tempVar);
+			}
 
-				sock.send(`checkMove ${tempBoard} ${this.state.turnColor}`);
-				this.setState({selectedTile:null});
+			else {
+				if ( MOVE_TABLE[this.state.turnColor][this.state.selectedTile].includes(tile)) {
+					// valid move to adjacent tile
+					console.log("valid move");
+
+					let tempBoard = this.state.board.join('');
+					let tempVar = tempBoard[this.state.selectedTile-1];
+
+					tempBoard = replaceAt(tempBoard, this.state.selectedTile-1, this.state.board[tile-1]);
+					tempBoard = replaceAt(tempBoard, tile-1, tempVar);
+
+					sock.send(`checkMove ${tempBoard} ${this.state.turnColor}`);
+					this.setState({selectedTile:null});
+				}
+
+				else if(MOVE_TABLE[`${this.state.turnColor}-jump`][this.state.selectedTile].includes(tile) && 
+						MOVE_TABLE[this.state.turnColor][this.state.selectedTile].reduce( (prev,curr) => {
+							if(	this.state.board[curr-1] == (this.state.turnColor == 'red' ? 'b' : 'r') || 
+								this.state.board[curr-1] == (this.state.turnColor == 'red' ? 'B' : 'R') )
+								return prev || MOVE_TABLE[this.state.turnColor][curr].includes(tile);
+							else 
+								return prev ||  false;
+						}, false) ) {
+
+					// valid jump target
+					console.log("valid jump");
+				}
+
+				else {
+					console.log("invalid move");
+				}
 			}
 		}
 
-		else 
+		else
 			console.log("You can't move that tile!");
 	}
 
 	resetBoard() {
-		this.setState({
-			turnColor: 'red'
-		},
+		this.setState(baseState,
 		() => {
 			sock.send(`resetGame`);
 		});

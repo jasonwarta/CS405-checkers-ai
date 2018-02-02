@@ -31,12 +31,12 @@ module.exports = {
 		]
 	},
 	plugins: [
+		new webpack.optimize.OccurrenceOrderPlugin(),
 		new webpack.optimize.UglifyJsPlugin({
 			compressor: {
 				warnings: false,
 			},
 		}),
-		new webpack.optimize.OccurrenceOrderPlugin(),
 		new HtmlWebpackPlugin({
 			template: './client/index.html',
 			filename: 'index.html',

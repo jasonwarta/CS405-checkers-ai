@@ -27,6 +27,8 @@ using std::strcpy;
 using std::ifstream;
 using std::iter_swap;
 
+#include "checkers.h"
+
 /* Message struct facilitates setting up messages to send to the client
  * 
  * For sending a new board at start of game or on reset event, use 
