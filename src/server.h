@@ -51,8 +51,8 @@ struct Message {
 	vector<char> vec;
 
 	void prepareReply(string messageType, const vector<char> & board, string playerColor = "");
-	void prepareReply(string messageType, string & boardString, string playerColor = "");
-	void prepareReply(string messageType, string & boardString, string playerColor, string otherMoves);
+	void prepareReply(string messageType, const string & boardString, string playerColor = "");
+	void prepareReply(string messageType, const string & boardString, string playerColor, string otherMoves);
 	void prepareBasicMessage(string messageType, string message);
 };
 

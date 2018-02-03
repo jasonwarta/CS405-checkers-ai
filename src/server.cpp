@@ -17,7 +17,7 @@ void Message::prepareReply(string messageType, const vector<char> & board, strin
 	size = msg.length();
 }
 
-void Message::prepareReply(string messageType, string & boardString, string playerColor){
+void Message::prepareReply(string messageType, const string & boardString, string playerColor){
 	string msg = messageType + " " + boardString + " " + playerColor;
 	vec = vector<char>(msg.length() + 1);
 	strcpy(&vec[0], msg.c_str());
@@ -26,7 +26,7 @@ void Message::prepareReply(string messageType, string & boardString, string play
 	size = msg.length();
 }
 
-void Message::prepareReply(string messageType, string & boardString, string playerColor, string otherMoves){
+void Message::prepareReply(string messageType, const string & boardString, string playerColor, string otherMoves){
 	string msg = messageType + " " + boardString + " " + playerColor + " " + otherMoves;
 	vec = vector<char>(msg.length() + 1);
 	strcpy(&vec[0], msg.c_str());

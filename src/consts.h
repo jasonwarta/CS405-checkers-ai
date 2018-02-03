@@ -16,17 +16,17 @@
 #include <string>
 //using std::string;
 
-const std::vector<char> START_BOARD { 
-	'r','r','r','r',
-	'r','r','r','r',
-	'r','r','r','r',
-	'_','_','_','_',
-	'_','_','_','_',
-	'b','b','b','b',
-	'b','b','b','b',
-	'b','b','b','b' };
+// const std::vector<char> START_BOARD { 
+// 	'r','r','r','r',
+// 	'r','r','r','r',
+// 	'r','r','r','r',
+// 	'_','_','_','_',
+// 	'_','_','_','_',
+// 	'b','b','b','b',
+// 	'b','b','b','b',
+// 	'b','b','b','b' };
 
-extern const std::string START_BOARD_STRING = "rrrrrrrrrrrr________bbbbbbbbbbbb";
+extern const std::string START_BOARD_STRING/* = "rrrrrrrrrrrr________bbbbbbbbbbbb"*/;
 // std::string START_BOARD_STRING = "rrrrr_r_rbrr_br___b_bb_b_b_bbbbb";
 
 const std::vector<std::vector<int>> RED_MOVE_BOARD { 
