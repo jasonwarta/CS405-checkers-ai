@@ -18,6 +18,7 @@ const vector<char> START_BOARD {
 
 string START_BOARD_STRING = "rrrrrrrrrrrr________bbbbbbbbbbbb";
 // string START_BOARD_STRING = "rrrrr_r_rbrr_br___b_bb_b_b_bbbbb";
+// string START_BOARD_STRING = "rrrrr_rrrrr__brrb____b_bbbbbbbbb";
 
 std::vector<std::vector<int>> redMoveBoard { 
 	{4, 5},		//0
