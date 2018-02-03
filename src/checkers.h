@@ -14,16 +14,12 @@
 
 #include <random>
 
-
-
-
-void makeStartBoard(std::vector<char> &v);
-
-void printTempBoard(std::vector<char> &v);
-
-std::string tempTester();
-
-
+/*
+	TODO:
+		Split into CPP and H
+		change shared to unique pointers
+		Update comment at top
+*/
 
 
 // May change from class to something else later...
@@ -101,10 +97,7 @@ public:
 			{
 				checkers_[i] = nullptr; //NULL or *NULL? test later....
 			}
-			else
-			{
-				std::cout << "FINALLY FOUND THAT FUCKKKING BUGGGGG!!!!!!!" << std::endl; // nope....
-			}
+
 		}
 		// Start figuring out what can go where...
 		updatePossibleMoves();
@@ -142,7 +135,7 @@ public:
 
 
 	private:
-	std::string turnBoardtoVec()
+	std::string turnBoardToString()
 	{
 		std::string returnMe = "";
 		for(int i=0; i<checkers_.size(); i++)
@@ -174,15 +167,11 @@ public:
 				}
 			}
 		}
-		if(returnMe.size() != 32)
-		{
-			std::cout << "Look closer at this" << std::endl;
-		}
 
 		return returnMe;
 	}
 
-	void JumpingRecursion(int i, int j, bool currTeamDirection)
+	void JumpingRecursion(int i, int j, bool currTeamDirection) // currTeamDirection gets passed going right way
 	{
 		std::shared_ptr<TheChecker> pieceJumped;
 		int k;
@@ -208,47 +197,45 @@ public:
 		for(int l=0; l<2; ++l)
 		{
 			// if "Can move that way" && "Theres a checker that way" && "That checker is not yours" && "The space to jump it is empty"
-			if(currTeamMoveBoard_[k][l] != -1 && checkers_[currTeamMoveBoard_[k][l]] != nullptr && 
-				checkers_[currTeamMoveBoard_[k][l]]->isTeamRed() != redTeamTurn_ && checkers_[currTeamJumpBoard_[k][l]] == nullptr)
+			if(currTeamMoveBoard_[k][l] != -1 && checkers_[currTeamMoveBoard_[k][l]] != nullptr && checkers_[currTeamMoveBoard_[k][l]]->isTeamRed() != redTeamTurn_ && currTeamJumpBoard_[k][l] != -1 && checkers_[currTeamJumpBoard_[k][l]] == nullptr)
 			{
-				JumpingRecursion(k, l, true);
 				jumpNeverFound = false;
+				JumpingRecursion(k, l, true);
 			}
-
 			// if king, check other direction too
 			if(checkers_[k]->isKing())
 			{
-				if(oppTeamMoveBoard_[k][l] != -1 && checkers_[oppTeamMoveBoard_[k][l]] != nullptr && 
-					checkers_[oppTeamMoveBoard_[k][l]]->isTeamRed() != redTeamTurn_ && checkers_[oppTeamJumpBoard_[k][l]] == nullptr)
+				if(oppTeamMoveBoard_[k][l] != -1 && checkers_[oppTeamMoveBoard_[k][l]] != nullptr && checkers_[oppTeamMoveBoard_[k][l]]->isTeamRed() != redTeamTurn_ && oppTeamJumpBoard_[k][l] != -1 && checkers_[oppTeamJumpBoard_[k][l]] == nullptr)
 				{
-					JumpingRecursion(k, l, false);
 					jumpNeverFound = false;
+					JumpingRecursion(k, l, false);
 				}
 			}
 		}
-		// if at tail of jump sequence, board is a possible answer
-		if(jumpNeverFound == true)
-		{
 
+		// if at tail of jump sequence, board is a possible answer
+		if(jumpNeverFound)
+		{
 			//isAlreadyKing default to true so that it bypasses checks if it doesn't get changed
 			bool isAlreadyKing = true;
+			
 			if(currTeamDirection)
 			{
 				isAlreadyKing = checkers_[currTeamJumpBoard_[i][j]]->isKing();
-				if(!isAlreadyKing && (redTeamTurn_ && currTeamJumpBoard_[i][j]>27) || (!redTeamTurn_ && currTeamJumpBoard_[i][j]<4))
+				if(!isAlreadyKing && ((redTeamTurn_ && currTeamJumpBoard_[i][j]>27) || (!redTeamTurn_ && currTeamJumpBoard_[i][j]<4)))
 				{
 					checkers_[currTeamJumpBoard_[i][j]]->setKing(true);
 
 				}
 			}
-
-			possibleMoves_.push_back(turnBoardtoVec());
-
-			if(currTeamDirection && !isAlreadyKing && (redTeamTurn_ && currTeamJumpBoard_[i][j]>27) || (!redTeamTurn_ && currTeamJumpBoard_[i][j]<4))
+			
+			possibleMoves_.push_back(turnBoardToString());
+			
+			if(currTeamDirection && !isAlreadyKing && ((redTeamTurn_ && currTeamJumpBoard_[i][j]>27) || (!redTeamTurn_ && currTeamJumpBoard_[i][j]<4)))
 			{
 				checkers_[currTeamJumpBoard_[i][j]]->setKing(false);
 
-			}
+			}	
 		}
 
 
@@ -303,14 +290,14 @@ public:
 
 				//If already a king, dont change it. If not, change it and change it back
 				bool isAlreadyKing = checkers_[teamMoveBoard[i][j]]->isKing();
-				if(!isAlreadyKing && (redTeamTurn_ && teamMoveBoard[i][j]>27) || (!redTeamTurn_ && teamMoveBoard[i][j]<4))
+				if(!isAlreadyKing && ((redTeamTurn_ && teamMoveBoard[i][j]>27) || (!redTeamTurn_ && teamMoveBoard[i][j]<4)))
 				{
 					checkers_[teamMoveBoard[i][j]]->setKing(true);
 				}
 
-				possibleMoves_.push_back(turnBoardtoVec());
+				possibleMoves_.push_back(turnBoardToString());
 
-				if(!isAlreadyKing && (redTeamTurn_ && teamMoveBoard[i][j]>27) || (!redTeamTurn_ && teamMoveBoard[i][j]<4))
+				if(!isAlreadyKing && ((redTeamTurn_ && teamMoveBoard[i][j]>27) || (!redTeamTurn_ && teamMoveBoard[i][j]<4)))
 				{
 					checkers_[teamMoveBoard[i][j]]->setKing(false);
 				}
@@ -334,9 +321,8 @@ public:
 					possibleMoves_.clear();
 					firstJumpFound_ = true;
 				}
-				//possibleMoves_.push_back(turnBoardtoVec());
-				JumpingRecursion(i, j, goingRightWay);
 
+				JumpingRecursion(i, j, goingRightWay);
 			}
 		}
 	}
