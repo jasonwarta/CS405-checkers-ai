@@ -8,6 +8,4 @@ int main(int argc, char const *argv[]) {
 	uWS::Hub h;
 	createServerInstance(h);
 	h.run();
-
-
 }

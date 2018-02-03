@@ -51,23 +51,18 @@ struct Message {
 	vector<char> vec;
 
 	void prepareReply(string messageType, const vector<char> & board, string playerColor = "");
+	void prepareReply(string messageType, string & boardString, string playerColor = "");
+	void prepareReply(string messageType, string & boardString, string playerColor, string otherMoves);
+	void prepareBasicMessage(string messageType, string message);
 };
 
 typedef uWS::WebSocket<uWS::SERVER> WebSocket;
 typedef basic_string<wchar_t> wstring;
 
-const vector<char> START_BOARD { 
-	'r','r','r','r',
-	'r','r','r','r',
-	'r','r','r','r',
-	'_','_','_','_',
-	'_','_','_','_',
-	'b','b','b','b',
-	'b','b','b','b',
-	'b','b','b','b' };
-
-int getKb();
 void createServerInstance(uWS::Hub &h);
 void loadFile(stringstream & fileData, string fname = "index.html");
+void sendStartBoard();
+void sendMessage(WebSocket *ws, Message & message);
+void sendMove(WebSocket * ws, string boardString);
 
 #endif

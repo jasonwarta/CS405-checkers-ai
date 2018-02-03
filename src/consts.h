@@ -1,6 +1,24 @@
 #ifndef CONSTS_H_INCLUDED
 #define CONSTS_H_INCLUDED
 
+#include <vector>
+using std::vector;
+#include <string>
+using std::string;
+
+const vector<char> START_BOARD { 
+	'r','r','r','r',
+	'r','r','r','r',
+	'r','r','r','r',
+	'_','_','_','_',
+	'_','_','_','_',
+	'b','b','b','b',
+	'b','b','b','b',
+	'b','b','b','b' };
+
+string START_BOARD_STRING = "rrrrrrrrrrrr________bbbbbbbbbbbb";
+// string START_BOARD_STRING = "rrrrr_r_rbrr_br___b_bb_b_b_bbbbb";
+
 std::vector<std::vector<int>> redMoveBoard { 
 	{4, 5},		//0
 	{5, 6},
