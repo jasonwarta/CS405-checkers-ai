@@ -3,6 +3,7 @@ import Board from './Board.jsx';
 import Color from './Color.jsx';
 import PlayerColor from './PlayerColor.jsx';
 import MoveTracker from './MoveTracker.jsx';
+import CheatBox from './CheatBox.jsx';
 
 import MOVE_TABLE from '../static/moveTable.js';
 
@@ -58,21 +59,27 @@ function tileHasNoAdjacentEnemies(board,turnColor,tile) {
 }
 
 function tileHasNoJumpExits(self,board,turnColor,tile) {
-	return (
+	// console.log('checking exits');
+	let rval =  (
 		MOVE_TABLE[`${turnColor}-jump`][tile].reduce( (prev,curr) => {
-			// console.log("curr: "+curr);
-			// console.log("validMove: "+tileIsValidJumpTarget(self, tile, curr));
-			return prev && tileIsValidJumpTarget(self, tile, curr, true);			
+			
+			
+			console.log("curr: "+curr);
+			console.log("validMove: "+tileIsValidJumpTarget(self, tile, curr, true));
+			return prev && !tileIsValidJumpTarget(self, tile, curr, true);			
 		}, true)
 	)
+	// console.log(rval);
+	return rval;
 }
 
 function tileIsValidJumpTarget(self,lastTile,tile,check=false) {
 	let jumpedTile = null;
 	let r_val=(	MOVE_TABLE[`${self.state.turnColor}-jump`][lastTile].includes(tile)  && 
 				MOVE_TABLE[self.state.turnColor][lastTile].reduce( (prev,curr) => {
-					if (self.state.board[curr-1] == (self.state.turnColor == 'red' ? 'b' : 'r') || 
-						self.state.board[curr-1] == (self.state.turnColor == 'red' ? 'B' : 'R') ) {
+					if ( (	self.state.board[curr-1] == (self.state.turnColor == 'red' ? 'b' : 'r')  || 
+							self.state.board[curr-1] == (self.state.turnColor == 'red' ? 'B' : 'R')) && 
+							self.state.board[tile-1] == '_') {
 
 						jumpedTile = curr;
 						return prev || MOVE_TABLE[self.state.turnColor][curr].includes(tile);
@@ -104,6 +111,7 @@ export default class GameContainer extends React.Component {
 		this.changePlayerColor = this.changePlayerColor.bind(this);
 		this.resetBoard = this.resetBoard.bind(this);
 		this.resetTileSelection = this.resetTileSelection.bind(this);
+		this.submitMove = this.submitMove.bind(this);
 	}
 
 	componentWillMount() {
@@ -196,7 +204,7 @@ export default class GameContainer extends React.Component {
 			else {
 				if ( MOVE_TABLE[this.state.turnColor][this.state.selectedTile].includes(tile)) {
 					// valid move to adjacent tile
-					console.log("valid move");
+					// console.log("valid move");
 
 					let tempBoard = this.state.board.join('');
 					let tempVar = tempBoard[this.state.selectedTile-1];
@@ -215,7 +223,7 @@ export default class GameContainer extends React.Component {
 					{
 						// laneded on a tile without any adjacent enemy chips
 						// send move to server
-						console.log("passed check");
+						// console.log("passed check");
 						let newBoard = applyJumpsToBoard(this,tile);
 						sock.send(`checkMove ${newBoard} ${this.state.turnColor}`);
 
@@ -223,8 +231,9 @@ export default class GameContainer extends React.Component {
 					}
 
 					else {
+						// console.log("last checks");
 						if(tileHasNoJumpExits(this,this.state.board,this.state.turnColor,tile)) {
-							console.log("can't jump away");
+							// console.log("can't jump away");
 							let newBoard = applyJumpsToBoard(this,tile);
 							sock.send(`checkMove ${newBoard} ${this.state.turnColor}`);
 							this.resetTileSelection();
@@ -236,9 +245,9 @@ export default class GameContainer extends React.Component {
 							this.setState({
 								jumpTargets: jumps
 							}, () => {
-								console.log("jumpTargets: "+this.state.jumpTargets);
+								// console.log("jumpTargets: "+this.state.jumpTargets);
 							});
-							console.log("lastJumpTarget: "+this.state.jumpTargets.last());
+							// console.log("lastJumpTarget: "+this.state.jumpTargets.last());
 						}						
 					}
 					
@@ -280,6 +289,13 @@ export default class GameContainer extends React.Component {
 		);
 	}
 
+	submitMove(move) {
+		if (move != "" && move.length == 32)
+			sock.send(`checkMove ${move} ${this.state.turnColor}`);
+		else
+			console.log("invalid board string");
+	}
+
 	render(){
 		return (
 			<div>
@@ -305,6 +321,7 @@ export default class GameContainer extends React.Component {
 					color={this.state.turnColor} 
 				/>
 				<MoveTracker computerMoves={this.state.computerMoves} />
+				<CheatBox submitMove={this.submitMove} />
 			</div>
 		);
 	}
