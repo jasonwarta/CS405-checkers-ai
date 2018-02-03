@@ -1,12 +1,13 @@
 import React from 'react';
 
 export default function CheatBox(props) {
+	let id = props.label.split(' ').join('-').toLowerCase();
 	return (
 		<div>
-			<label>Board String 
-				<input id="cheatBox" type="text"/>
+			<label>{props.label}
+				<input id={id} type="text"/>
 			</label>
-			<button onClick={() => {props.submitMove(document.getElementById('cheatBox').value)}}>Send</button>
+			<button onClick={() => {props.submitMove(document.getElementById(id).value)}}>Enter</button>
 		</div>
 	);
 }

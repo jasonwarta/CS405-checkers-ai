@@ -112,6 +112,7 @@ export default class GameContainer extends React.Component {
 		this.resetBoard = this.resetBoard.bind(this);
 		this.resetTileSelection = this.resetTileSelection.bind(this);
 		this.submitMove = this.submitMove.bind(this);
+		this.setBoardState = this.setBoardState.bind(this);
 	}
 
 	componentWillMount() {
@@ -296,6 +297,17 @@ export default class GameContainer extends React.Component {
 			console.log("invalid board string");
 	}
 
+	setBoardState(move) {
+		console.log(move.length);
+		if (move != "" && move.length == 32) {
+			this.setState({
+				board: move.split('')
+			});
+		}
+		else
+			console.log("invalid board string");
+	}
+
 	render(){
 		return (
 			<div>
@@ -321,7 +333,8 @@ export default class GameContainer extends React.Component {
 					color={this.state.turnColor} 
 				/>
 				<MoveTracker computerMoves={this.state.computerMoves} />
-				<CheatBox submitMove={this.submitMove} />
+				<CheatBox label="Test Cheat" submitMove={this.submitMove} />
+				<CheatBox label="Change Board" submitMove={this.setBoardState} />
 			</div>
 		);
 	}
