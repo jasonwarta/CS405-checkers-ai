@@ -49,6 +49,7 @@ public:
 
 	std::vector<std::string> getAllRandoMoves();
 
+	bool isValidBoard(std::string newBoard);
 
 private:
 	std::string turnBoardToString();

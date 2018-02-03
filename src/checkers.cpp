@@ -114,6 +114,19 @@
 		return possibleMoves_;
 	}
 
+	bool CheckerBoard::isValidBoard(std::string newBoard)
+	{
+		for(int i=0; i<possibleMoves_.size(); ++i)
+		{
+			if(possibleMoves_[i] == newBoard)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+
 	std::string CheckerBoard::turnBoardToString()
 	{
 		std::string returnMe = "";
