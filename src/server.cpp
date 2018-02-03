@@ -1,4 +1,9 @@
 #include "server.h"
+#include "consts.h"
+
+// red=true, black=false
+bool computerColor = false;
+string currentBoard = "";
 
 void Message::prepareReply(string messageType, const vector<char> & board, string playerColor){
 	ostringstream oss;
@@ -11,6 +16,65 @@ void Message::prepareReply(string messageType, const vector<char> & board, strin
 
 	data = &vec[0];
 	size = msg.length();
+}
+
+void Message::prepareReply(string messageType, const string & boardString, string playerColor){
+	string msg = messageType + " " + boardString + " " + playerColor;
+	vec = vector<char>(msg.length() + 1);
+	strcpy(&vec[0], msg.c_str());
+
+	data = &vec[0];
+	size = msg.length();
+}
+
+void Message::prepareReply(string messageType, const string & boardString, string playerColor, string otherMoves){
+	string msg = messageType + " " + boardString + " " + playerColor + " " + otherMoves;
+	vec = vector<char>(msg.length() + 1);
+	strcpy(&vec[0], msg.c_str());
+
+	data = &vec[0];
+	size = msg.length();
+}
+
+void Message::prepareBasicMessage(string messageType, string msg) {
+	vec = vector<char>(msg.length() + 1);
+	strcpy(&vec[0], msg.c_str());
+
+	data = &vec[0];
+	size = msg.length();
+}
+
+void sendMove(WebSocket * ws, string boardString) {
+	Message msg;
+	//CheckerBoard boardClass(boardString, computerColor, redMoveBoard, redJumpBoard, blackMoveBoard, blackJumpBoard);
+	CheckerBoard boardClass(boardString, computerColor); // redMoveBoard, redJumpBoard, blackMoveBoard, blackJumpBoard);
+	cout << "recieved move" << endl;
+	string move = boardClass.getRandoMove();
+
+	vector<string> allMoves = boardClass.getAllRandoMoves();
+	string otherMoves = "";
+	for( auto move : allMoves) {
+		otherMoves += move + ",";
+	}
+
+	currentBoard = move;
+	msg.prepareReply(
+		"move",
+		move,
+		computerColor ? "red" : "black",
+		otherMoves );
+	sendMessage(ws,msg);
+}
+
+void sendStartBoard(WebSocket * ws) {
+	Message msg;
+
+	if(computerColor) { // computer color is red
+		sendMove(ws, START_BOARD_STRING);
+	} else { // computer color is black
+		msg.prepareReply("board",START_BOARD_STRING);
+		sendMessage(ws,msg);
+	}
 }
 
 void sendMessage(WebSocket *ws, Message & message) {
@@ -46,10 +110,7 @@ void createServerInstance(uWS::Hub &h) {
 
 	h.onConnection([&h](WebSocket *ws, uWS::HttpRequest req) {
 		cout << "onConnection" << endl;
-		Message reply;
-		reply.prepareReply("board",START_BOARD);
-		cout << reply.data << endl;
-		sendMessage(ws,reply);
+		sendStartBoard(ws);
 	});
 
 	h.onMessage([&h](WebSocket *ws, char *data, size_t length, uWS::OpCode opCode) {
@@ -70,7 +131,8 @@ void createServerInstance(uWS::Hub &h) {
 				// Put function call to check move here
 				cout << "Check Move for " << playerColor << endl;
 
-				reply.prepareReply("confirmMove",board,"red");
+				reply.prepareReply("confirmMove",board,playerColor);
+				currentBoard = tokens[1];
 				sendMessage(ws,reply);
 			}
 
@@ -78,22 +140,49 @@ void createServerInstance(uWS::Hub &h) {
 				// convert board from string to vector<char>
 				vector<char> board(tokens[1].begin(), tokens[1].end());
 
-				// get computer's color
-				string computerColor = tokens[2];
+				sendMove(ws, tokens[1]);
 
-				// generate computer move
-				// at the moment, this is just swapping two elements in the board so we can see that something changed
-				iter_swap(board.begin()+19, board.begin()+23);
+				// // get computer's color
+				// string computerColorString = tokens[2];
 
-				// stringify and send new board to client
-				reply.prepareReply("move",board,"black");
-				sendMessage(ws,reply);	
+				// // cout << "Get move" << endl;
+
+				// CheckerBoard boardClass(tokens[1], computerColor, redMoveBoard, redJumpBoard, blackMoveBoard, blackJumpBoard);
+
+				// // cout << "recieved move" << endl;
+
+				// string move = boardClass.getRandoMove();
+				// vector<string> allMoves = boardClass.getAllRandoMoves();
+				// string otherMoves = "";
+				// for( auto move : allMoves) {
+				// 	otherMoves += move + ",";
+				// }
+
+				// move += " " + otherMoves;
+
+				// // cout << "sending move" << endl;
+
+				// // stringify and send new board to client
+				// reply.prepareReply("move", move, computerColor ? "red" : "black");
+				// sendMessage(ws,reply);	
 			}
 
 			else if (tokens[0] == "resetGame") {
+				cout << "Reset Game" << endl;
+				sendStartBoard(ws);
+			}
+
+			else if (tokens[0] == "changePlayerColorTo") {
+				if (tokens[1] == "black") {
+					computerColor = true;
+					reply.prepareBasicMessage("changeComputerColorTo","red");
+				}
+				else if (tokens[1] == "red") {
+					computerColor = false;
+					reply.prepareBasicMessage("changeComputerColorTo","black");
+				}
+
 				
-				reply.prepareReply("board",START_BOARD);
-				sendMessage(ws,reply);
 			}
 
 			cout << "Sent reply" << endl;

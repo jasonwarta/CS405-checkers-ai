@@ -12,7 +12,7 @@ export default function Board(props) {
 			boardRow.push(<td key={`${key}_`} className="buff"></td>);
 			boardRow.push(
 				<td key={key} 
-					className={`green ${TILES[val][1]} ${TILES[val][0]} ${props.focus == (key+1) ? 'focus' : ''}`}
+					className={`green ${TILES[val][1]} ${TILES[val][0]} ${(props.selectedTile == (key+1) || props.jumpTargets.includes(key+1)) ? 'focus' : ''}`}
 					onClick={(event) => props.clickTile(event.target,key+1)}>
 					<p className="tileLabel">{key+1}</p>
 				</td>);
@@ -20,7 +20,7 @@ export default function Board(props) {
 		else {
 			boardRow.push(
 				<td key={key} 
-					className={`green ${TILES[val][1]} ${TILES[val][0]} ${props.focus == (key+1) ? 'focus' : ''}`}
+					className={`green ${TILES[val][1]} ${TILES[val][0]} ${(props.selectedTile == (key+1) || props.jumpTargets.includes(key+1)) ? 'focus' : ''}`}
 					onClick={(event) => props.clickTile(event.target,key+1)}>
 					<p className="tileLabel">{key+1}</p>
 				</td>);
