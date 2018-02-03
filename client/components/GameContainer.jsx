@@ -3,6 +3,7 @@ import Board from './Board.jsx';
 import Color from './Color.jsx';
 import PlayerColor from './PlayerColor.jsx';
 import MoveTracker from './MoveTracker.jsx';
+import CheatBox from './CheatBox.jsx';
 
 import MOVE_TABLE from '../static/moveTable.js';
 
@@ -110,6 +111,7 @@ export default class GameContainer extends React.Component {
 		this.changePlayerColor = this.changePlayerColor.bind(this);
 		this.resetBoard = this.resetBoard.bind(this);
 		this.resetTileSelection = this.resetTileSelection.bind(this);
+		this.submitMove = this.submitMove.bind(this);
 	}
 
 	componentWillMount() {
@@ -287,6 +289,13 @@ export default class GameContainer extends React.Component {
 		);
 	}
 
+	submitMove(move) {
+		if (move != "" && move.length == 32)
+			sock.send(`checkMove ${move} ${this.state.turnColor}`);
+		else
+			console.log("invalid board string");
+	}
+
 	render(){
 		return (
 			<div>
@@ -312,6 +321,7 @@ export default class GameContainer extends React.Component {
 					color={this.state.turnColor} 
 				/>
 				<MoveTracker computerMoves={this.state.computerMoves} />
+				<CheatBox submitMove={this.submitMove} />
 			</div>
 		);
 	}
