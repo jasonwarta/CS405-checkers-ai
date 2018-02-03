@@ -26,8 +26,7 @@
 // 	'b','b','b','b',
 // 	'b','b','b','b' };
 
-extern const std::string START_BOARD_STRING/* = "rrrrrrrrrrrr________bbbbbbbbbbbb"*/;
-// std::string START_BOARD_STRING = "rrrrr_r_rbrr_br___b_bb_b_b_bbbbb";
+extern const std::string START_BOARD_STRING;
 
 const std::vector<std::vector<int>> RED_MOVE_BOARD { 
 	{4, 5},		//0

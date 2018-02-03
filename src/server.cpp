@@ -3,6 +3,7 @@
 
 // red=true, black=false
 bool computerColor = false;
+string currentBoard = "";
 
 void Message::prepareReply(string messageType, const vector<char> & board, string playerColor){
 	ostringstream oss;
@@ -56,6 +57,7 @@ void sendMove(WebSocket * ws, string boardString) {
 		otherMoves += move + ",";
 	}
 
+	currentBoard = move;
 	msg.prepareReply(
 		"move",
 		move,
@@ -129,7 +131,8 @@ void createServerInstance(uWS::Hub &h) {
 				// Put function call to check move here
 				cout << "Check Move for " << playerColor << endl;
 
-				reply.prepareReply("confirmMove",board,"red");
+				reply.prepareReply("confirmMove",board,playerColor);
+				currentBoard = tokens[1];
 				sendMessage(ws,reply);
 			}
 
