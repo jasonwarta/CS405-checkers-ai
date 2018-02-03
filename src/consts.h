@@ -1,12 +1,22 @@
+
+
+
+
+
+
+
+
 #ifndef CONSTS_H_INCLUDED
 #define CONSTS_H_INCLUDED
 
-#include <vector>
-using std::vector;
-#include <string>
-using std::string;
 
-const vector<char> START_BOARD { 
+
+#include <vector>
+//using std::vector;
+#include <string>
+//using std::string;
+
+const std::vector<char> START_BOARD { 
 	'r','r','r','r',
 	'r','r','r','r',
 	'r','r','r','r',
@@ -16,10 +26,10 @@ const vector<char> START_BOARD {
 	'b','b','b','b',
 	'b','b','b','b' };
 
-string START_BOARD_STRING = "rrrrrrrrrrrr________bbbbbbbbbbbb";
-// string START_BOARD_STRING = "rrrrr_r_rbrr_br___b_bb_b_b_bbbbb";
+extern const std::string START_BOARD_STRING = "rrrrrrrrrrrr________bbbbbbbbbbbb";
+// std::string START_BOARD_STRING = "rrrrr_r_rbrr_br___b_bb_b_b_bbbbb";
 
-std::vector<std::vector<int>> redMoveBoard { 
+const std::vector<std::vector<int>> RED_MOVE_BOARD { 
 	{4, 5},		//0
 	{5, 6},
 	{6, 7},
@@ -53,7 +63,8 @@ std::vector<std::vector<int>> redMoveBoard {
 	{-1, -1},	//30
 	{-1, -1} };
 
-std::vector<std::vector<int>> redJumpBoard { {-1, 9},	//0
+const std::vector<std::vector<int>> RED_JUMP_BOARD { 
+	{-1, 9},	//0
 	{8, 10},
 	{9, 11},
 	{10, -1},
@@ -86,7 +97,7 @@ std::vector<std::vector<int>> redJumpBoard { {-1, 9},	//0
 	{-1, -1},	//30
 	{-1, -1} };	 
 
-std::vector<std::vector<int>> blackMoveBoard { 
+const std::vector<std::vector<int>> BLACK_MOVE_BOARD { 
 	{-1, -1},	//0
 	{-1, -1},
 	{-1, -1},
@@ -120,7 +131,7 @@ std::vector<std::vector<int>> blackMoveBoard {
 	{25, 26},	//30
 	{26, 27} };
 
-std::vector<std::vector<int>> blackJumpBoard { 
+const std::vector<std::vector<int>> BLACK_JUMP_BOARD { 
 	{-1, -1},	//0
 	{1, -1},
 	{-1, -1},

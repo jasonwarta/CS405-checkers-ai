@@ -45,7 +45,8 @@ void Message::prepareBasicMessage(string messageType, string msg) {
 
 void sendMove(WebSocket * ws, string boardString) {
 	Message msg;
-	CheckerBoard boardClass(boardString, computerColor, redMoveBoard, redJumpBoard, blackMoveBoard, blackJumpBoard);
+	//CheckerBoard boardClass(boardString, computerColor, redMoveBoard, redJumpBoard, blackMoveBoard, blackJumpBoard);
+	CheckerBoard boardClass(boardString, computerColor); // redMoveBoard, redJumpBoard, blackMoveBoard, blackJumpBoard);
 	cout << "recieved move" << endl;
 	string move = boardClass.getRandoMove();
 
