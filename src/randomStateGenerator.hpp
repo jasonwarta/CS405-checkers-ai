@@ -9,6 +9,7 @@ using std::string;
 #include <iostream>
 using std::cout;
 using std::endl;
+#include <algorithm>
 
 #include "checkers.h"
 
@@ -22,7 +23,11 @@ public:
 
 	void generateRedCheckers();
 	void generateBlackCheckers();
-	bool checkIfSpotOpen(std::std::vector<int>);
+	bool checkIfSpotOpen(std::vector<int>, int);
+
+private:
+	int numberOfCheckersRed_;
+	int numberOfCheckersBlack_;
 
 private:
 	int16_t numberOfCheckersRed_;
