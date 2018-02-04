@@ -126,8 +126,13 @@ void createServerInstance(uWS::Hub &h) {
 			Message reply;
 
 			if (tokens[0] == "checkMove") {
+				// check validity of player move and send board back to client, if valid
+
 				vector<char> board(tokens[1].begin(), tokens[1].end());
 				string playerColor = tokens[2];
+
+
+
 				// Put function call to check move here
 				cout << "Check Move for " << playerColor << endl;
 
@@ -137,42 +142,24 @@ void createServerInstance(uWS::Hub &h) {
 			}
 
 			else if (tokens[0] == "computerMove") {
-				// convert board from string to vector<char>
-				vector<char> board(tokens[1].begin(), tokens[1].end());
+				// send a computer move
 
 				sendMove(ws, tokens[1]);
 
-				// // get computer's color
-				// string computerColorString = tokens[2];
 
-				// // cout << "Get move" << endl;
 
-				// CheckerBoard boardClass(tokens[1], computerColor, redMoveBoard, redJumpBoard, blackMoveBoard, blackJumpBoard);
-
-				// // cout << "recieved move" << endl;
-
-				// string move = boardClass.getRandoMove();
-				// vector<string> allMoves = boardClass.getAllRandoMoves();
-				// string otherMoves = "";
-				// for( auto move : allMoves) {
-				// 	otherMoves += move + ",";
-				// }
-
-				// move += " " + otherMoves;
-
-				// // cout << "sending move" << endl;
-
-				// // stringify and send new board to client
-				// reply.prepareReply("move", move, computerColor ? "red" : "black");
-				// sendMessage(ws,reply);	
 			}
 
 			else if (tokens[0] == "resetGame") {
+				// reset game state
+
 				cout << "Reset Game" << endl;
 				sendStartBoard(ws);
 			}
 
 			else if (tokens[0] == "changePlayerColorTo") {
+				// recieved signal to reset player color, change computer color to the opposite color
+				
 				if (tokens[1] == "black") {
 					computerColor = true;
 					reply.prepareBasicMessage("changeComputerColorTo","red");
