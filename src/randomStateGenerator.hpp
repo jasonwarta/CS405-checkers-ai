@@ -29,10 +29,6 @@ private:
 	int numberOfCheckersRed_;
 	int numberOfCheckersBlack_;
 
-private:
-	int16_t numberOfCheckersRed_;
-	int16_t numberOfCheckersBlack_;
-
 	std::vector<int> randomSpotRedVec_;
 	std::vector<int> randomSpotBlackVec_;
 };
