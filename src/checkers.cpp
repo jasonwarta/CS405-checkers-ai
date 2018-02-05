@@ -6,7 +6,7 @@
 
 #include "consts.h"
 #include "checkers.h"
-
+#include <memory>
 
 
 	/*
@@ -165,24 +165,20 @@
 
 	void CheckerBoard::JumpingRecursion(int i, int j, bool currTeamDirection) // currTeamDirection gets passed going right way
 	{
-		std::shared_ptr<TheChecker> pieceJumped;
+		std::unique_ptr<TheChecker> pieceJumped;
 		int k;
 		bool jumpNeverFound = true;
 
 		if(currTeamDirection == true)
 		{
-			pieceJumped = checkers_[currTeamMoveBoard_[i][j]];
-			checkers_[currTeamMoveBoard_[i][j]] = nullptr;
-			checkers_[currTeamJumpBoard_[i][j]] = checkers_[i];
-			checkers_[i] = nullptr;
+			pieceJumped = std::move(checkers_[currTeamMoveBoard_[i][j]]);
+			checkers_[currTeamJumpBoard_[i][j]] = std::move(checkers_[i]);
 			k = currTeamJumpBoard_[i][j];
 		}
 		else // currTeamDirection == false
 		{
-			pieceJumped = checkers_[oppTeamMoveBoard_[i][j]];
-			checkers_[oppTeamMoveBoard_[i][j]] = nullptr;
-			checkers_[oppTeamJumpBoard_[i][j]] = checkers_[i];
-			checkers_[i] = nullptr;
+			pieceJumped = std::move(checkers_[oppTeamMoveBoard_[i][j]]);
+			checkers_[oppTeamJumpBoard_[i][j]] = std::move(checkers_[i]);
 			k = oppTeamJumpBoard_[i][j];
 		}
 
@@ -234,17 +230,14 @@
 		// undo the beginning for previous recurse call
 		if(currTeamDirection == true)
 		{
-			checkers_[i] = checkers_[currTeamJumpBoard_[i][j]];
-			checkers_[currTeamJumpBoard_[i][j]] = nullptr;
-			checkers_[currTeamMoveBoard_[i][j]] = pieceJumped;
+			checkers_[i] = std::move(checkers_[currTeamJumpBoard_[i][j]]);
+			checkers_[currTeamMoveBoard_[i][j]] = std::move(pieceJumped);
 		}
 		else
 		{
-			checkers_[i] = checkers_[oppTeamJumpBoard_[i][j]];
-			checkers_[oppTeamJumpBoard_[i][j]] = nullptr;
-			checkers_[oppTeamMoveBoard_[i][j]] = pieceJumped;
+			checkers_[i] = std::move(checkers_[oppTeamJumpBoard_[i][j]]);
+			checkers_[oppTeamMoveBoard_[i][j]] = std::move(pieceJumped);
 		}
-		pieceJumped = nullptr; //necessary?
 	}
 
 	// You can also not include the teamMoveBoard and teamJumpBoard, and just say if goingRightWay == true, use currTeamBoard, else use oppTeamBoard.
@@ -277,8 +270,7 @@
 			if(firstJumpFound_ == false)
 			{
 				//move the checker to the new spot
-				checkers_[teamMoveBoard[i][j]] = checkers_[i];
-				checkers_[i] = nullptr;
+				checkers_[teamMoveBoard[i][j]] = move(checkers_[i]);
 
 				//If already a king, dont change it. If not, change it and change it back
 				bool isAlreadyKing = checkers_[teamMoveBoard[i][j]]->isKing();
@@ -295,9 +287,7 @@
 				}
 
 				//put the checker back
-				checkers_[i] = checkers_[teamMoveBoard[i][j]];
-				checkers_[teamMoveBoard[i][j]] = nullptr;
-
+				checkers_[i] = move(checkers_[teamMoveBoard[i][j]]);
 
 			}
 		}
