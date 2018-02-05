@@ -61,19 +61,19 @@
 			// later, break at space first for speedup?
 			if(startBoard.at(i) == 'r')
 			{
-				checkers_[i] = std::make_shared<TheChecker>(TheChecker(true, false));
+				checkers_[i] = std::make_unique<TheChecker>(TheChecker(true, false));
 			}
 			else if(startBoard.at(i) == 'R')
 			{
-				checkers_[i] = std::make_shared<TheChecker>(TheChecker(true, true));
+				checkers_[i] = std::make_unique<TheChecker>(TheChecker(true, true));
 			}
 			else if(startBoard.at(i) == 'b')
 			{
-				checkers_[i] = std::make_shared<TheChecker>(TheChecker(false, false));
+				checkers_[i] = std::make_unique<TheChecker>(TheChecker(false, false));
 			}
 			else if(startBoard.at(i) == 'B')
 			{
-				checkers_[i] = std::make_shared<TheChecker>(TheChecker(false, true));
+				checkers_[i] = std::make_unique<TheChecker>(TheChecker(false, true));
 			}
 			else if(startBoard.at(i) == '_')// nothing there
 			{
