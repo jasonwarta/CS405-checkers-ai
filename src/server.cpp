@@ -1,8 +1,13 @@
 #include "server.h"
 #include "consts.h"
 
+// PvC=true, CvC=false
+bool gameMode = true;
+
 // red=true, black=false
 bool computerColor = false;
+bool currentTurn = true;
+
 string currentBoard = "";
 
 void Message::prepareReply(string messageType, const vector<char> & board, string playerColor){
@@ -141,13 +146,24 @@ void createServerInstance(uWS::Hub &h) {
 				sendMessage(ws,reply);
 			}
 
+			else if (tokens[0] == "changeGameMode") {
+				if (tokens[1] == "PvC") {
+					gameMode = true;
+				}
+
+				else if (tokens[1] == "CvC") {
+					gameMode = false;
+				}
+			}
+
+			else if (tokens[0] == "watching") {
+				cout << "watching" << endl;
+			}
+
 			else if (tokens[0] == "computerMove") {
 				// send a computer move
 
 				sendMove(ws, tokens[1]);
-
-
-
 			}
 
 			else if (tokens[0] == "resetGame") {
@@ -159,7 +175,7 @@ void createServerInstance(uWS::Hub &h) {
 
 			else if (tokens[0] == "changePlayerColorTo") {
 				// recieved signal to reset player color, change computer color to the opposite color
-				
+
 				if (tokens[1] == "black") {
 					computerColor = true;
 					reply.prepareBasicMessage("changeComputerColorTo","red");

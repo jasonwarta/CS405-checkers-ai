@@ -7,6 +7,9 @@ import CheatBox from './CheatBox.jsx';
 
 import MOVE_TABLE from '../static/moveTable.js';
 
+// r__rrrbr___r_bbr___r_br_b__b_bbb
+// ___rrrb__r___brrb_r_b_rrbb_b___b
+
 if (!Array.prototype.last){
     Array.prototype.last = function(){
         return this[this.length - 1];
@@ -14,6 +17,11 @@ if (!Array.prototype.last){
 };
 
 var sock;
+
+const kingMe = {
+	'red' : [29,30,31,32],
+	'black' : [1,2,3,4]
+}
 
 const baseState = {
 	board: [],
@@ -35,9 +43,13 @@ const baseStateNoPlayerColor = {
 }
 
 function applyJumpsToBoard(self,tile) {
+	console.log(self.state.jumpedTiles);
 	let newBoard = self.state.board.join('');
 	
-	newBoard = replaceAt(newBoard, tile-1, self.state.board[self.state.selectedTile-1]);
+	if ( kingMe[self.state.turnColor].includes(tile) )
+		newBoard = replaceAt(newBoard, tile-1, self.state.board[self.state.selectedTile-1].toUpperCase());
+	else
+		newBoard = replaceAt(newBoard, tile-1, self.state.board[self.state.selectedTile-1]);
 
 	self.state.jumpedTiles.forEach( val => {
 		newBoard = replaceAt(newBoard, val-1, '_');
@@ -81,7 +93,9 @@ function tileIsValidJumpTarget(self,lastTile,tile,check=false) {
 							self.state.board[curr-1] == (self.state.turnColor == 'red' ? 'B' : 'R')) && 
 							self.state.board[tile-1] == '_') {
 
-						jumpedTile = curr;
+						if (MOVE_TABLE[self.state.turnColor][curr].includes(tile))
+							jumpedTile = curr;
+
 						return prev || MOVE_TABLE[self.state.turnColor][curr].includes(tile);
 					}
 					else 
@@ -99,6 +113,25 @@ function tileIsValidJumpTarget(self,lastTile,tile,check=false) {
 	}
 
 	return r_val;
+}
+
+function getOwnerColor(board,tile) {
+	return 	( board[tile-1] == 'r' || board[tile-1] == 'R' ) ? 'red' : 
+			( board[tile-1] == 'b' || board[tile-1] == 'B' ) ? 'black' : '';
+}
+
+function checkMove(board,turnColor) {
+	console.log();
+	kingMe[turnColor].forEach( tile => {
+		console.log(getOwnerColor(board,tile));
+		// if (board[val-1] == )
+		// 	console.log('king this: '+val);
+		console.log(tile);
+	})
+
+	// if (board[kingMe[turnColor]])
+
+	sock.send(`checkMove ${board} ${turnColor}`);
 }
 
 export default class GameContainer extends React.Component {
@@ -213,7 +246,7 @@ export default class GameContainer extends React.Component {
 					tempBoard = replaceAt(tempBoard, this.state.selectedTile-1, this.state.board[tile-1]);
 					tempBoard = replaceAt(tempBoard, tile-1, tempVar);
 
-					sock.send(`checkMove ${tempBoard} ${this.state.turnColor}`);
+					checkMove(tempBoard,this.state.turnColor);
 					this.setState({selectedTile:null});
 				}
 
@@ -226,8 +259,7 @@ export default class GameContainer extends React.Component {
 						// send move to server
 						// console.log("passed check");
 						let newBoard = applyJumpsToBoard(this,tile);
-						sock.send(`checkMove ${newBoard} ${this.state.turnColor}`);
-
+						checkMove(newBoard,this.state.turnColor);
 						this.resetTileSelection();
 					}
 
@@ -236,7 +268,7 @@ export default class GameContainer extends React.Component {
 						if(tileHasNoJumpExits(this,this.state.board,this.state.turnColor,tile)) {
 							// console.log("can't jump away");
 							let newBoard = applyJumpsToBoard(this,tile);
-							sock.send(`checkMove ${newBoard} ${this.state.turnColor}`);
+							checkMove(newBoard,this.state.turnColor);
 							this.resetTileSelection();
 						}
 
@@ -292,7 +324,7 @@ export default class GameContainer extends React.Component {
 
 	submitMove(move) {
 		if (move != "" && move.length == 32)
-			sock.send(`checkMove ${move} ${this.state.turnColor}`);
+			checkMove(move,this.state.turnColor);
 		else
 			console.log("invalid board string");
 	}
