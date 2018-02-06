@@ -1,6 +1,12 @@
 
-// update later
-
+// checkers.h
+// Created By:
+//	Cameron Showalter
+// 	Rachel Crosley
+//	Jason Warta
+//	Jim Samson
+// Version 4.20
+// Date February 2, 2018
 
 
 
@@ -11,15 +17,12 @@
 #include <iostream>
 #include <memory>
 #include <string>
-
 #include <random>
+
 #include "consts.h"
-/*
-	TODO:
-		Split into CPP and H
-		change shared to unique pointers
-		Update comment at top
-*/
+
+
+
 
 class TheChecker
 {
@@ -64,7 +67,7 @@ private:
 
 private:
 	// pointers to all the checkers
-	std::vector<std::shared_ptr<TheChecker>> checkers_;
+	std::vector<std::unique_ptr<TheChecker>> checkers_;
 
 	// will have all possible moves, each vector is a different board
 	std::vector<std::string> possibleMoves_;
