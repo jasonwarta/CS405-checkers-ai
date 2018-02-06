@@ -10,11 +10,23 @@ import MOVE_TABLE from '../static/moveTable.js';
 // r__rrrbr___r_bbr___r_br_b__b_bbb
 // ___rrrb__r___brrb_r_b_rrbb_b___b
 
+// r_rrr_r____r_rr____bbb___b_bbR_b
+
 if (!Array.prototype.last){
     Array.prototype.last = function(){
         return this[this.length - 1];
     };
 };
+
+if (!String.prototype.replaceAt){
+	String.prototype.replaceAt = function(idx,newChar){
+		return `${this.substr(0,idx)}${newChar}${this.substr(idx+1)}`;
+	};
+};
+
+function replaceAt(string,idx,newChar) {
+	return `${string.substr(0,idx)}${newChar}${string.substr(idx+1)}`;
+}
 
 var sock;
 
@@ -42,8 +54,21 @@ const baseStateNoPlayerColor = {
 	computerMoves: [],
 }
 
+function applyMoveToBoard(self,tile) {
+	let newBoard = self.state.board.join('');
+
+	if ( kingMe[self.state.turnColor].includes(tile) ) 
+		newBoard = newBoard.replaceAt(tile-1, self.state.board[self.state.selectedTile-1].toUpperCase());
+	else
+		newBoard = newBoard.replaceAt(tile-1, self.state.board[self.state.selectedTile-1]);
+	
+	newBoard = newBoard.replaceAt(self.state.selectedTile-1, '_');
+
+	return newBoard;
+}
+
 function applyJumpsToBoard(self,tile) {
-	console.log(self.state.jumpedTiles);
+	// console.log(self.state.jumpedTiles);
 	let newBoard = self.state.board.join('');
 	
 	if ( kingMe[self.state.turnColor].includes(tile) )
@@ -60,34 +85,92 @@ function applyJumpsToBoard(self,tile) {
 	return newBoard;
 }
 
-function replaceAt(string,idx,newChar) {
-	return `${string.substr(0,idx)}${newChar}${string.substr(idx+1)}`;
+function tileHasNoAdjacentEnemies(board,turnColor,tile,king) {
+	if (king)
+		return (
+			( MOVE_TABLE['red'][tile].reduce( (prev,curr) => {
+				return prev && (board[curr-1] != (turnColor == 'red' ? 'b' : 'r') && board[curr-1] != (turnColor == 'red' ? 'B' : 'R') )
+			}, true) )
+			&&
+			( MOVE_TABLE['black'][tile].reduce( (prev,curr) => {
+				return prev && (board[curr-1] != (turnColor == 'red' ? 'b' : 'r') && board[curr-1] != (turnColor == 'red' ? 'B' : 'R') )
+			}, true) ) );
+	else
+		return ( MOVE_TABLE[turnColor][tile].reduce( (prev,curr) => {
+			return prev && (board[curr-1] != (turnColor == 'red' ? 'b' : 'r') && board[curr-1] != (turnColor == 'red' ? 'B' : 'R') )
+		}, true) );
 }
 
-function tileHasNoAdjacentEnemies(board,turnColor,tile) {
-	return ( MOVE_TABLE[turnColor][tile].reduce( (prev,curr) => {
-		return prev && (board[curr-1] != (turnColor == 'red' ? 'b' : 'r') && board[curr-1] != (turnColor == 'red' ? 'B' : 'R') )
-	}, true) );
-}
+function tileHasNoJumpExits(self,board,turnColor,tile,king) {
+	console.log("checking jump exits");
+	let rval = null;
+	if (king)
+		rval = (
+			( MOVE_TABLE['red-jump'][tile].reduce( (prev,curr) => {
+				return prev && !tileIsValidJumpTarget(self, tile, curr, true, true);			
+			}, true) )
+			&&
+			( MOVE_TABLE['black-jump'][tile].reduce( (prev,curr) => {
+				return prev && !tileIsValidJumpTarget(self, tile, curr, true, true);			
+			}, true) ) );
+	else
+		rval = ( MOVE_TABLE[`${turnColor}-jump`][tile].reduce( (prev,curr) => {
+				return prev && !tileIsValidJumpTarget(self, tile, curr, true, false);			
+			}, true) );
 
-function tileHasNoJumpExits(self,board,turnColor,tile) {
-	// console.log('checking exits');
-	let rval =  (
-		MOVE_TABLE[`${turnColor}-jump`][tile].reduce( (prev,curr) => {
-			
-			
-			console.log("curr: "+curr);
-			console.log("validMove: "+tileIsValidJumpTarget(self, tile, curr, true));
-			return prev && !tileIsValidJumpTarget(self, tile, curr, true);			
-		}, true)
-	)
-	// console.log(rval);
 	return rval;
 }
 
-function tileIsValidJumpTarget(self,lastTile,tile,check=false) {
+function otherColor(c) {
+	return c == 'black' ? 'red' : 'black';
+}
+
+function tileBelongsToOpponent(board,tile,turnColor) {
+	return board[tile-1] == (turnColor == 'red' ? 'b' : 'r') || board[tile-1] == (turnColor == 'red' ? 'B' : 'R');
+}
+
+function log(msg) {
+	console.log(msg);
+	return true;
+}
+
+function tileIsValidJumpTarget(self,lastTile,tile,check=false,king) {
 	let jumpedTile = null;
-	let r_val=(	MOVE_TABLE[`${self.state.turnColor}-jump`][lastTile].includes(tile)  && 
+	let r_val = null;
+	if (!lastTile)
+		lastTile = self.state.selectedTile;
+	// console.log(self.state.selectedTile);
+	console.log("validJump vars - from target",self.state.selectedTile,tile,false,isKing(self,self.state.selectedTile));
+	console.log("validJump vars - as passed",lastTile,tile,check,king);
+	console.log(`isValidMoveForKing: ${isValidMoveForKing(lastTile,tile,true)}`)
+	if (king)
+		r_val=((isValidMoveForKing(lastTile,tile,true) && self.state.board[tile-1] == '_' &&
+				(	MOVE_TABLE['red'][lastTile].reduce( (prev,curr) => {
+						if (tileBelongsToOpponent(self.state.board,curr,self.state.turnColor)) {
+							console.log(`Tile: ${curr}  belongs to opponent`);
+							if (isValidMoveForKing(curr,tile,false))
+								jumpedTile = curr;
+							console.log(`JumpedTile: ${jumpedTile}`);
+
+							return prev || isValidMoveForKing(curr,tile,false);
+						}
+						else
+							return prev || false;
+				},false) || 
+				MOVE_TABLE['black'][lastTile].reduce( (prev,curr) => {
+					if (tileBelongsToOpponent(self.state.board,curr,self.state.turnColor)) {
+						console.log(`Tile: ${curr} belongs to opponent`);
+						if (isValidMoveForKing(curr,tile,false))
+							jumpedTile = curr;
+						console.log(`JumpedTile: ${jumpedTile}`);
+
+						return prev || isValidMoveForKing(curr,tile,false);
+					}
+					else
+						return prev || false;
+				},false))));
+	else 
+		r_val=(	MOVE_TABLE[`${self.state.turnColor}-jump`][lastTile].includes(tile)  && 
 				MOVE_TABLE[self.state.turnColor][lastTile].reduce( (prev,curr) => {
 					if ( (	self.state.board[curr-1] == (self.state.turnColor == 'red' ? 'b' : 'r')  || 
 							self.state.board[curr-1] == (self.state.turnColor == 'red' ? 'B' : 'R')) && 
@@ -109,7 +192,7 @@ function tileIsValidJumpTarget(self,lastTile,tile,check=false) {
 		self.setState({
 			jumpedTiles: jumpedTiles
 		});
-		// console.log(`jumped to ${tile} over ${jumpedTile}`);
+		console.log(`jumped to ${tile} over ${jumpedTile}`);
 	}
 
 	return r_val;
@@ -120,7 +203,7 @@ function getOwnerColor(board,tile) {
 			( board[tile-1] == 'b' || board[tile-1] == 'B' ) ? 'black' : '';
 }
 
-function checkMove(board,turnColor) {
+function checkMoveAgainstServer(board,turnColor) {
 	console.log();
 	kingMe[turnColor].forEach( tile => {
 		console.log(getOwnerColor(board,tile));
@@ -132,6 +215,33 @@ function checkMove(board,turnColor) {
 	// if (board[kingMe[turnColor]])
 
 	sock.send(`checkMove ${board} ${turnColor}`);
+}
+
+function isKing(self,tile) {
+	console.log("checking king status");
+	return self.state.board[tile-1] == 'B' || self.state.board[tile-1] == 'R';
+}
+
+function isValidMoveForKing(tile,targetTile,jump) {
+	console.log("checking valid move for king");
+	// jump should be true or false
+
+	if (!jump) {
+		if (MOVE_TABLE['red'][tile].includes(targetTile))
+			return true;
+		if (MOVE_TABLE['black'][tile].includes(targetTile))
+			return true;
+	}
+
+	else if (jump) {
+		if (MOVE_TABLE['red-jump'][tile].includes(targetTile))
+			return true;
+		if (MOVE_TABLE['black-jump'][tile].includes(targetTile))
+			return true;
+	}
+
+	console.log("invalid move to adjacent tile")
+	return false;
 }
 
 export default class GameContainer extends React.Component {
@@ -198,12 +308,12 @@ export default class GameContainer extends React.Component {
 	}
 
 	clickTile(element, tile) {
+		console.log("clickEvent", element, tile)
 		let ownerColor = '';
 		if (element.classList.contains('red'))
 			ownerColor = 'red';
 		else if (element.classList.contains('black'))
 			ownerColor = 'black';
-
 
 		if (this.state.turnColor == ownerColor && this.state.turnColor == this.state.playerColor) {
 			if (this.state.selectedTile == null) {
@@ -220,7 +330,7 @@ export default class GameContainer extends React.Component {
 		}
 
 		else if (ownerColor == '') {
-
+			console.log("no owner color",element,tile)
 			if (this.state.selectedTile == null) {
 				console.log("You must select a piece first");
 			}
@@ -236,39 +346,38 @@ export default class GameContainer extends React.Component {
 			}
 
 			else {
-				if ( MOVE_TABLE[this.state.turnColor][this.state.selectedTile].includes(tile)) {
+				console.log(`catch#1 : selectedTile:${this.state.selectedTile}, clickedTile:${tile}`);
+
+				if ( MOVE_TABLE[this.state.turnColor][this.state.selectedTile].includes(tile) ||
+					(isKing(this,this.state.selectedTile) && isValidMoveForKing(this.state.selectedTile,tile,false)) ) {
 					// valid move to adjacent tile
-					// console.log("valid move");
 
-					let tempBoard = this.state.board.join('');
-					let tempVar = tempBoard[this.state.selectedTile-1];
+					let tempBoard = applyMoveToBoard(this,tile);
 
-					tempBoard = replaceAt(tempBoard, this.state.selectedTile-1, this.state.board[tile-1]);
-					tempBoard = replaceAt(tempBoard, tile-1, tempVar);
-
-					checkMove(tempBoard,this.state.turnColor);
+					checkMoveAgainstServer(tempBoard,this.state.turnColor);
 					this.setState({selectedTile:null});
 				}
 
-				else if ( tileIsValidJumpTarget(this,this.state.selectedTile,tile) || tileIsValidJumpTarget(this,this.state.jumpTargets.last(),tile )) {
+				else if ( tileIsValidJumpTarget(this,this.state.selectedTile,tile,false,isKing(this,this.state.selectedTile)) || tileIsValidJumpTarget(this,this.state.jumpTargets.last(),tile,false,isKing(this,this.state.selectedTile) )) {
 					// valid jump
+					console.log(`catch#2 : selectedTile:${this.state.selectedTile}, clickedTile:${tile}`);
 					
-					if ( tileHasNoAdjacentEnemies(this.state.board,this.state.turnColor,tile) )
+					if ( tileHasNoAdjacentEnemies(this.state.board,this.state.turnColor,tile,isKing(this,this.state.selectedTile)) )
 					{
 						// laneded on a tile without any adjacent enemy chips
 						// send move to server
 						// console.log("passed check");
 						let newBoard = applyJumpsToBoard(this,tile);
-						checkMove(newBoard,this.state.turnColor);
+						checkMoveAgainstServer(newBoard,this.state.turnColor);
 						this.resetTileSelection();
 					}
 
 					else {
 						// console.log("last checks");
-						if(tileHasNoJumpExits(this,this.state.board,this.state.turnColor,tile)) {
+						if(tileHasNoJumpExits(this,this.state.board,this.state.turnColor,tile,isKing(this,this.state.selectedTile))) {
 							// console.log("can't jump away");
 							let newBoard = applyJumpsToBoard(this,tile);
-							checkMove(newBoard,this.state.turnColor);
+							checkMoveAgainstServer(newBoard,this.state.turnColor);
 							this.resetTileSelection();
 						}
 
@@ -298,6 +407,8 @@ export default class GameContainer extends React.Component {
 	}
 
 	resetTileSelection() {
+		console.log('reset tile selection');
+		console.trace();
 		this.setState({
 			selectedTile: null,
 			jumpTargets: [],
@@ -324,7 +435,7 @@ export default class GameContainer extends React.Component {
 
 	submitMove(move) {
 		if (move != "" && move.length == 32)
-			checkMove(move,this.state.turnColor);
+			checkMoveAgainstServer(move,this.state.turnColor);
 		else
 			console.log("invalid board string");
 	}
