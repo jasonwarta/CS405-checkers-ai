@@ -17,13 +17,12 @@
 #include <iostream>
 #include <memory>
 #include <string>
-
 #include <random>
+
 #include "consts.h"
-/*
-	TODO:
-		Update comment at top
-*/
+
+
+
 
 class TheChecker
 {

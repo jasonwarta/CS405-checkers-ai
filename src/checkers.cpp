@@ -4,9 +4,7 @@
 
 
 
-#include "consts.h"
 #include "checkers.h"
-#include <memory>
 
 
 	/*
@@ -270,7 +268,7 @@
 			if(firstJumpFound_ == false)
 			{
 				//move the checker to the new spot
-				checkers_[teamMoveBoard[i][j]] = move(checkers_[i]);
+				checkers_[teamMoveBoard[i][j]] = std::move(checkers_[i]);
 
 				//If already a king, dont change it. If not, change it and change it back
 				bool isAlreadyKing = checkers_[teamMoveBoard[i][j]]->isKing();
@@ -287,7 +285,7 @@
 				}
 
 				//put the checker back
-				checkers_[i] = move(checkers_[teamMoveBoard[i][j]]);
+				checkers_[i] = std::move(checkers_[teamMoveBoard[i][j]]);
 
 			}
 		}
