@@ -1,30 +1,8 @@
-
-
-
-
-
-
-
-
 #ifndef CONSTS_H_INCLUDED
 #define CONSTS_H_INCLUDED
 
-
-
 #include <vector>
-//using std::vector;
 #include <string>
-//using std::string;
-
-// const std::vector<char> START_BOARD { 
-// 	'r','r','r','r',
-// 	'r','r','r','r',
-// 	'r','r','r','r',
-// 	'_','_','_','_',
-// 	'_','_','_','_',
-// 	'b','b','b','b',
-// 	'b','b','b','b',
-// 	'b','b','b','b' };
 
 extern const std::string START_BOARD_STRING;
 
