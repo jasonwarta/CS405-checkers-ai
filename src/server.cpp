@@ -8,8 +8,6 @@ bool gameMode = true;
 bool computerColor = false;
 bool currentTurn = true;
 
-string currentBoard = "";
-
 void Message::prepareReply(string messageType, const vector<char> & board, string playerColor){
 	ostringstream oss;
 	copy(board.begin(),board.end(),ostream_iterator<char>(oss));
@@ -49,11 +47,11 @@ void Message::prepareBasicMessage(string messageType, string msg) {
 	size = msg.length();
 }
 
-void sendMove(WebSocket * ws, string boardString) {
+void sendMove(WebSocket * ws, string boardString, Communicator &comm) {
 	Message msg;
 	//CheckerBoard boardClass(boardString, computerColor, redMoveBoard, redJumpBoard, blackMoveBoard, blackJumpBoard);
 	CheckerBoard boardClass(boardString, computerColor); // redMoveBoard, redJumpBoard, blackMoveBoard, blackJumpBoard);
-	cout << "recieved move" << endl;
+	// cout << "recieved move" << endl;
 	string move = boardClass.getRandoMove();
 
 	vector<string> allMoves = boardClass.getAllRandoMoves();
@@ -62,7 +60,8 @@ void sendMove(WebSocket * ws, string boardString) {
 		otherMoves += move + ",";
 	}
 
-	currentBoard = move;
+	// currentBoard = move;
+	comm.setBoard(move);
 	msg.prepareReply(
 		"move",
 		move,
@@ -71,11 +70,11 @@ void sendMove(WebSocket * ws, string boardString) {
 	sendMessage(ws,msg);
 }
 
-void sendStartBoard(WebSocket * ws) {
+void sendStartBoard(WebSocket * ws, Communicator & comm) {
 	Message msg;
 
 	if(computerColor) { // computer color is red
-		sendMove(ws, START_BOARD_STRING);
+		sendMove(ws, START_BOARD_STRING, comm);
 	} else { // computer color is black
 		msg.prepareReply("board",START_BOARD_STRING);
 		sendMessage(ws,msg);
@@ -89,14 +88,14 @@ void sendMessage(WebSocket *ws, Message & message) {
 	ws->finalizeMessage(preparedMessage);
 }
 
-void createServerInstance(uWS::Hub &h) {
+void createServerInstance(uWS::Hub &h, Communicator & comm) {
 
 	h.onHttpRequest([](uWS::HttpResponse *res, uWS::HttpRequest req, char *data, size_t, size_t) {
 
-		cout << "onHttpRequest" << endl;
+		// cout << "onHttpRequest" << endl;
 
 		string requestedFile = req.getUrl().toString();
-		cout << requestedFile << endl;
+		// cout << requestedFile << endl;
 
 		stringstream fileData;
 		if (requestedFile.at(0) == '/'){
@@ -113,20 +112,20 @@ void createServerInstance(uWS::Hub &h) {
 			res->end(nullptr, 0);
 	});
 
-	h.onConnection([&h](WebSocket *ws, uWS::HttpRequest req) {
-		cout << "onConnection" << endl;
-		sendStartBoard(ws);
+	h.onConnection([&h,&comm](WebSocket *ws, uWS::HttpRequest req) {
+		// cout << "onConnection" << endl;
+		sendStartBoard(ws,comm);
 	});
 
-	h.onMessage([&h](WebSocket *ws, char *data, size_t length, uWS::OpCode opCode) {
-		cout << "onMessage" << endl;
+	h.onMessage([&h,&comm](WebSocket *ws, char *data, size_t length, uWS::OpCode opCode) {
+		// cout << "onMessage" << endl;
 		if (length && length < 4096) {
 			istringstream iss(string(data,length));
 			vector<string> tokens{
 				istream_iterator<string>{iss},
 				istream_iterator<string>{}};
 
-			cout << iss.str() << endl;
+			// cout << iss.str() << endl;
 
 			Message reply;
 
@@ -139,10 +138,11 @@ void createServerInstance(uWS::Hub &h) {
 
 
 				// Put function call to check move here
-				cout << "Check Move for " << playerColor << endl;
+				// cout << "Check Move for " << playerColor << endl;
 
 				reply.prepareReply("confirmMove",board,playerColor);
-				currentBoard = tokens[1];
+				comm.setBoard(tokens[1]);
+				// currentBoard = tokens[1];
 				sendMessage(ws,reply);
 			}
 
@@ -157,20 +157,20 @@ void createServerInstance(uWS::Hub &h) {
 			}
 
 			else if (tokens[0] == "watching") {
-				cout << "watching" << endl;
+				// cout << "watching" << endl;
 			}
 
 			else if (tokens[0] == "computerMove") {
 				// send a computer move
 
-				sendMove(ws, tokens[1]);
+				sendMove(ws, tokens[1], comm);
 			}
 
 			else if (tokens[0] == "resetGame") {
 				// reset game state
 
-				cout << "Reset Game" << endl;
-				sendStartBoard(ws);
+				// cout << "Reset Game" << endl;
+				sendStartBoard(ws,comm);
 			}
 
 			else if (tokens[0] == "changePlayerColorTo") {
@@ -188,20 +188,20 @@ void createServerInstance(uWS::Hub &h) {
 				
 			}
 
-			cout << "Sent reply" << endl;
-			cout << reply.data << endl;
+			// cout << "Sent reply" << endl;
+			// cout << reply.data << endl;
 		}
 	});
 
 	h.onDisconnection([&h](WebSocket *ws, int code, char *message, size_t length) {
-		cout << "onDisconnection" << endl;
+		// cout << "onDisconnection" << endl;
 	});
 
 	h.getDefaultGroup<uWS::SERVER>().startAutoPing(30000);
 	if (h.listen(3000)) {
-		cout << "Listening to port 3000" << endl;
+		// cout << "Listening to port 3000" << endl;
 	} else {
-		cout << "Failed to listen to port" << endl;
+		// cout << "Failed to listen to port" << endl;
 	}
 }
 
