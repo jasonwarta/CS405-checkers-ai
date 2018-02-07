@@ -12,9 +12,18 @@ import MOVE_TABLE from '../static/moveTable.js';
 
 // r_rrr_r____r_rr____bbb___b_bbR_b
 
+// ________B__r____B_r_rR___rR__R__
+// ___________r____B_r_rR___rR__R__
+
 if (!Array.prototype.last){
     Array.prototype.last = function(){
         return this[this.length - 1];
+    };
+};
+
+if (!Array.prototype.first){
+    Array.prototype.first = function(){
+        return this[0];
     };
 };
 
@@ -85,15 +94,16 @@ function applyJumpsToBoard(self,tile) {
 	return newBoard;
 }
 
-function tileHasNoAdjacentEnemies(board,turnColor,tile,king) {
+function tileHasNoAdjacentEnemies(self,board,turnColor,tile,king) {
+	console.log("checking adjacent tiles");
 	if (king)
 		return (
 			( MOVE_TABLE['red'][tile].reduce( (prev,curr) => {
-				return prev && (board[curr-1] != (turnColor == 'red' ? 'b' : 'r') && board[curr-1] != (turnColor == 'red' ? 'B' : 'R') )
-			}, true) )
+				return prev && (console.log(curr)||true) && (!self.state.jumpedTiles.includes(curr)) && (board[curr-1] != (turnColor == 'red' ? 'b' : 'r') && board[curr-1] != (turnColor == 'red' ? 'B' : 'R') )
+			}, true) ) 
 			&&
 			( MOVE_TABLE['black'][tile].reduce( (prev,curr) => {
-				return prev && (board[curr-1] != (turnColor == 'red' ? 'b' : 'r') && board[curr-1] != (turnColor == 'red' ? 'B' : 'R') )
+				return prev && (console.log(curr)||true) && (!self.state.jumpedTiles.includes(curr)) && (board[curr-1] != (turnColor == 'red' ? 'b' : 'r') && board[curr-1] != (turnColor == 'red' ? 'B' : 'R') )
 			}, true) ) );
 	else
 		return ( MOVE_TABLE[turnColor][tile].reduce( (prev,curr) => {
@@ -204,7 +214,6 @@ function getOwnerColor(board,tile) {
 }
 
 function checkMoveAgainstServer(board,turnColor) {
-	console.log();
 	kingMe[turnColor].forEach( tile => {
 		console.log(getOwnerColor(board,tile));
 		// if (board[val-1] == )
@@ -256,6 +265,7 @@ export default class GameContainer extends React.Component {
 		this.resetTileSelection = this.resetTileSelection.bind(this);
 		this.submitMove = this.submitMove.bind(this);
 		this.setBoardState = this.setBoardState.bind(this);
+		this.sendMoveManually = this.sendMoveManually.bind(this);
 	}
 
 	componentWillMount() {
@@ -362,11 +372,11 @@ export default class GameContainer extends React.Component {
 					// valid jump
 					console.log(`catch#2 : selectedTile:${this.state.selectedTile}, clickedTile:${tile}`);
 					
-					if ( tileHasNoAdjacentEnemies(this.state.board,this.state.turnColor,tile,isKing(this,this.state.selectedTile)) )
+					if ( tileHasNoAdjacentEnemies(this,this.state.board,this.state.turnColor,tile,isKing(this,this.state.selectedTile)) )
 					{
 						// laneded on a tile without any adjacent enemy chips
 						// send move to server
-						// console.log("passed check");
+						console.log("passed check");
 						let newBoard = applyJumpsToBoard(this,tile);
 						checkMoveAgainstServer(newBoard,this.state.turnColor);
 						this.resetTileSelection();
@@ -451,6 +461,28 @@ export default class GameContainer extends React.Component {
 			console.log("invalid board string");
 	}
 
+	sendMoveManually(move) {
+		if (move != "") {
+			let tiles = move.split('-');
+			if (tiles.length > 1){
+				let newBoard = this.state.board.join('');
+
+				newBoard = newBoard.replaceAt(tiles.last()-1,newBoard[tiles.first()-1]);
+
+				tiles.forEach( (item) => {
+					if (item != tiles.last()) {
+						newBoard = newBoard.replaceAt(item-1,'_')
+					}
+				});
+
+				// console.log(newBoard);
+				checkMoveAgainstServer(newBoard,this.state.turnColor);
+			}
+		}
+		else
+			console.log("invalid move")
+	}
+
 	render(){
 		return (
 			<div>
@@ -478,6 +510,7 @@ export default class GameContainer extends React.Component {
 				<MoveTracker computerMoves={this.state.computerMoves} />
 				<CheatBox label="Test Cheat" submitMove={this.submitMove} />
 				<CheatBox label="Change Board" submitMove={this.setBoardState} />
+				<CheatBox label="Enter Move" submitMove={this.sendMoveManually} placeholder="22-17-13" />
 			</div>
 		);
 	}
