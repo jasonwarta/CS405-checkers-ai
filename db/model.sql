@@ -1,0 +1,11 @@
+create database `checkers`;
+use checkers;
+create table 02_tiles ( board char(32), next_board char(32) );
+create table 03_tiles ( board char(32), next_board char(32) );
+create table 04_tiles ( board char(32), next_board char(32) );
+create table 05_tiles ( board char(32), next_board char(32) );
+create table 06_tiles ( board char(32), next_board char(32) );
+create table 07_tiles ( board char(32), next_board char(32) );
+create table 08_tiles ( board char(32), next_board char(32) );
+create table 09_tiles ( board char(32), next_board char(32) );
+create table 10_tiles ( board char(32), next_board char(32) );
