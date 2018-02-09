@@ -28,6 +28,7 @@ using std::ifstream;
 using std::iter_swap;
 
 #include "checkers.h"
+#include "threadUtils.h"
 
 /* Message struct facilitates setting up messages to send to the client
  * 
@@ -44,7 +45,6 @@ using std::iter_swap;
  * 
  */
 
-
 struct Message {
 	char* data;
 	size_t size;
@@ -59,7 +59,7 @@ struct Message {
 typedef uWS::WebSocket<uWS::SERVER> WebSocket;
 typedef basic_string<wchar_t> wstring;
 
-void createServerInstance(uWS::Hub &h);
+void createServerInstance(uWS::Hub &h, Communicator &comm);
 void loadFile(stringstream & fileData, string fname = "index.html");
 void sendStartBoard();
 void sendMessage(WebSocket *ws, Message & message);
