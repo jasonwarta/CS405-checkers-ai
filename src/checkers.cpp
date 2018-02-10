@@ -101,8 +101,7 @@
 	    else
 	    {
 	        std::uniform_int_distribution<> movePicked(0, (possibleMoves_.size()-1));
-	        //int temp = movePicked(rando);
-	        //std::cout << possibleMoves[temp] << std::endl;
+	        
 	        return possibleMoves_[movePicked(rando)];
 	    }
 	}
