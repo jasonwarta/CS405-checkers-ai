@@ -4,7 +4,16 @@
 #include "NeuralNet.h"
 #include <iostream>
 #include <vector>
+#include <cstdlib>
+#include <ctime>
+#include <random>
+using std::mt19937;
 using std::vector;
+using std::uniform_real_distribution;
+using std::cout;
+using std::endl;
+
+
 
 class Nodes {
 public:
@@ -22,17 +31,37 @@ public:
                 randomWeights(edges[i-1]);
                 for(int j = 0; j < layers[i].size(); ++ j) {
                     for(int k = 0; k < layers[i-1].size(); ++k) {
+                        
                         layers[i][j] += layers[i-1][k];
                     }
+                    
                 }
             }
         }
+        cout << "edges: " << endl;
+        printvec(edges);
+        
+        cout << endl << "layers: " << endl;
+        printvec(layers);
+        cout << endl;
         std::cout << layers[layers.size()-1][0] << std::endl;
     }
     
     void randomWeights(vector<float> & rando) {
+        std::random_device rd;
+        std::mt19937 random(rd());
         for(int i = 0; i < rando.size(); ++i) {
-            rando[i] = 1.0;
+            uniform_real_distribution<> randomfloats(-1.0, 1.0);
+            rando[i] = randomfloats(random);
+        }
+    }
+    
+    void printvec(vector<vector<float>> & x) {
+        for(int i = 0; i < x.size(); ++i) {
+            for(int j=0; j < x[i].size(); ++j) {
+                std::cout << x[i][j] << " ";
+            }
+            std::cout << std::endl;
         }
     }
     
@@ -46,10 +75,15 @@ private:
     
 };
 
+
+
+
+
 int main() {
     
-    vector<int> y {4, 5, 3, 1};
+    vector<int> y {2, 1};
     Nodes x(y);
+    
     
     return 0;
 }
