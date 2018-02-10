@@ -64,7 +64,6 @@ private:
 	void updatePossibleMoves();
 
 
-
 private:
 	// pointers to all the checkers
 	std::vector<std::unique_ptr<TheChecker>> checkers_;
@@ -83,6 +82,19 @@ private:
 	std::vector<std::vector<int>> oppTeamJumpBoard_;
 
 };
+
+
+class weights {
+public:
+    
+    
+    
+private:
+    
+    
+    
+};
+
 
 
 #endif // CHECKERS_H_INLCUDED
