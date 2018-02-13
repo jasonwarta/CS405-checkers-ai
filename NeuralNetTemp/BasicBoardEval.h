@@ -1,10 +1,15 @@
 
 
+
+#ifndef BASICBOARDEVAL_H_INCLUDED
+#define BASICBOARDEVAL_H_INCLUDED
+
+
 #include <iostream>
 #include <string>
 #include <math.h>
 
-float basicBoardEval(std::string currBoard, bool redTeamTurn)
+int basicBoardEval(std::string currBoard, bool redTeamTurn)
 {
 	int redC = 0;
 	int blackC = 0;
@@ -37,15 +42,19 @@ float basicBoardEval(std::string currBoard, bool redTeamTurn)
 
 	if(currTeamCheckers == 0)
 	{
-		return 1.0f;
+		return -1;
 	}
 	else if(otherTeamCheckers == 0)
 	{
-		return -1.0f;
+		return 1;
 	}
 
-
-	return tanh((float)currTeamCheckers - (float)otherTeamCheckers);
+	// tanh((float)currTeamCheckers - (float)otherTeamCheckers)
+	return currTeamCheckers - otherTeamCheckers;
 
 
 }
+
+
+
+#endif
