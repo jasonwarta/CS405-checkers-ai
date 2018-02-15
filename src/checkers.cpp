@@ -101,7 +101,7 @@
 	    else
 	    {
 	        std::uniform_int_distribution<> movePicked(0, (possibleMoves_.size()-1));
-	        
+
 	        return possibleMoves_[movePicked(rando)];
 	    }
 	}
@@ -203,7 +203,7 @@
 		{
 			//isAlreadyKing default to true so that it bypasses checks if it doesn't get changed
 			bool isAlreadyKing = true;
-			
+
 			if(currTeamDirection)
 			{
 				isAlreadyKing = checkers_[currTeamJumpBoard_[i][j]]->isKing();
@@ -213,14 +213,14 @@
 
 				}
 			}
-			
+
 			possibleMoves_.push_back(turnBoardToString());
-			
+
 			if(currTeamDirection && !isAlreadyKing && ((redTeamTurn_ && currTeamJumpBoard_[i][j]>27) || (!redTeamTurn_ && currTeamJumpBoard_[i][j]<4)))
 			{
 				checkers_[currTeamJumpBoard_[i][j]]->setKing(false);
 
-			}	
+			}
 		}
 
 
@@ -238,7 +238,7 @@
 	}
 
 	// You can also not include the teamMoveBoard and teamJumpBoard, and just say if goingRightWay == true, use currTeamBoard, else use oppTeamBoard.
-	// 
+	//
 	void CheckerBoard::moveJumpManager(int &i, int &j, bool goingRightWay)
 	{
 
@@ -256,13 +256,13 @@
 			teamMoveBoard = oppTeamMoveBoard_;
 			teamJumpBoard = oppTeamJumpBoard_;
 		}
-		
+
 		// if you can't even move that direction, don't check for other options
 		if(teamMoveBoard[i][j] == -1)
 		{
 			return;
 		}
-		if(checkers_[teamMoveBoard[i][j]] == nullptr) 
+		if(checkers_[teamMoveBoard[i][j]] == nullptr)
 		{
 			if(firstJumpFound_ == false)
 			{
@@ -319,7 +319,7 @@
 			//for loop because 0 deals with left, and 1 deals with right
 			//check both sides independently
 			for(int j=0; j<2; j++)
-			{	
+			{
 
 				moveJumpManager(i, j, true);
 
@@ -330,11 +330,5 @@
 
 			}
 		}
-		
+
 	}
-
-
-
-
-
-

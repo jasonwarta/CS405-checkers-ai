@@ -3,7 +3,7 @@
 
 #include <string>
 #include <algorithm>
-#include "../src/checkers.h"
+#include "checkers.h"
 #include "BasicBoardEval.h"
 
 int minMaxTreeRecurse(std::string theBoard, int depth, bool playerTurn) {

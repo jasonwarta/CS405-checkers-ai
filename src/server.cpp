@@ -1,5 +1,9 @@
 #include "server.h"
 #include "consts.h"
+#include "MinMaxTree.h"
+
+//Bugs
+//____b____________bbBr__b__b_b__b
 
 // PvC=true, CvC=false
 bool gameMode = true;
@@ -52,7 +56,7 @@ void sendMove(WebSocket * ws, string boardString, Communicator &comm) {
 	//CheckerBoard boardClass(boardString, computerColor, redMoveBoard, redJumpBoard, blackMoveBoard, blackJumpBoard);
 	CheckerBoard boardClass(boardString, computerColor); // redMoveBoard, redJumpBoard, blackMoveBoard, blackJumpBoard);
 	// cout << "recieved move" << endl;
-	string move = boardClass.getRandoMove();
+	string move = minMaxTreeBase(boardString, 4, false);
 
 	vector<string> allMoves = boardClass.getAllRandoMoves();
 	string otherMoves = "";
@@ -82,7 +86,7 @@ void sendStartBoard(WebSocket * ws, Communicator & comm) {
 }
 
 void sendMessage(WebSocket *ws, Message & message) {
-	WebSocket::PreparedMessage *preparedMessage = 
+	WebSocket::PreparedMessage *preparedMessage =
 			WebSocket::prepareMessage(message.data, message.size, uWS::TEXT, false);
 	ws->sendPrepared(preparedMessage);
 	ws->finalizeMessage(preparedMessage);
@@ -185,7 +189,7 @@ void createServerInstance(uWS::Hub &h, Communicator & comm) {
 					reply.prepareBasicMessage("changeComputerColorTo","black");
 				}
 
-				
+
 			}
 
 			// cout << "Sent reply" << endl;
@@ -210,6 +214,6 @@ void loadFile(stringstream & fileData, string fname) {
 	fileData << std::ifstream (fname).rdbuf();
 	if (fileData.str().length() > 1)
 		cout << fname << " loaded successfully. " << fileData.str().length() << " bytes loaded." << endl;
-	else 
+	else
 		cout << "Could not load " << fname << endl;
 }

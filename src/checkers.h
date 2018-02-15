@@ -47,7 +47,7 @@ public:
 	// startBoard is the 32 vector
 	// CheckerBoard(std::string startBoard, bool redPlayerTurn, std::vector<std::vector<int>> &redMove, std::vector<std::vector<int>> &redJump, std::vector<std::vector<int>> &blackMove, std::vector<std::vector<int>> &blackJump)
 	CheckerBoard(std::string startBoard, bool redPlayerTurn); //std::vector<std::vector<int>> &redMove, std::vector<std::vector<int>> &redJump, std::vector<std::vector<int>> &blackMove, std::vector<std::vector<int>> &blackJump)
-	
+
 	std::string getRandoMove();
 
 	std::vector<std::string> getAllRandoMoves();
@@ -58,9 +58,9 @@ private:
 	std::string turnBoardToString();
 
 	void JumpingRecursion(int i, int j, bool currTeamDirection); // currTeamDirection gets passed going right way
-	
+
 	void moveJumpManager(int &i, int &j, bool goingRightWay);
-	
+
 	void updatePossibleMoves();
 
 
@@ -86,13 +86,13 @@ private:
 
 class weights {
 public:
-    
-    
-    
+
+
+
 private:
-    
-    
-    
+
+
+
 };
 
 

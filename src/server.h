@@ -31,18 +31,18 @@ using std::iter_swap;
 #include "threadUtils.h"
 
 /* Message struct facilitates setting up messages to send to the client
- * 
- * For sending a new board at start of game or on reset event, use 
+ *
+ * For sending a new board at start of game or on reset event, use
  * prepareReply( "board", START_BOARD )
- * 
+ *
  * To send the confirmation that a player move is valid, use
  * prepareReply( "confirmMove", board, playerColor )
  *  *NOTE: playerColor is "red" or "black". This function is only used if playing with an opponent using the website interface
- * 
+ *
  * To send a computer's move, use
  * prepareReply( "move", board, playerColor )
  *  *NOTE: playerColor is the color that is assigned to the computer
- * 
+ *
  */
 
 struct Message {

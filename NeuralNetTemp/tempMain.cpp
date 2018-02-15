@@ -8,14 +8,14 @@
 #include <vector>
 
 int main() {
-    /* 
+    /*
     // NN test
     std::vector<int> y {1000,1000,10001,420,420,420,1};
     NeuralNet myNodes(y);
     std::cout << "LastNode of NN: " << myNodes.getLastNode() << std::endl;
     */
 
-    /* 
+    /*
     // BasicBoardEval test
 	std::string board0 = "__________brrrr_________________";
 	std::string board1 = "Br____________________________bR";
@@ -29,32 +29,8 @@ int main() {
     */
 
     // MinMaxTree test
-    std::string board0 = "rrrrrrrrrrrr________bbbbbbbbbbbb";
+    std::string board0 = "rr_r___rr___rr____rrrbr_b_bbbb__";
     std::cout << "StartBoard Eval: " << minMaxTreeBase(board0, 4, true) << std::endl;
-    
+
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
