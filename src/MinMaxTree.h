@@ -41,7 +41,7 @@ std::string minMaxTreeBase(std::string theBoard, int depth, bool playerTurn) {
 	for(int index = 1; index < possBoards.size(); ++index) {
 
 		int value = minMaxTreeRecurse(possBoards[index], depth-1, playerTurn);
-		if(value > bestValue) {
+		if(bestValue > value) {
 			bestValue = value;
 			indexBestBoard = index;
 		}
