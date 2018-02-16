@@ -23,7 +23,7 @@ int milli_to_micro(int milliseconds) {
 }
 
 int main(int argc, char const *argv[]) {
-	std::cout << argc << std::endl;
+	// std::cout << argc << std::endl;
 
 	std::mutex mtx;
 	Communicator comm = {START_BOARD_STRING,&mtx};
@@ -37,8 +37,8 @@ int main(int argc, char const *argv[]) {
 	// main loop, only exit when done
 	while (true) {
 		std::this_thread::sleep_for( std::chrono::milliseconds(1000) );
-		std::cout << "in main thread" << endl;
-		std::cout << comm.getBoard() << endl;
+		// std::cout << "in main thread" << endl;
+		// std::cout << comm.getBoard() << endl;
 	}
 
 

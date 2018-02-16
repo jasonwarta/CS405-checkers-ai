@@ -3,15 +3,14 @@
 
 #include <string>
 #include <algorithm>
-#include "../src/checkers.h"
-#include "../src/BasicBoardEval.h"
+#include "checkers.h"
+#include "BasicBoardEval.h"
 
 
 class MinMaxTree
 {
 public:
-	// will crash if there is no possible board to go down
-	// add fix later
+
 	MinMaxTree(std::string theBoard, int depth, bool redPlayer)
 	{
 		redPlayerTurn_ = redPlayer;
@@ -23,7 +22,7 @@ public:
 
 		if(possBoards.size() == 0) 
 		{
-			std::cout << "MinMaxTree.h: No possible moves. bestBoard_ = theBoard" << std::endl;
+			//std::cout << "MinMaxTree.h: No possible moves. Setting bestBoard_ = theBoard" << std::endl;
 			bestBoard_ = theBoard;
 			return;
 		}
@@ -34,14 +33,13 @@ public:
 		for(int i=1; i<possBoards.size(); ++i) 
 		{
 			int value = minMaxTreeRecurse(possBoards[i], depth-1, true);
-			//std::cout << index << "th value is: " << value << std::endl;
 			if(value > bestValue) 
 			{
 				bestValue = value;
 				bestBoard_ = possBoards[i];
 			}
 		}
-	
+		//std::cout << theBoard <<  " - Best Board: " << bestValue << std::endl;
 	}
 
 	std::string getBestBoard()
@@ -54,9 +52,9 @@ private:
 	// change to float when we hook up NN
 	int minMaxTreeRecurse(std::string theBoard, int depth, bool maximizingPlayer)
 	{
+
 		if(depth == 0) // maybe other checks here later?...
 		{
-			//std::cout << "BasicBoardEval: " << basicBoardEval(theBoard, redPlayerTurn_) << std::endl;
 			return basicBoardEval(theBoard, redPlayerTurn_);
 		}
 
@@ -78,7 +76,7 @@ private:
 				int v = minMaxTreeRecurse(possBoards[i], depth-1, false);
 				bestValue = std::max(bestValue, v);
 			}
-			//std::cout << "Recursing level: " << depth_ << " MaxPlayer: True bestValue: " << bestValue << std::endl;
+			//std::cout << "MP: true, depth: " << depth << ", BestValue: " << bestValue << std::endl;
 			return bestValue;
 		}
 		else // NOT maximizingPlayer
@@ -87,7 +85,6 @@ private:
 			std::vector<std::string> possBoards;
 			possBoards = std::move(tempBoard.getAllRandoMoves());
 			// delete class here later
-
 
 			if(possBoards.size() == 0)
 			{
@@ -100,7 +97,7 @@ private:
 				int v = minMaxTreeRecurse(possBoards[i], depth-1, true);
 				worstValue = std::min(worstValue, v);
 			}
-			//std::cout << "Recursing level: " << depth_ << " MaxPlayer: False worstValue: " << worstValue << std::endl;
+			//std::cout << "MP: false, depth: " << depth << ", WorstValue: " << worstValue << std::endl;
 			return worstValue;
 		}
 	}
