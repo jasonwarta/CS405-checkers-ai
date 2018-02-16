@@ -2,7 +2,7 @@
 
 
 #include "NeuralNet.h"
-#include "BasicBoardEval.h"
+#include "../src/BasicBoardEval.h"
 #include "MinMaxTree.h"
 #include "../src/checkers.h"
 #include <vector>
@@ -30,7 +30,7 @@ int main() {
 
     // MinMaxTree test    12345678901234567890123456789012
     std::string board0 = "rrrrrrrrrrrr________bbbbbbbbbbbb";
-    MinMaxTree searchTree(board0, 6, true);
+    MinMaxTree searchTree(board0, 4, true);
     std::cout << "StartBoard Eval: " << searchTree.getBestBoard() << std::endl;
 
     return 0;
