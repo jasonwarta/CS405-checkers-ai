@@ -59,7 +59,7 @@ private:
 		std::vector<std::string> possBoards;
 		possBoards = std::move(tempBoard.getAllRandoMoves());
 
-		if(depth_ == 0 || possBoards.size() == 1) // maybe other checks here later?...
+		if(depth_ == 0) // maybe other checks here later?...
 		{
 			//std::cout << "BasicBoardEval: " << basicBoardEval(theBoard, redPlayerTurn_) << std::endl;
 			return basicBoardEval(theBoard, redPlayerTurn_);
@@ -67,10 +67,18 @@ private:
 		depth_--;
 		std::cout << "Recurse pB" << std::endl;
 
+		CheckerBoard tempBoard(theBoard, redPlayerTurn_);
+		std::vector<std::string> possBoards;
+		possBoards = std::move(tempBoard.getAllRandoMoves());
 		// delete class here later
 
 		if(maximizingPlayer)
 		{
+			if(possBoards.size() == 0)
+			{
+				return -100;
+			}
+
 			int bestValue = minMaxTreeRecurse(possBoards[0], false);
 			for(int i=1; i<possBoards.size(); ++i)
 			{
@@ -80,8 +88,13 @@ private:
 			//std::cout << "Recursing level: " << depth_ << " MaxPlayer: True bestValue: " << bestValue << std::endl;
 			return bestValue;
 		}
-		else if(!maximizingPlayer) // NOT maximizingPlayer
+		else // NOT maximizingPlayer
 		{
+			if(possBoards.size() == 0)
+			{
+				return 100;
+			}
+
 			int worstValue = minMaxTreeRecurse(possBoards[0], true);
 			for(int i=1; i<possBoards.size(); ++i)
 			{
