@@ -3,7 +3,7 @@
 
 #include <string>
 #include <algorithm>
-#include "../src/checkers.h"
+#include "checkers.h"
 #include "BasicBoardEval.h"
 
 
@@ -19,24 +19,31 @@ public:
 
 		CheckerBoard tempBoard(theBoard, redPlayerTurn_);
 		std::vector<std::string> possBoards;
+		std::cout << "Point A" << std::endl;
 		possBoards = std::move(tempBoard.getAllRandoMoves());
 		// Delete tempBoard here
 
+		std::cout << "Point B" << std::endl;
+
 		depth_--;
 
-		bestBoard_ = possBoards[0];
-		int bestValue = minMaxTreeRecurse(possBoards[0], true);
-		for(int index = 1; index < possBoards.size(); ++index) 
-		{
-			int value = minMaxTreeRecurse(possBoards[index], true);
-			//std::cout << index << "th value is: " << value << std::endl;
-			if(value > bestValue) 
+		if(possBoards.size() > 0) {
+			bestBoard_ = possBoards[0];
+			int bestValue = minMaxTreeRecurse(possBoards[0], true);
+			std::cout << "Point C" << std::endl;
+			for(int index = 1; index < possBoards.size(); ++index) 
 			{
-				bestValue = value;
-				bestBoard_ = possBoards[index];
+				int value = minMaxTreeRecurse(possBoards[index], true);
+				//std::cout << index << "th value is: " << value << std::endl;
+				if(value > bestValue) 
+				{
+					bestValue = value;
+					bestBoard_ = possBoards[index];
+				}
 			}
+			std::cout << "Picking value: " << bestValue << std::endl;
 		}
-		//std::cout << "Picking value: " << bestValue << std::endl;
+
 	}
 
 	std::string getBestBoard()
@@ -49,18 +56,25 @@ private:
 	// change to float when we hook up NN
 	int minMaxTreeRecurse(std::string theBoard, bool maximizingPlayer)
 	{
-		if(depth_ == 0) // maybe other checks here later?...
+		std::cout << "Recurse pA-" << std::endl;
+
+		CheckerBoard tempBoard(theBoard, redPlayerTurn_);
+		std::vector<std::string> possBoards;
+		possBoards = std::move(tempBoard.getAllRandoMoves());
+
+		std::cout << theBoard << std::endl;
+		std::cout << "Recurse pA" << std::endl;
+		if(depth_ == 0 || possBoards.size() == 1) // maybe other checks here later?...
 		{
 			//std::cout << "BasicBoardEval: " << basicBoardEval(theBoard, redPlayerTurn_) << std::endl;
 			return basicBoardEval(theBoard, redPlayerTurn_);
 		}
 		depth_--;
+		std::cout << "Recurse pB" << std::endl;
 
-		CheckerBoard tempBoard(theBoard, redPlayerTurn_);
-		std::vector<std::string> possBoards;
-		possBoards = std::move(tempBoard.getAllRandoMoves());
 		// delete class here later
 
+		std::cout << "Recurse pC" << std::endl;
 
 		if(maximizingPlayer)
 		{
@@ -73,7 +87,7 @@ private:
 			//std::cout << "Recursing level: " << depth_ << " MaxPlayer: True bestValue: " << bestValue << std::endl;
 			return bestValue;
 		}
-		else // NOT maximizingPlayer
+		else if(!maximizingPlayer) // NOT maximizingPlayer
 		{
 			int worstValue = minMaxTreeRecurse(possBoards[0], true);
 			for(int i=1; i<possBoards.size(); ++i)
@@ -84,6 +98,8 @@ private:
 			//std::cout << "Recursing level: " << depth_ << " MaxPlayer: False worstValue: " << worstValue << std::endl;
 			return worstValue;
 		}
+		else
+			return basicBoardEval(theBoard, redPlayerTurn_);
 }
 
 

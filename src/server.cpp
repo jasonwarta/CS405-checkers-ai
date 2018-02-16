@@ -4,7 +4,8 @@
 
 //Bugs
 //____b____________bbBr__b__b_b__b
-
+// r__r___r_r___r___________b_rRR_b
+// 
 // PvC=true, CvC=false
 bool gameMode = true;
 
