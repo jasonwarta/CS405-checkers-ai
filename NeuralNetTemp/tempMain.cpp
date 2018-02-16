@@ -28,9 +28,10 @@ int main() {
     std::cout << "BoardEval: " << basicBoardEval(board3, redTeamTurn) << std::endl;
     */
 
-    // MinMaxTree test
-    std::string board0 = "rr_r___rr___rr____rrrbr_b_bbbb__";
-    std::cout << "StartBoard Eval: " << minMaxTreeBase(board0, 4, true) << std::endl;
+    // MinMaxTree test    12345678901234567890123456789012
+    std::string board0 = "rrrrrrrrrrrr________bbbbbbbbbbbb";
+    MinMaxTree searchTree(board0, 4, true);
+    std::cout << "StartBoard Eval: " << searchTree.getBestBoard() << std::endl;
 
     return 0;
 }

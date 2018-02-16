@@ -6,107 +6,92 @@
 #include "checkers.h"
 #include "BasicBoardEval.h"
 
-int minMaxTreeRecurse(std::string theBoard, int depth, bool playerTurn) {
-	// Maybe add aditional break if board gets too bad later?
-	// also break if no moves possible
-	if(depth == 0) {
-		return basicBoardEval(theBoard, playerTurn);
-	}
 
-	CheckerBoard tempBoard(theBoard, playerTurn);
-	std::vector<std::string> possBoards;
-	possBoards = std::move(tempBoard.getAllRandoMoves());
-	// Delete tempBoard Here
+class MinMaxTree
+{
+public:
+	// will crash if there is no possible board to go down
+	// add fix later
+	MinMaxTree(std::string theBoard, int searchDepth, bool redPlayer)
+	{
+		depth_ = searchDepth;
+		redPlayerTurn_ = redPlayer;
 
-	// Have at least one "best value" stored, i starts at 1
-	int bestValue = minMaxTreeRecurse(possBoards[0], depth-1, !playerTurn);
-	for(int index = 1; index < possBoards.size(); ++index) {
-		int value = minMaxTreeRecurse(possBoards[index], depth-1, !playerTurn);
-		bestValue = std::max(bestValue, value);
-	}
-	// Because playerTurn flips, this returns your best move, then opps best move, etc...
-	return bestValue;
-}
+		CheckerBoard tempBoard(theBoard, redPlayerTurn_);
+		std::vector<std::string> possBoards;
+		possBoards = std::move(tempBoard.getAllRandoMoves());
+		// Delete tempBoard here
 
+		depth_--;
 
-std::string minMaxTreeBase(std::string theBoard, int depth, bool playerTurn) {
-
-	CheckerBoard tempBoard(theBoard, playerTurn);
-	std::vector<std::string> possBoards;
-	possBoards = std::move(tempBoard.getAllRandoMoves());
-	// Delete tempBoard here
-
-	int indexBestBoard = 0;
-	int bestValue = minMaxTreeRecurse(possBoards[0], depth-1, playerTurn);
-	for(int index = 1; index < possBoards.size(); ++index) {
-
-		int value = minMaxTreeRecurse(possBoards[index], depth-1, playerTurn);
-		if(bestValue > value) {
-			bestValue = value;
-			indexBestBoard = index;
+		bestBoard_ = possBoards[0];
+		int bestValue = minMaxTreeRecurse(possBoards[0], false);
+		for(int index = 1; index < possBoards.size(); ++index) 
+		{
+			int value = minMaxTreeRecurse(possBoards[index], false);
+			if(value > bestValue) 
+			{
+				bestValue = value;
+				bestBoard_ = possBoards[index];
+			}
 		}
 	}
-	return possBoards[indexBestBoard];
+
+	std::string getBestBoard()
+	{
+		return bestBoard_;
+	}
+
+private:
+	// int because basicBoardEval just returns an int
+	// change to float when we hook up NN
+	int minMaxTreeRecurse(std::string theBoard, bool maximizingPlayer)
+	{
+		if(depth_ == 0) // maybe other checks here later?...
+		{
+			return basicBoardEval(theBoard, redPlayerTurn_);
+		}
+		depth_--;
+
+		CheckerBoard tempBoard(theBoard, redPlayerTurn_);
+		std::vector<std::string> possBoards;
+		possBoards = std::move(tempBoard.getAllRandoMoves());
+		// delete class here later
+
+
+		if(maximizingPlayer)
+		{
+			int bestValue = minMaxTreeRecurse(possBoards[0], false);
+			for(int i=1; i<possBoards.size(); ++i)
+			{
+				int v = minMaxTreeRecurse(possBoards[i], false);
+				bestValue = std::max(bestValue, v);
+			}
+			return bestValue;
+		}
+		else // NOT maximizingPlayer
+		{
+			int worstValue = minMaxTreeRecurse(possBoards[0], true);
+			for(int i=1; i<possBoards.size(); ++i)
+			{
+				int v = minMaxTreeRecurse(possBoards[i], true);
+				worstValue = std::min(worstValue, v);
+			}
+			return worstValue;
+		}
 }
+
+
+private:
+	std::string bestBoard_;
+	int depth_;
+	bool redPlayerTurn_;
+
+};
+
+
+
+
 #endif
 
-/* ----------TEMP BACKUP! MAY DELETE LATER. TESTING POSSIBLE SHORTCUT ABOVE---------
 
-
-int minMaxTreeRecurse(std::string theBoard, int depth, bool playerTurn, bool maximizingPlayer)
-{
-	if(depth == 0) // Maybe add aditional break if board gets too bad later?
-					// also break if no moves possible
-	{
-		return basicBoardEval(theBoard);
-	}
-
-	CheckerBoard tempBoard(theBoard, playerTurn);
-	const std::vector<std::string>> possBoards = std::move(tempBoard.getAllRandoMoves());
-
-	if(maximizingPlayer)
-	{
-
-		int bestValue = minMaxTreeRecurse(possBoards[0], depth-1, !playerTurn, false);
-		for(int i=1; i<possBoards.size(); ++i)
-		{
-			int v = minMaxTreeRecurse(possBoards[i], depth-1, !playerTurn, false);
-			bestValue = std::max(bestValue, v);
-		}
-		return bestValue;
-	}
-	else // NOT maximizingPlayer
-	{
-		int worstValue = minMaxTreeRecurse(possBoards[0], depth-1, !playerTurn, true);
-		for(int i=1; i<possBoards.size(); ++i)
-		{
-			int v = minMaxTreeRecurse(possBoards[i], depth-1, !playerTurn, true);
-			worstValue = std::min(worstValue, v);
-		}
-		return worstValue;
-	}
-}
-
-
-std::string minMaxTreeBase(std::string theBoard, int depth, bool playerTurn)
-{
-
-	CheckerBoard tempBoard(theBoard, playerTurn);
-	const std::vector<std::string>> possBoards = std::move(tempBoard.getAllRandoMoves());
-
-	int indexBestBoard = 0;
-	int bestValue = minMaxTreeRecurse(possBoards[0], depth-1, playerTurn, true)
-
-	for(int i=1; i<possBoards.size(); ++i)
-	{
-		int v = minMaxTreeRecurse(possBoards[i], depth-1, playerTurn, true);
-		if(v>bestValue)
-		{
-			bestValue = v;
-			indexBestBoard = i;
-		}
-	}
-
-	return possBoards[indexBestBoard];
-}
-*/

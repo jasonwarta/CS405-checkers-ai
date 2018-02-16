@@ -51,12 +51,16 @@ void Message::prepareBasicMessage(string messageType, string msg) {
 	size = msg.length();
 }
 
+
+// Note from Cameron. I THINK you dont need to make a checkerboard class here any more,
+// but not 100% sure so im not touching it
 void sendMove(WebSocket * ws, string boardString, Communicator &comm) {
 	Message msg;
 	//CheckerBoard boardClass(boardString, computerColor, redMoveBoard, redJumpBoard, blackMoveBoard, blackJumpBoard);
 	CheckerBoard boardClass(boardString, computerColor); // redMoveBoard, redJumpBoard, blackMoveBoard, blackJumpBoard);
 	// cout << "recieved move" << endl;
-	string move = minMaxTreeBase(boardString, 4, false);
+	MinMaxTree myMove(boardString, 4, false);
+	string move = myMove.getBestBoard();
 
 	vector<string> allMoves = boardClass.getAllRandoMoves();
 	string otherMoves = "";
