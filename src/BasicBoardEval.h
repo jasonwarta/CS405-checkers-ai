@@ -1,6 +1,3 @@
-
-
-
 #ifndef BASICBOARDEVAL_H_INCLUDED
 #define BASICBOARDEVAL_H_INCLUDED
 
@@ -51,8 +48,6 @@ int basicBoardEval(std::string currBoard, bool redTeamTurn)
 
 	// tanh((float)currTeamCheckers - (float)otherTeamCheckers)
 	return currTeamCheckers - otherTeamCheckers;
-
-
 }
 
 
