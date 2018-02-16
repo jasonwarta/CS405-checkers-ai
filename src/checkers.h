@@ -46,13 +46,13 @@ class CheckerBoard
 public:
 	// startBoard is the 32 vector
 	// CheckerBoard(std::string startBoard, bool redPlayerTurn, std::vector<std::vector<int>> &redMove, std::vector<std::vector<int>> &redJump, std::vector<std::vector<int>> &blackMove, std::vector<std::vector<int>> &blackJump)
-	CheckerBoard(std::string startBoard, bool redPlayerTurn); //std::vector<std::vector<int>> &redMove, std::vector<std::vector<int>> &redJump, std::vector<std::vector<int>> &blackMove, std::vector<std::vector<int>> &blackJump)
+	CheckerBoard(std::string &startBoard, bool redPlayerTurn); //std::vector<std::vector<int>> &redMove, std::vector<std::vector<int>> &redJump, std::vector<std::vector<int>> &blackMove, std::vector<std::vector<int>> &blackJump)
 
 	std::string getRandoMove();
 
 	std::vector<std::string> getAllRandoMoves();
 
-	bool isValidBoard(std::string newBoard);
+	bool isValidBoard(std::string &newBoard);
 
 private:
 	std::string turnBoardToString();

@@ -6,7 +6,7 @@
 #include <string>
 #include <math.h>
 
-int basicBoardEval(std::string currBoard, bool redTeamTurn)
+int basicBoardEval(std::string &currBoard, bool redTeamTurn)
 {
 	int redC = 0;
 	int blackC = 0;

@@ -32,7 +32,7 @@
 		==================================================== CHECKER BOARD CLASS ====================================================
 	*/
 
-	CheckerBoard::CheckerBoard(std::string startBoard, bool redPlayerTurn)
+	CheckerBoard::CheckerBoard(std::string &startBoard, bool redPlayerTurn)
 	{
 		redTeamTurn_ = redPlayerTurn;
 		firstJumpFound_ = false;
@@ -111,7 +111,7 @@
 		return possibleMoves_;
 	}
 
-	bool CheckerBoard::isValidBoard(std::string newBoard)
+	bool CheckerBoard::isValidBoard(std::string &newBoard)
 	{
 		for(int i=0; i<possibleMoves_.size(); ++i)
 		{

@@ -11,7 +11,7 @@ class MinMaxTree
 {
 public:
 
-	MinMaxTree(std::string theBoard, int depth, bool redPlayer)
+	MinMaxTree(std::string &theBoard, int depth, bool redPlayer)
 	{
 		redPlayerTurn_ = redPlayer;
 
@@ -53,7 +53,7 @@ public:
 private:
 	// int because basicBoardEval just returns an int
 	// change to float when we hook up NN
-	int minMaxTreeRecurse(std::string theBoard, int depth, bool maximizingPlayer)
+	int minMaxTreeRecurse(std::string &theBoard, int depth, bool maximizingPlayer)
 	{
 
 		if(depth == 0) // maybe other checks here later?...

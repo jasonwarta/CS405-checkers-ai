@@ -1,7 +1,7 @@
 
 
 
-#include "NeuralNet.h"
+#include "BasicNN.h"
 #include "../src/BasicBoardEval.h"
 #include "../src/MinMaxTree.h"
 #include "../src/checkers.h"
