@@ -28,11 +28,14 @@ public:
 		}
 
 		int bestValue = minMaxTreeRecurse(possBoards[0], depth-1, true);
+		std::cout << possBoards[0] << " - Value: " << bestValue << " D: " << depth-1 << " true"<< std::endl;
+
 		bestBoard_ = possBoards[0];
 
 		for(int i=1; i<possBoards.size(); ++i) 
 		{
 			int value = minMaxTreeRecurse(possBoards[i], depth-1, true);
+			std::cout << possBoards[i] << " - Value: " << value << " D: " << depth-1 << " true"<< std::endl;
 			if(value > bestValue) 
 			{
 				bestValue = value;
@@ -71,9 +74,12 @@ private:
 			}
 
 			int bestValue = minMaxTreeRecurse(possBoards[0], depth-1, false);
+			std::cout << possBoards[0] << " - Value: " << bestBalue << " D: " << depth-1 << " false"<< std::endl;
+
 			for(int i=1; i<possBoards.size(); ++i)
 			{
 				int v = minMaxTreeRecurse(possBoards[i], depth-1, false);
+				std::cout << possBoards[i] << " - Value: " << v << " D: " << depth-1 << " false"<< std::endl;
 				bestValue = std::max(bestValue, v);
 			}
 			//std::cout << "MP: true, depth: " << depth << ", BestValue: " << bestValue << std::endl;
@@ -92,9 +98,13 @@ private:
 			}
 
 			int worstValue = minMaxTreeRecurse(possBoards[0], depth-1, true);
+			std::cout << possBoards[0] << " - Value: " << worstValue << " D: " << depth-1 << " true"<< std::endl;
+
 			for(int i=1; i<possBoards.size(); ++i)
 			{
 				int v = minMaxTreeRecurse(possBoards[i], depth-1, true);
+				std::cout << possBoards[i] << " - Value: " << v << " D: " << depth-1 << " true"<< std::endl;
+
 				worstValue = std::min(worstValue, v);
 			}
 			//std::cout << "MP: false, depth: " << depth << ", WorstValue: " << worstValue << std::endl;
