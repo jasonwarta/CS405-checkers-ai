@@ -19,8 +19,11 @@ public:
 
 		CheckerBoard tempBoard(theBoard, redPlayerTurn_);
 		std::vector<std::string> possBoards;
+		std::cout << "Point A" << std::endl;
 		possBoards = std::move(tempBoard.getAllRandoMoves());
 		// Delete tempBoard here
+
+		std::cout << "Point B" << std::endl;
 
 		depth_--;
 
@@ -62,6 +65,7 @@ private:
 			return basicBoardEval(theBoard, redPlayerTurn_);
 		}
 		depth_--;
+		std::cout << "Recurse pB" << std::endl;
 
 		// delete class here later
 
