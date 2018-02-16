@@ -59,7 +59,7 @@ void sendMove(WebSocket * ws, string boardString, Communicator &comm) {
 	//CheckerBoard boardClass(boardString, computerColor, redMoveBoard, redJumpBoard, blackMoveBoard, blackJumpBoard);
 	CheckerBoard boardClass(boardString, computerColor); // redMoveBoard, redJumpBoard, blackMoveBoard, blackJumpBoard);
 	// cout << "recieved move" << endl;
-	MinMaxTree myMove(boardString, 4, false);
+	MinMaxTree myMove(boardString, 4, computerColor);
 	string move = myMove.getBestBoard();
 
 	vector<string> allMoves = boardClass.getAllRandoMoves();
