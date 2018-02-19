@@ -22,11 +22,10 @@ using std::endl;
 #include <math.h> // for tanh. may change if we find a faster sigmoid
 
 
-class NeuralNet {
+class BasicNN {
 public:
     
-    NeuralNet(vector<int> netSize) {
-    	//DONT LET NETSIZE BE 0!!!
+    BasicNN(vector<int> &netSize) {
 
     	setNeuralSizes(netSize);
 

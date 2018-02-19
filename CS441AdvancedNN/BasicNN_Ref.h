@@ -1,7 +1,7 @@
 //
 
-#ifndef NeuralNet_h
-#define NeuralNet_h
+#ifndef NeuralNet_Ref_h
+#define NeuralNet_Ref_h
 
 
 
@@ -22,12 +22,12 @@ using std::endl;
 #include <math.h> // for tanh. may change if we find a faster sigmoid
 
 
-class NeuralNet {
+class BasicNN_Ref {
 public:
     
-    NeuralNet(vector<int> &netSize) {
+    BasicNN_Ref(vector<int> &netSize, vector<vector<float>> &layers, vector<vector<float>> &edges) {
 
-    	setNeuralSizes(netSize);
+    	setNeuralSizes(netSize, layers, edges);
 
         for(int i = 0; i < layers.size(); ++i) {
             if(i == 0) {
@@ -45,9 +45,10 @@ public:
                 }
             }
         }
+        totalWeight_= layers[layers.size()-1][0];
     }
 
-    void setNeuralSizes(std::vector<int> &layerSizes)
+    void setNeuralSizes(std::vector<int> &layerSizes, vector<vector<float>> &layers, vector<vector<float>> &edges)
    	{
         layers.resize(layerSizes.size());
         edges.resize(layerSizes.size()-1);
@@ -69,9 +70,14 @@ public:
         }
     }
     
-    float getLastNode(){
-   		return layers[layers.size()-1][0];
+    float getLastWeight(){
+   		return totalWeight_;
    	}
+
+private:
+    float totalWeight_;  
+
+
 
 /*
     void printvec(vector<vector<float>> & x) {
@@ -85,11 +91,11 @@ public:
 */    
     
     
-    
+/*   
 private:
     vector<vector<float>> layers;
     vector<vector<float>> edges;
-    
+*/  
     
 };
 
@@ -97,4 +103,4 @@ private:
 
 
 
-#endif /* NeuralNet_h */
+#endif /* NeuralNet_Ref_h */
