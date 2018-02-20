@@ -51,7 +51,7 @@ public:
         }
     }
 
-    void setNeuralSizes(std::vector<int> &nodeSizes)
+    void setNeuralSizes(const std::vector<int> &nodeSizes)
    	{
         // The size passed plus begining and end nodes:
         edges.resize(nodeSizes.size()+2);
@@ -82,7 +82,7 @@ public:
         }
         for(int i=0; i<firstSet.size(); ++i)
         {
-            for(int j=0; j<NN91_NODE_LOCATIONS[i].size(), ++j)
+            for(int j=0; j<NN91_NODE_LOCATIONS[i].size(); ++j)
             {
                 nodes[0][i]; // += something
             }

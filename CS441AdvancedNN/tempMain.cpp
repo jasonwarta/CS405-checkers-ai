@@ -3,7 +3,7 @@
 
 #include "BasicNN.h"
 #include "BasicNN_Ref.h"
-#include "NN91_Basic.h"
+// #include "NN91_Basic.h"
 
 #include "../src/BasicBoardEval.h"
 #include "../src/MinMaxTree.h"
@@ -47,7 +47,7 @@ int main() {
     vector<vector<float>> edges;
 
     auto startTime = std::chrono::system_clock::now();
-    for(int i=0; i<5000; i++)
+    for(int i=0; i<50000; i++)
     {
         BasicNN_Ref basicNet(networkSize, layers, edges);
     }
