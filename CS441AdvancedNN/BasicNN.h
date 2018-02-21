@@ -28,25 +28,24 @@ public:
     BasicNN(const vector<int> &netSize) {
 
     	setNeuralSizes(netSize);
-        evaluateNN();
     }
-
+    void randomizeWeights()
+    {
+        randomWeights(layers[0]);
+        for(int i=0; i<edges.size(); ++i)
+        {
+            randomWeights(edges[i]);
+        }
+    }
     void evaluateNN()
     {
-        for(int i = 0; i < layers.size(); ++i) {
-            if(i == 0) {
-                randomWeights(layers[0]);
-            }
-            else {
-                randomWeights(edges[i-1]);
-                for(int j = 0; j < layers[i].size(); ++ j) {
-                    for(int k = 0; k < layers[i-1].size(); ++k) {
-                        
-                        layers[i][j] += (layers[i-1][k] * edges[i-1][layers[i-1].size()*j+k]);
-                    }
-                //clamp between -1 and 1
-                layers[i][j] = tanh(layers[i][j]);
+        for(int i=1; i < layers.size(); ++i) {
+            for(int j=0; j < layers[i].size(); ++ j) {
+                for(int k=0; k < layers[i-1].size(); ++k) {
+                    layers[i][j] += (layers[i-1][k] * edges[i-1][layers[i-1].size()*j+k]);
                 }
+            //clamp between -1 and 1
+            layers[i][j] = tanh(layers[i][j]);
             }
         }
     }

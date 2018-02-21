@@ -53,10 +53,11 @@ int main() {
     vector<vector<float>> edges;
 
     BasicNN basicNet(networkSize);
+    basicNet.randomizeWeights();
     //BasicNN_Ref basicNet(networkSize, layers, edges);
 
     auto startTime = std::chrono::system_clock::now();
-    for(int i=0; i<500000; i++)
+    for(int i=0; i<100000; i++)
     {
         basicNet.evaluateNN();
         //basicNet.evaluateNN(layers, edges);
