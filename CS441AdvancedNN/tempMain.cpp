@@ -45,8 +45,10 @@ int main() {
 
     std::vector<int> networkSize{4, 32, 40, 10, 1};
     const std::string board0 = "rrrrrrrrrrrr________bbbbbbbbbbbb";
+    //NN91_Basic tempBoard(board0, networkSize);
+    //std::cout << "Returned: " << tempBoard.getLastNode() << std::endl;
 
-    /*
+    
     vector<vector<float>> layers;
     vector<vector<float>> edges;
 
@@ -54,7 +56,7 @@ int main() {
     //BasicNN_Ref basicNet(networkSize, layers, edges);
 
     auto startTime = std::chrono::system_clock::now();
-    for(int i=0; i<50000; i++)
+    for(int i=0; i<500000; i++)
     {
         basicNet.evaluateNN();
         //basicNet.evaluateNN(layers, edges);
@@ -63,11 +65,10 @@ int main() {
 
     std::chrono::duration<double> elapsed_time = endTime - startTime;
     std::cout << "Elapsed Time: " << elapsed_time.count() << "s" << std::endl;
-    */
+    
 
 
-    NN91_Basic tempBoard(board0, networkSize);
-    std::cout << "Returned: " << tempBoard.getLastNode() << std::endl;
+
     /*
     int count =0;
     for(int i=0; i<NN91_NODE_LOCATIONS.size(); ++i)

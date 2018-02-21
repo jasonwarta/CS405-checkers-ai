@@ -35,12 +35,12 @@ public:
             {
                 //randomWeights(nodes[0]);
                 setFirstWeights(weightedStartBoard);
-                randomWeights(edges[0]);
+                // randomWeights(edges[0]);
             }
             else 
             {
                 
-                randomWeights(edges[i]);
+                // randomWeights(edges[i]);
                 for(int j=0; j<nodes[i].size(); ++j) 
                 {
                     for(int k=0; k<nodes[i-1].size(); ++k) 
