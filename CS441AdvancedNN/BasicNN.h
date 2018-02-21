@@ -25,10 +25,14 @@ using std::endl;
 class BasicNN {
 public:
     
-    BasicNN(vector<int> &netSize) {
+    BasicNN(const vector<int> &netSize) {
 
     	setNeuralSizes(netSize);
+        evaluateNN();
+    }
 
+    void evaluateNN()
+    {
         for(int i = 0; i < layers.size(); ++i) {
             if(i == 0) {
                 randomWeights(layers[0]);
@@ -41,13 +45,13 @@ public:
                         layers[i][j] += (layers[i-1][k] * edges[i-1][layers[i-1].size()*j+k]);
                     }
                 //clamp between -1 and 1
-               	layers[i][j] = tanh(layers[i][j]);
+                layers[i][j] = tanh(layers[i][j]);
                 }
             }
         }
     }
 
-    void setNeuralSizes(std::vector<int> &layerSizes)
+    void setNeuralSizes(const std::vector<int> &layerSizes)
    	{
         layers.resize(layerSizes.size());
         edges.resize(layerSizes.size()-1);

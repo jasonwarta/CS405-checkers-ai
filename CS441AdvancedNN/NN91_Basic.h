@@ -26,65 +26,79 @@ public:
     {
         // netSize not counting first and last layers
     	setNeuralSizes(netSize);
-
-        for(int i = 0; i < nodes.size(); ++i) 
+        std::vector<float> weightedStartBoard;
+        weightedStartBoard = stringToWeights(theBoard);
+        
+        for(int i=0; i<nodes.size(); ++i) 
         {
             if(i == 0) 
             {
                 //randomWeights(nodes[0]);
-                setFirstWeights(nodes[0], theBoard);
+                setFirstWeights(weightedStartBoard);
                 randomWeights(edges[0]);
             }
             else 
             {
-                randomWeights(edges[i-1]);
-                for(int j = 0; j < nodes[i].size(); ++ j) 
+                
+                randomWeights(edges[i]);
+                for(int j=0; j<nodes[i].size(); ++j) 
                 {
-                    for(int k = 0; k < nodes[i-1].size(); ++k) 
+                    for(int k=0; k<nodes[i-1].size(); ++k) 
                     {
-                        nodes[i][j] += (nodes[i-1][k] * edges[i-1][nodes[i-1].size()*j+k]);
+                        nodes[i][j] += (nodes[i-1][k] * edges[i][nodes[i-1].size()*j+k]);
                     }
                 //clamp between -1 and 1
                	nodes[i][j] = tanh(nodes[i][j]);
                 }
+
             }
         }
-    }
 
+    }
+    std::vector<float> stringToWeights(const std::string &theBoard)
+    {
+        // put real stringToWeights thingy here later
+        std::vector<float> returnMe {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 
+                                     0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 
+                                     1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+        return returnMe;
+    }
     void setNeuralSizes(const std::vector<int> &nodeSizes)
    	{
         // The size passed plus begining and end nodes:
         edges.resize(nodeSizes.size()+2);
         nodes.resize(nodeSizes.size()+2);
 
-        edges[0].resize(913);
+        edges[0].resize(854);
         nodes[0].resize(91, 0.0f);
         for(int i=1; i<nodes.size()-1; ++i) 
         {            
-            // edges = left.size() * right.size() + right.size(), for biases
-            // simplifies to edges = left * (right + 1)
-            edges[i].resize(nodes[i].size() * (nodes[i+1].size()+1) );
+            // edges = left.size() * right.size() + right.size()
+            edges[i].resize(nodes[i].size() * (nodes[i+1].size()) );
             nodes[i].resize(nodeSizes[i], 0.0f);
 
         }
         // Last edge, since its going to a single node, is resized to
         // the size of the second to last set of nodes
-        edges[edges.size()-1].resize(nodes[nodes.size()-2]].size());
-        nodes[size()-1].resize(1, 0.0f);
+        edges[edges.size()-1].resize(nodes[nodes.size()-2].size());
+        nodes[nodes.size()-1].resize(1, 0.0f);
    	}
 
-    void setFirstWeights(std::vector<float> &firstSet, const std::vector<float> & weightedStartBoard)
+    void setFirstWeights(const std::vector<float> &weightedStartBoard)
     {
         if(weightedStartBoard.size() != 32)
         {
             std::cout << "NeuralNet.h Warning: board passed was NOT 32 size. Unknown things about to happen!" << std::endl;
             return;
         }
-        for(int i=0; i<firstSet.size(); ++i)
+
+        int edgeCount = 0;
+        for(int i=0; i<nodes[0].size(); ++i)
         {
             for(int j=0; j<NN91_NODE_LOCATIONS[i].size(); ++j)
             {
-                nodes[0][i]; // += something
+                nodes[0][i] += weightedStartBoard[ NN91_NODE_LOCATIONS[i][j] ] * edges[0][edgeCount];
+                edgeCount++;
             }
         }
     }
@@ -103,18 +117,7 @@ public:
     float getLastNode()
     {
    		return nodes[nodes.size()-1][0];
-   	}
-
-/*
-    void printvec(vector<vector<float>> & x) {
-        for(int i = 0; i < x.size(); ++i) {
-            for(int j=0; j < x[i].size(); ++j) {
-                std::cout << x[i][j] << " ";
-            }
-            std::cout << std::endl;
-        }
-    }
-*/    
+   	} 
     
     
     

@@ -3,11 +3,12 @@
 
 #include "BasicNN.h"
 #include "BasicNN_Ref.h"
-// #include "NN91_Basic.h"
+#include "NN91_Basic.h"
 
 #include "../src/BasicBoardEval.h"
 #include "../src/MinMaxTree.h"
 #include "../src/checkers.h"
+#include "../src/consts.h"
 
 #include <vector>
 #include <chrono>
@@ -43,21 +44,41 @@ int main() {
 
 
     std::vector<int> networkSize{4, 32, 40, 10, 1};
+    const std::string board0 = "rrrrrrrrrrrr________bbbbbbbbbbbb";
+
+    /*
     vector<vector<float>> layers;
     vector<vector<float>> edges;
+
+    BasicNN basicNet(networkSize);
+    //BasicNN_Ref basicNet(networkSize, layers, edges);
 
     auto startTime = std::chrono::system_clock::now();
     for(int i=0; i<50000; i++)
     {
-        BasicNN_Ref basicNet(networkSize, layers, edges);
+        basicNet.evaluateNN();
+        //basicNet.evaluateNN(layers, edges);
     }
     auto endTime = std::chrono::system_clock::now();
 
     std::chrono::duration<double> elapsed_time = endTime - startTime;
     std::cout << "Elapsed Time: " << elapsed_time.count() << "s" << std::endl;
+    */
 
 
-    
+    NN91_Basic tempBoard(board0, networkSize);
+    std::cout << "Returned: " << tempBoard.getLastNode() << std::endl;
+    /*
+    int count =0;
+    for(int i=0; i<NN91_NODE_LOCATIONS.size(); ++i)
+    {
+        for(int j=0; j<NN91_NODE_LOCATIONS[i].size(); ++j)
+        {
+            count++;
+        }
+    }
+    std::cout << "Count is: " << count << std::endl;
+    */
     return 0;
 }
 

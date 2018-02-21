@@ -28,7 +28,12 @@ public:
     BasicNN_Ref(vector<int> &netSize, vector<vector<float>> &layers, vector<vector<float>> &edges) {
 
     	setNeuralSizes(netSize, layers, edges);
+        evaluateNN(layers, edges);
 
+    }
+
+    void evaluateNN(vector<vector<float>> &layers, vector<vector<float>> &edges)
+    {
         for(int i = 0; i < layers.size(); ++i) {
             if(i == 0) {
                 randomWeights(layers[0]);
@@ -41,12 +46,13 @@ public:
                         layers[i][j] += (layers[i-1][k] * edges[i-1][layers[i-1].size()*j+k]);
                     }
                 //clamp between -1 and 1
-               	layers[i][j] = tanh(layers[i][j]);
+                layers[i][j] = tanh(layers[i][j]);
                 }
             }
         }
         totalWeight_= layers[layers.size()-1][0];
     }
+
 
     void setNeuralSizes(std::vector<int> &layerSizes, vector<vector<float>> &layers, vector<vector<float>> &edges)
    	{
