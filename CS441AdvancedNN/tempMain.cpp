@@ -43,7 +43,7 @@ int main() {
     */
 
 
-    std::vector<int> networkSize{4, 32, 40, 10, 1};
+    std::vector<int> networkSize{32, 40, 10, 1};
     const std::string board0 = "rrrrrrrrrrrr________bbbbbbbbbbbb";
     //NN91_Basic tempBoard(board0, networkSize);
     //std::cout << "Returned: " << tempBoard.getLastNode() << std::endl;
@@ -54,10 +54,12 @@ int main() {
 
     BasicNN basicNet(networkSize);
     basicNet.randomizeWeights();
-    //BasicNN_Ref basicNet(networkSize, layers, edges);
 
+    //BasicNN_Ref basicNet(networkSize, layers, edges);
+    const int NumBoards = 150000;
     auto startTime = std::chrono::system_clock::now();
-    for(int i=0; i<100000; i++)
+
+    for(int i=0; i<NumBoards; i++)
     {
         basicNet.evaluateNN();
         //basicNet.evaluateNN(layers, edges);
@@ -66,7 +68,7 @@ int main() {
 
     std::chrono::duration<double> elapsed_time = endTime - startTime;
     std::cout << "Elapsed Time: " << elapsed_time.count() << "s" << std::endl;
-    
+    std::cout << "Time Per Board: " << elapsed_time.count()/NumBoards << "s" << std::endl;    
 
 
 

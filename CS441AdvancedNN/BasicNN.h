@@ -41,11 +41,14 @@ public:
     {
         for(int i=1; i < layers.size(); ++i) {
             for(int j=0; j < layers[i].size(); ++ j) {
+                float currNode = 0;
                 for(int k=0; k < layers[i-1].size(); ++k) {
-                    layers[i][j] += (layers[i-1][k] * edges[i-1][layers[i-1].size()*j+k]);
+                    currNode += (layers[i-1][k] * edges[i-1][layers[i-1].size()*j+k]);
+                    // layers[i][j] += (layers[i-1][k] * edges[i-1][j+k]);
                 }
-            //clamp between -1 and 1
-            layers[i][j] = tanh(layers[i][j]);
+
+                //clamp between -1 and 1
+                layers[i][j] = tanh(currNode);
             }
         }
     }
