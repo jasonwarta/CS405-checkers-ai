@@ -25,45 +25,52 @@ using std::endl;
 class BasicNN {
 public:
     
-    BasicNN(const vector<int> &netSize) {
-
-    	setNeuralSizes(netSize);
+    BasicNN(const vector<int> &netSize) 
+    {
+        networkSize = netSize;
+    	setNeuralSizes(networkSize);
     }
     void randomizeWeights()
     {
-        randomWeights(layers[0]);
-        for(int i=0; i<edges.size(); ++i)
-        {
-            randomWeights(edges[i]);
-        }
+        //randomWeights(layers);
+        randomWeights(edges);
+
     }
     void evaluateNN()
     {
-        for(int i=1; i < layers.size(); ++i) {
-            for(int j=0; j < layers[i].size(); ++ j) {
-                float currNode = 0;
-                for(int k=0; k < layers[i-1].size(); ++k) {
-                    currNode += (layers[i-1][k] * edges[i-1][layers[i-1].size()*j+k]);
-                    // layers[i][j] += (layers[i-1][k] * edges[i-1][j+k]);
+        EdgesUsed = 0;
+        NodesUsed = 0;
+        for(int i=1; i < networkSize.size(); ++i) 
+        {
+            for(int j=0; j < networkSize[i]; ++ j) 
+            {
+                currNode = 0;
+                for(int k=0; k<networkSize[i-1]; ++k) 
+                {
+                    currNode += (layers[NodesUsed] * edges[EdgesUsed]);
+                    EdgesUsed++;
                 }
-
-                //clamp between -1 and 1
-                layers[i][j] = tanh(currNode);
+                NodesUsed++;
+                layers[currNode] = tanh(currNode);
             }
         }
     }
 
     void setNeuralSizes(const std::vector<int> &layerSizes)
    	{
-        layers.resize(layerSizes.size());
-        edges.resize(layerSizes.size()-1);
+        int totalNodes = 0;
+        for(int i=0; i<layerSizes.size(); ++i) 
+        {
+            totalNodes += layerSizes[i];
+        }
+        layers.resize(totalNodes, 0.0f);
 
-        for(int i=0; i<layers.size(); ++i) {
-        	layers[i].resize(layerSizes[i], 0.0f);
+        int totalEdges = 0;
+        for(int i=0; i<layers.size()-1; ++i)
+        {
+            totalEdges += layerSizes[i] * layerSizes[i+1];
         }
-        for(int i=0; i<edges.size(); ++i) {
-        	edges[i].resize(layers[i].size() * layers[i+1].size());
-        }
+        edges.resize(totalEdges);
    	}
     
     void randomWeights(vector<float> & rando) {
@@ -76,7 +83,7 @@ public:
     }
     
     float getLastNode(){
-   		return layers[layers.size()-1][0];
+   		return layers[layers.size()-1];
    	}
 
 /*
@@ -93,9 +100,13 @@ public:
     
     
 private:
-    vector<vector<float>> layers;
-    vector<vector<float>> edges;
+    vector<float> layers;
+    vector<float> edges;
+    vector<int> networkSize;
     
+    int EdgesUsed;
+    int NodesUsed;
+    float currNode;
     
 };
 

@@ -56,10 +56,10 @@ int main() {
     basicNet.randomizeWeights();
 
     //BasicNN_Ref basicNet(networkSize, layers, edges);
-    const int NumBoards = 150000;
+    const int NumBoards = 275000;
     auto startTime = std::chrono::system_clock::now();
 
-    for(int i=0; i<NumBoards; i++)
+    for(int i=0; i<NumBoards; ++i)
     {
         basicNet.evaluateNN();
         //basicNet.evaluateNN(layers, edges);
