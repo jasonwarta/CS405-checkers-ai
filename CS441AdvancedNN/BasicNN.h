@@ -50,8 +50,10 @@ public:
                     currNode += (layers[NodesUsed] * edges[EdgesUsed]);
                     EdgesUsed++;
                 }
+                layers[NodesUsed] = tanh(currNode);
+                // layers[NodesUsed] = currNode / (1 + std::abs(currNode));
                 NodesUsed++;
-                layers[currNode] = tanh(currNode);
+
             }
         }
     }
