@@ -1,88 +1,121 @@
+/*
+    Cameron Showalter
+    CS 405 && CS 441
+    2-22-2018
+    Version: alot
+*/
 
 
 
-#include "BasicNN.h"
-#include "BasicNN_Ref.h"
-#include "NN91_Basic.h"
+#define BASIC_NN 1
+#define BASIC_NN_SIMD 1
+#define NN91_BASIC_NET 0
+#define NN91_SIMD_NET 0
 
-#include "../src/BasicBoardEval.h"
-#include "../src/MinMaxTree.h"
-#include "../src/checkers.h"
-#include "../src/consts.h"
+#if BASIC_NN
+    #include "BasicNN.h"
+#endif
+#if BASIC_NN_SIMD
+    #include "BasicNN_SIMD.h"
+#endif
+#if NN91_BASIC_NET
+    #include "NN91_Basic.h"
+#endif
+#if NN91_SIMD_NET
+    #include "NN91_SIMD"
+#endif
+
 
 #include <vector>
 #include <chrono>
+#include <iostream>
 
+int main() 
+{
 
-int main() {
-    /*
-    // NN test
-    std::vector<int> y {1000,1000,10001,420,420,420,1};
-    NeuralNet myNodes(y);
-    std::cout << "LastNode of NN: " << myNodes.getLastNode() << std::endl;
-    */
-
-    /*
-    // BasicBoardEval test
-	std::string board0 = "__________brrrr_________________";
-	std::string board1 = "Br____________________________bR";
-	std::string board2 = "________bb______________________";
-	std::string board3 = "________rr______________________";
-	bool redTeamTurn = true;
-    std::cout << "BoardEval: " << basicBoardEval(board0, redTeamTurn) << std::endl;
-    std::cout << "BoardEval: " << basicBoardEval(board1, redTeamTurn) << std::endl;
-    std::cout << "BoardEval: " << basicBoardEval(board2, redTeamTurn) << std::endl;
-    std::cout << "BoardEval: " << basicBoardEval(board3, redTeamTurn) << std::endl;
-    */
-
-    /*
-    // MinMaxTree test    12345678901234567890123456789012
-    std::string board0 = "rrrrrrrrrrrr________bbbbbbbbbbbb";
-    MinMaxTree searchTree(board0, 4, false);
-    std::cout << "StartBoard Eval: " << searchTree.getBestBoard() << std::endl;
-    */
-
-
+    // config options:
     std::vector<int> networkSize{32, 40, 10, 1};
     const std::string board0 = "rrrrrrrrrrrr________bbbbbbbbbbbb";
-    //NN91_Basic tempBoard(board0, networkSize);
-    //std::cout << "Returned: " << tempBoard.getLastNode() << std::endl;
-
-    
-    vector<vector<float>> layers;
-    vector<vector<float>> edges;
-
-    BasicNN basicNet(networkSize);
-    basicNet.randomizeWeights();
-
-    //BasicNN_Ref basicNet(networkSize, layers, edges);
     const int NumBoards = 275000;
-    auto startTime = std::chrono::system_clock::now();
-
-    for(int i=0; i<NumBoards; ++i)
-    {
-        basicNet.evaluateNN();
-        //basicNet.evaluateNN(layers, edges);
-    }
-    auto endTime = std::chrono::system_clock::now();
-
-    std::chrono::duration<double> elapsed_time = endTime - startTime;
-    std::cout << "Elapsed Time: " << elapsed_time.count() << "s" << std::endl;
-    std::cout << "Time Per Board: " << elapsed_time.count()/NumBoards << "s" << std::endl;    
 
 
+    // Different boards:
+    #if BASIC_NN
+        BasicNN basicNet(networkSize);
+        basicNet.randomizeWeights();
+    #endif
+    #if BASIC_NN_SIMD
+        BasicNN_SIMD basicNetSIMD(networkSize);
+        basicNetSIMD.randomizeWeights();
+    #endif
+    #if NN91_BASIC_NET
+        NN91_Basic NN91_BasicNet(board0, networkSize);
+        // NN91_BasicNet.randomizeWeights();
+    #endif
+    #if NN91_SIMD_NET
+        NN91_SIMD NN91_SIMDnetwork(networkSize);
+        NN91_SIMDnetwork.randomizeWeights();
+    #endif
 
-    /*
-    int count =0;
-    for(int i=0; i<NN91_NODE_LOCATIONS.size(); ++i)
-    {
-        for(int j=0; j<NN91_NODE_LOCATIONS[i].size(); ++j)
+
+    // Timing Math:
+    #if BASIC_NN
+        auto evalBasicNetStart = std::chrono::system_clock::now();
+        for(int i=0; i<NumBoards; ++i)
         {
-            count++;
+            basicNet.evaluateNN();
         }
-    }
-    std::cout << "Count is: " << count << std::endl;
-    */
+        auto evalBasicNetEnd = std::chrono::system_clock::now();
+    #endif
+
+    #if BASIC_NN_SIMD
+        auto evalBasicSIMDstart = std::chrono::system_clock::now();
+        for(int i=0; i<NumBoards; ++i)
+        {
+            basicNetSIMD.evaluateNN();
+        }
+        auto evalBasicSIMDend = std::chrono::system_clock::now();
+    #endif
+
+    #if NN91_BASIC_NET
+        auto eval91BasicStart = std::chrono::system_clock::now();
+        for(int i=0; i<NumBoards; ++i)
+        {
+            // NN91_BasicNet.evaluateNN();
+            // Will finish NN91_Basic soon...
+        }
+        auto eval91BasicEnd = std::chrono::system_clock::now();
+    #endif
+
+    #if NN91_SIMD_NET
+        auto eval91SIMDstart = std::chrono::system_clock::now();
+        for(int i=0; i<NumBoards; ++i)
+        {
+            NN91_SIMDnetwork.evaluateNN();
+        }
+        auto eval91SIMDend = std::chrono::system_clock::now();
+    #endif
+
+
+
+    std::cout << "TIMES: " << std::endl;
+
+    #if BASIC_NN
+        std::chrono::duration<double> elapsed_seconds_1 = evalBasicNetEnd - evalBasicNetStart;
+        std::cout << "Time of BasicNN: " << elapsed_seconds_1.count() << "s total, or " << elapsed_seconds_1.count() / NumBoards << "s/board" << " for " << NumBoards << " boards" << std::endl;
+    #endif
+    #if BASIC_NN_SIMD
+        std::chrono::duration<double> elapsed_seconds_2 = evalBasicSIMDend - evalBasicSIMDstart;
+        std::cout << "Time of BasicNN with SIMD: " << elapsed_seconds_2.count() << "s total, or " << elapsed_seconds_2.count() / NumBoards << "s/board" << " for " << NumBoards << " boards" << std::endl;
+    #endif
+    #if NN91_BASIC_NET
+        std::chrono::duration<double> elapsed_seconds_3 = eval91BasicEnd - eval91BasicStart;
+        std::cout << "Time of NN91: " << elapsed_seconds_3.count() << "s total, or " << elapsed_seconds_3.count() / NumBoards << "s/board" << " for " << NumBoards << " boards" << std::endl;
+    #endif
+    #if NN91_SIMD_NET
+        std::chrono::duration<double> elapsed_seconds_4 = eval91SIMDend - eval91SIMDstartt;
+        std::cout << "Time of NN91 with SIMD: " << elapsed_seconds_4.count() << "s total, or " << elapsed_seconds_4.count() / NumBoards << "s/board" << " for " << NumBoards << " boards" << std::endl;
+    #endif
     return 0;
 }
 

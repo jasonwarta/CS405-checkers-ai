@@ -1,7 +1,7 @@
 //
 
-#ifndef BASIC_NN_H
-#define BASIC_NN_H
+#ifndef BASIC_NN_SIMD_H
+#define BASIC_NN_SIMD_H
 
 
 
@@ -12,16 +12,17 @@
 #include <ctime>
 #include <random>
 #include <iomanip>
-
-
-
 #include <math.h> // for tanh. may change if we find a faster sigmoid
 
+#include <immintrin.h> // -mavx -march=native?
+#include "floats.h"
 
-class BasicNN {
+
+
+class BasicNN_SIMD {
 public:
     
-    BasicNN(const std::vector<int> &netSize) 
+    BasicNN_SIMD(const std::vector<int> &netSize) 
     {
         networkSize = netSize;
     	setNeuralSizes(networkSize);

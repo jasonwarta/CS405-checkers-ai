@@ -22,7 +22,7 @@ class NN91_Basic
 {
 public:
     
-    NN91_Basic(const std::string &theBoard, const vector<int> &netSize) 
+    NN91_Basic(const std::string &theBoard, const std::vector<int> &netSize) 
     {
         // netSize not counting first and last layers
     	setNeuralSizes(netSize);
@@ -103,7 +103,7 @@ public:
         }
     }
 
-    void randomWeights(vector<float> & rando) 
+    void randomWeights(std::vector<float> & rando) 
     {
         std::random_device rd;
         std::mt19937 random(rd());
@@ -122,8 +122,8 @@ public:
     
     
 private:
-    vector<vector<float>> nodes;
-    vector<vector<float>> edges;
+    std::vector<std::vector<float>> nodes;
+    std::vector<std::vector<float>> edges;
     
 };
 
