@@ -30,10 +30,11 @@ public:
     {
         randomWeights(edges);
     }
-    void evaluateNN()
+    void evaluateNN(const std::string &theBoard)
     {
-        EdgesUsed = 0;
-        NodesUsed = 0;
+        setFirstWeights(theBoard);
+        EdgesUsed = networkSize[0];
+        NodesUsed = networkSize[0]; // should be 32
         for(int i=1; i < networkSize.size(); ++i) 
         {
             for(int j=0; j < networkSize[i]; ++ j) 
@@ -51,7 +52,14 @@ public:
             }
         }
     }
-
+    void setFirstWeights(const std::string &theBoard)
+    {
+        for(int i=0; i<networkSize[0]; ++i)
+        {
+            edges[i] = 2.2f;
+            layers[i] = 3.0f * 2.2f; // For now: Node = "PieceRank" * edge
+        }
+    }
     void setNeuralSizes(const std::vector<int> &layerSizes)
    	{
         int totalNodes = 0;
@@ -61,7 +69,7 @@ public:
         }
         layers.resize(totalNodes, 0.0f);
 
-        int totalEdges = 0;
+        int totalEdges = layerSizes[0]; // Should be the first 32
         for(int i=0; i<layers.size()-1; ++i)
         {
             totalEdges += layerSizes[i] * layerSizes[i+1];

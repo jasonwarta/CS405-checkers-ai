@@ -8,7 +8,7 @@
 
 
 #define BASIC_NN 1
-#define BASIC_NN_SIMD 1
+#define BASIC_NN_SIMD 0
 #define NN91_BASIC_NET 0
 #define NN91_SIMD_NET 0
 
@@ -36,7 +36,7 @@ int main()
     // config options:
     std::vector<int> networkSize{32, 40, 10, 1};
     const std::string board0 = "rrrrrrrrrrrr________bbbbbbbbbbbb";
-    const int NumBoards = 275000;
+    const int NumBoards = 2000;
 
 
     // Different boards:
@@ -49,7 +49,7 @@ int main()
         basicNetSIMD.randomizeWeights();
     #endif
     #if NN91_BASIC_NET
-        NN91_Basic NN91_BasicNet(board0, networkSize);
+        NN91_Basic NN91_BasicNet(networkSize);
         // NN91_BasicNet.randomizeWeights();
     #endif
     #if NN91_SIMD_NET
@@ -63,7 +63,7 @@ int main()
         auto evalBasicNetStart = std::chrono::system_clock::now();
         for(int i=0; i<NumBoards; ++i)
         {
-            basicNet.evaluateNN();
+            basicNet.evaluateNN(board0);
         }
         auto evalBasicNetEnd = std::chrono::system_clock::now();
     #endif
@@ -72,7 +72,7 @@ int main()
         auto evalBasicSIMDstart = std::chrono::system_clock::now();
         for(int i=0; i<NumBoards; ++i)
         {
-            basicNetSIMD.evaluateNN();
+            basicNetSIMD.evaluateNN(board0);
         }
         auto evalBasicSIMDend = std::chrono::system_clock::now();
     #endif
@@ -81,8 +81,7 @@ int main()
         auto eval91BasicStart = std::chrono::system_clock::now();
         for(int i=0; i<NumBoards; ++i)
         {
-            // NN91_BasicNet.evaluateNN();
-            // Will finish NN91_Basic soon...
+            NN91_BasicNet.evaluateNN(board0);
         }
         auto eval91BasicEnd = std::chrono::system_clock::now();
     #endif
@@ -91,7 +90,7 @@ int main()
         auto eval91SIMDstart = std::chrono::system_clock::now();
         for(int i=0; i<NumBoards; ++i)
         {
-            NN91_SIMDnetwork.evaluateNN();
+            NN91_SIMDnetwork.evaluateNN(board0);
         }
         auto eval91SIMDend = std::chrono::system_clock::now();
     #endif

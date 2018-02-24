@@ -22,86 +22,85 @@ class NN91_Basic
 {
 public:
     
-    NN91_Basic(const std::string &theBoard, const std::vector<int> &netSize) 
+    NN91_Basic(const std::vector<int> &netSize) 
     {
-        // netSize not counting first and last layers
     	setNeuralSizes(netSize);
-        std::vector<float> weightedStartBoard;
-        weightedStartBoard = stringToWeights(theBoard);
-        
-        for(int i=0; i<nodes.size(); ++i) 
+    }
+    void evaluateNN(const std::string &theBoard)
+    {
+        stringToWeightedBoard(theBoard);
+        setFirstWeights();
+        // NodeCount = 91 && edgecount = 854
+
+        for(int i=1; i < networkSize.size(); ++i) 
         {
-            if(i == 0) 
+            for(int j=0; j < networkSize[i]; ++ j) 
             {
-                //randomWeights(nodes[0]);
-                setFirstWeights(weightedStartBoard);
-                // randomWeights(edges[0]);
-            }
-            else 
-            {
-                
-                // randomWeights(edges[i]);
-                for(int j=0; j<nodes[i].size(); ++j) 
+                currNode = 0;
+                for(int k=0; k<networkSize[i-1]; ++k) 
                 {
-                    for(int k=0; k<nodes[i-1].size(); ++k) 
-                    {
-                        nodes[i][j] += (nodes[i-1][k] * edges[i][nodes[i-1].size()*j+k]);
-                    }
-                //clamp between -1 and 1
-               	nodes[i][j] = tanh(nodes[i][j]);
+                    currNode += nodes[nodeCount] * edges[edgeCount];
+                    edgeCount++;
                 }
+                nodes[nodeCount] = tanh(currNode);
+                // layers[nodeCount] = currNode / (1 + std::abs(currNode));
+                nodeCount++;
 
             }
         }
 
     }
-    std::vector<float> stringToWeights(const std::string &theBoard)
+    void stringToWeightedBoard(const std::string &theBoard)
     {
-        // put real stringToWeights thingy here later
-        std::vector<float> returnMe {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 
-                                     0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 
-                                     1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
-        return returnMe;
+        weightedStartBoard = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+                              0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+                              -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f};
     }
-    void setNeuralSizes(const std::vector<int> &nodeSizes)
-   	{
-        // The size passed plus begining and end nodes:
-        edges.resize(nodeSizes.size()+2);
-        nodes.resize(nodeSizes.size()+2);
-
-        edges[0].resize(854);
-        nodes[0].resize(91, 0.0f);
-        for(int i=1; i<nodes.size()-1; ++i) 
-        {            
-            // edges = left.size() * right.size() + right.size()
-            edges[i].resize(nodes[i].size() * (nodes[i+1].size()) );
-            nodes[i].resize(nodeSizes[i], 0.0f);
-
-        }
-        // Last edge, since its going to a single node, is resized to
-        // the size of the second to last set of nodes
-        edges[edges.size()-1].resize(nodes[nodes.size()-2].size());
-        nodes[nodes.size()-1].resize(1, 0.0f);
-   	}
-
-    void setFirstWeights(const std::vector<float> &weightedStartBoard)
+    void setFirstWeights()
     {
-        if(weightedStartBoard.size() != 32)
-        {
-            std::cout << "NeuralNet.h Warning: board passed was NOT 32 size. Unknown things about to happen!" << std::endl;
-            return;
-        }
-
-        int edgeCount = 0;
-        for(int i=0; i<nodes[0].size(); ++i)
+        edgeCount = 0;
+        nodeCount = 0;
+        for(int i=0; i<NN91_NODE_LOCATIONS.size(); ++i)
         {
             for(int j=0; j<NN91_NODE_LOCATIONS[i].size(); ++j)
             {
-                nodes[0][i] += weightedStartBoard[ NN91_NODE_LOCATIONS[i][j] ] * edges[0][edgeCount];
+                nodes[i] += weightedStartBoard[NN91_NODE_LOCATIONS[i][j]] * edges[edgeCount];
                 edgeCount++;
             }
+            nodeCount++;
+        }
+
+        if(nodeCount != 91 || edgeCount != 854)
+        {
+            std::cout << "NODE COUNT: " << nodeCount << " EDGE COUNT: " << edgeCount << " SUPPOSED TO BE 91 and 854!! NN91_Basic.h" << std::endl;
         }
     }
+
+    inline void setNeuralSizes(const std::vector<int> &nodeSizes)
+   	{
+        // Set up network size: [91, nodeSizes, 1]
+        networkSize.resize(nodeSizes.size()+2);
+        networkSize[0] = 91;
+        for(int i=0; i<nodeSizes.size(); ++i)
+        {
+            networkSize[i+1] = nodeSizes[i];
+        }
+        networkSize[networkSize.size()-1] = 1;
+
+        int totalNodes = 0;
+        for(int i=0; i<nodeSizes.size(); ++i) 
+        {
+            totalNodes += networkSize[i];
+        }
+        nodes.resize(totalNodes, 0.0f);
+
+        int totalEdges = 854; // Edges from first set of nodes to the input vector
+        for(int i=0; i<nodes.size()-1; ++i)
+        {
+            totalEdges += networkSize[i] * networkSize[i+1];
+        }
+        edges.resize(totalEdges);
+   	}
 
     void randomWeights(std::vector<float> & rando) 
     {
@@ -116,15 +115,20 @@ public:
     
     float getLastNode()
     {
-   		return nodes[nodes.size()-1][0];
+   		return nodes[nodes.size()-1];
    	} 
     
     
     
 private:
-    std::vector<std::vector<float>> nodes;
-    std::vector<std::vector<float>> edges;
+    std::vector<float> nodes;
+    std::vector<float> edges;
+    std::vector<int> networkSize;
+    std::vector<float> weightedStartBoard;
     
+    int edgeCount;
+    int nodeCount;
+    float currNode;
 };
 
 
