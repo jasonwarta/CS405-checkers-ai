@@ -36,7 +36,7 @@ int main()
     // config options:
     std::vector<int> networkSize{32, 40, 10, 1};
     const std::string board0 = "rrrrrrrrrrrr________bbbbbbbbbbbb";
-    const int NumBoards = 275000;
+    const int NumBoards = 500000;
 
 
     // Different boards:

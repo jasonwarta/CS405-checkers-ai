@@ -90,8 +90,8 @@
 	    if(possibleMoves_.size() == 0)
 	    {
 	    	// if no moves, still return something so you wont crash
-	    	std::cout << "NO MOVES FOUND. RETURNING BLANK BOARD. FIX LATER!!!!" << std::endl;
-	        return "________________________________";
+	    	// std::cout << "NO MOVES FOUND. RETURNING BLANK BOARD. FIX LATER!!!!" << std::endl;
+	        return "You Lost";
 	    }
 	    else if(possibleMoves_.size() == 1)
 	    {
