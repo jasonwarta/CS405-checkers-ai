@@ -80,8 +80,14 @@ int main(int argc, char const *argv[]) {
 			// MinMaxTree board(boardString,4,redTeamTurn);
 			// boardString = board.getBestBoard();
 
-			MinimaxWithAlphaBeta board(boardString,6,redTeamTurn);
-			boardString = board.getBestBoard();
+			if (totalPieceCount(boardString) <= 3 ) {
+				MinimaxWithAlphaBeta board(boardString,10,redTeamTurn);
+				boardString = board.getBestBoard();
+			}
+			else {
+				MinimaxWithAlphaBeta board(boardString,6,redTeamTurn);
+				boardString = board.getBestBoard();
+			}
 		}
 
 		// black team uses random move picking... should always lose

@@ -5,6 +5,7 @@
 
 #include <string>
 #include <algorithm>
+#include <chrono>
 #include "checkers.h"
 #include "BasicBoardEval.h"
 
@@ -26,6 +27,7 @@ public:
 		int alpha = -10000;
 		int beta = 10000;
 
+		clock_ = std::chrono::system_clock::now();
 		int bestVal = minimaxWithAlphaBetaRecursive(possBoards[0], depth-1, alpha, beta, true);
 		bestBoard_ = possBoards[0];
 
@@ -39,7 +41,7 @@ public:
 	}
 
 	std::string getBestBoard() {
-		if( !breakAlpha_ || !breakBeta_ )
+		if( breakAlpha_ > 0 || breakBeta_ > 0 )
 			std::cout << "alpha: " << breakAlpha_ << ", beta: " << breakBeta_ << std::endl;
 		return bestBoard_;
 	}
@@ -48,6 +50,10 @@ private:
 	int minimaxWithAlphaBetaRecursive(std::string &theBoard, int depth, int alpha, int beta, bool maximizingPlayer) {
 		if(depth == 0) {
 			return basicBoardEval(theBoard, redPlayerTurn_);
+		}
+
+		if ( std::chrono::duration<double>(std::chrono::system_clock::now() - clock_).count() >= 14.0) {
+			std::cout << "out of time" << std::endl;
 		}
 
 		if (maximizingPlayer) {
@@ -119,6 +125,8 @@ private:
 	bool redPlayerTurn_;
 	int breakBeta_;
 	int breakAlpha_;
+
+	std::chrono::time_point<std::chrono::system_clock> clock_;
 };
 
 #endif
