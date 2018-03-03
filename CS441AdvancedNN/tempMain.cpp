@@ -7,8 +7,8 @@
 
 
 
-#define BASIC_NN 1
-#define BASIC_NN_SIMD 0
+#define BASIC_NN 0
+#define BASIC_NN_SIMD 1
 #define NN91_BASIC_NET 0
 #define NN91_SIMD_NET 0
 

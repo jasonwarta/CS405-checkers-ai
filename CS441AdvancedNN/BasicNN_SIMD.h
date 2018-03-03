@@ -56,7 +56,8 @@ public:
                     __m256 nodeWeights = _mm256_mul_ps(edgesSIMD, nodeSIMD);
 
                     int sizeSIMD = std::min(networkSize[i-1]-k, 8);
-                    nodeWeights = _mm256_and_ps(nodeWeights, (float *)MASK_INCLUDE_TABLE[sizeSIMD].data());
+                    // __m256 magicalMask - _mm256_load_ps()
+                    nodeWeights = _mm256_and_ps(nodeWeights, *(__m256*)MASK_INCLUDE_TABLE[sizeSIMD].data()); // .data()?
                     addStorage = _mm256_add_ps(addStorage, nodeWeights);
 
                     // currNode += (layers[NodesUsed] * edges[EdgesUsed]);
@@ -67,7 +68,7 @@ public:
                 addStorage = _mm256_hadd_ps(addStorage, addStorage);
                 addStorage = _mm256_hadd_ps(addStorage, addStorage);
 
-                _mm256_maskstore_ps(&layers[NodesUsed], (float *)MASK_INCLUDE_TABLE[1].data(), addStorage);
+                //_mm256_maskstore_ps(&layers[NodesUsed], *(__m256*)MASK_INCLUDE_TABLE[1].data(), addStorage); // .data()?
                 layers[NodesUsed] = tanh(layers[NodesUsed]);
                 // layers[NodesUsed] = currNode / (1 + std::abs(currNode));
                 NodesUsed++;
