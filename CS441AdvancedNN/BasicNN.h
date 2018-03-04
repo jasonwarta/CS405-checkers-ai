@@ -24,7 +24,6 @@ public:
 
     BasicNN(const std::vector<int> &netSize)
     {
-        networkSize = netSize;
         setNeuralSizes(networkSize);
 
         // seed randomness
@@ -59,7 +58,7 @@ public:
         std::normal_distribution<float> distribute(0.0, 1.0);
         for(int i=0; i<layers.size(); ++i)
         {
-            sigma_[i] = sigma_[i] * std::pow(t, distribute(generator));
+            sigma_[i] = sigma_[i] * std::exp(t * distribute(generator));
             layers[i] = layers[i] + sigma_[i]*distribute(generator);
         }
     }
@@ -81,8 +80,8 @@ public:
                     EdgesUsed++;
                 }
                 // layers[NodesUsed] = currNode / (1 + std::abs(currNode));
-                // layers[NodesUsed] = tanh(currNode);
-                layers[NodesUsed] = currNode;
+                layers[NodesUsed] = tanh(currNode);
+                // layers[NodesUsed] = currNode;
                 NodesUsed++;
             }
         }
@@ -96,6 +95,8 @@ public:
     }
     void setNeuralSizes(const std::vector<int> &layerSizes)
    	{
+        networkSize = layerSizes;
+
         int totalNodes = 0;
         for(int i=0; i<layerSizes.size(); ++i) 
         {
