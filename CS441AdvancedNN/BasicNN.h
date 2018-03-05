@@ -86,6 +86,7 @@ public:
             }
         }
     }
+
     void setFirstWeights(const std::string &theBoard)
     {
         for(int i=0; i<networkSize[0]; ++i)
@@ -93,6 +94,7 @@ public:
             layers[i] = 2.2f; // For now: Node = "2.2"
         }
     }
+    
     void setNeuralSizes(const std::vector<int> &layerSizes)
    	{
         networkSize = layerSizes;

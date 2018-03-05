@@ -8,6 +8,7 @@
 
 #include "BasicNN.h"
 #include "NN91_Basic.h"
+#include "BasicNN_SIMD.h"
 
 #include <vector>
 #include <chrono>
@@ -18,7 +19,7 @@
 int main() 
 {
 	std::string board0 = "rrrrrrrrrrrr________bbbbbbbbbbbb";
-    std::vector<int> startBoard{40,10};
+    std::vector<int> startBoard{4, 3, 2};
 
     int counter = 0;
     for(int i=0; i<NN91_NODE_LOCATIONS.size(); ++i)
@@ -30,7 +31,7 @@ int main()
     }
     std::cout << "COUNTER IS: " << counter << std::endl;
 
-	NN91_Basic tempNet(startBoard);
+	BasicNN_SIMD tempNet(startBoard);
 	// tempNet.printAll();
 	tempNet.evaluateNN(board0);
 	tempNet.printAll();

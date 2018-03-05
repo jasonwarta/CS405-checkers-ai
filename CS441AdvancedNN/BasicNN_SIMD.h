@@ -30,6 +30,7 @@ public:
         networkSize = netSize;
     	setNeuralSizes(netSize);
         additionStorage.resize(8, 0.0f);
+        summedStorage.resize(8, 0.0f);
     }
     void randomizeWeights()
     {
@@ -51,8 +52,9 @@ public:
 
                 for(int k=0; k<networkSize[i-1]; k+=8) 
                 {
+                    
                     __m256 edgesSIMD = _mm256_load_ps(&edges[EdgesUsed]);
-                    __m256 nodeSIMD = _mm256_broadcast_ss(&layers[NodesUsed]);
+                    __m256 nodeSIMD = _mm256_load_ps(&layers[NodesUsed-j-networkSize[i-1]+k]);
                     __m256 nodeWeights = _mm256_mul_ps(edgesSIMD, nodeSIMD);
 
                     int sizeSIMD = std::min(networkSize[i-1]-k, 8);
@@ -62,20 +64,25 @@ public:
 
                     // currNode += (layers[NodesUsed] * edges[EdgesUsed]);
                     EdgesUsed+=sizeSIMD;
+
                 }
+                
                 // Horizontal add of 8 elements
                 addStorage = _mm256_hadd_ps(addStorage, addStorage);
                 addStorage = _mm256_hadd_ps(addStorage, addStorage);
                 addStorage = _mm256_hadd_ps(addStorage, addStorage);
-
+                
+                _mm256_store_ps(&summedStorage[0], addStorage);
                 //_mm256_maskstore_ps(&layers[NodesUsed], *(__m256*)MASK_INCLUDE_TABLE[1].data(), addStorage); // .data()?
-                layers[NodesUsed] = tanh(layers[NodesUsed]);
+                layers[NodesUsed] = tanh(summedStorage[0]);
                 // layers[NodesUsed] = currNode / (1 + std::abs(currNode));
+                
                 NodesUsed++;
 
             }
         }
     }
+
     void setFirstWeights(const std::string &theBoard)
     {
         for(int i=0; i<networkSize[0]; ++i)
@@ -93,7 +100,7 @@ public:
         layers.resize(totalNodes, 0.0f);
 
         int totalEdges = 0;
-        for(int i=0; i<layers.size()-1; ++i)
+        for(int i=0; i<layerSizes.size()-1; ++i)
         {
             totalEdges += layerSizes[i] * layerSizes[i+1];
         }
@@ -113,14 +120,36 @@ public:
    		return layers[layers.size()-1];
    	}
 
-  
+    void printAll()
+    {
+        int NodesUsed = 0;
+        std::cout << std::endl << "------------------NODES----------------" << std::endl;
+        NodesUsed = 0;
+        for(int i=0; i<networkSize.size(); ++i)
+        {
+            for(int j=0; j<networkSize[i]; ++j)
+            {
+                std::cout << layers[NodesUsed] << " ";
+                NodesUsed++;
+            }
+            std::cout << std::endl;
+        }
+
+        std::cout << std::endl << "------------------EDGES----------------" << std::endl;
+        for(int i=0; i<edges.size(); ++i)
+        {
+            std::cout << edges[i] << " ";
+        }
+        std::cout << std::endl;
+    }
     
 private:
     std::vector<float> layers;
     std::vector<float> edges;
     std::vector<int> networkSize;
-    std::vector<float> additionStorage;
 
+    std::vector<float> additionStorage;
+    std::vector<float> summedStorage;
 };
 
 
