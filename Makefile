@@ -20,6 +20,8 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 CPPFLAGS ?= -std=c++14 $(INC_FLAGS) -MMD -MP
 
+prod: CPPFLAGS += -O3
+
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 	$(CC) -std=c++14 $(OBJS) -o $@ $(LDFLAGS)
 
@@ -40,3 +42,7 @@ run:
 	./build/server
 
 up: $(BUILD_DIR)/$(TARGET_EXEC) run
+
+prod: clean up
+
+dev: clean up
