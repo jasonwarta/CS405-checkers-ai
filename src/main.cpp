@@ -81,11 +81,13 @@ int main(int argc, char const *argv[]) {
 			// boardString = board.getBestBoard();
 
 			if (totalPieceCount(boardString) <= 3 ) {
-				MinimaxWithAlphaBeta board(boardString,10,redTeamTurn);
+				MinimaxWithAlphaBeta board(boardString,10,redTeamTurn,2.0);
+				// MinimaxWithAlphaBeta board(boardString,10,redTeamTurn);
 				boardString = board.getBestBoard();
 			}
 			else {
-				MinimaxWithAlphaBeta board(boardString,6,redTeamTurn);
+				MinimaxWithAlphaBeta board(boardString,6,redTeamTurn,2.0);
+				// MinimaxWithAlphaBeta board(boardString,6,redTeamTurn);
 				boardString = board.getBestBoard();
 			}
 		}

@@ -42,6 +42,7 @@ int basicBoardEval(std::string &currBoard, bool redTeamTurn)
 }
 
 float weightedBoardEval(std::string &currBoard, float kingVal, bool redTeamTurn){
+	// std::cout << "weighted board eval" << std::endl;
 	PieceMap board(currBoard);
 
 	int currTeamCheckers = redTeamTurn ? board.weightedRedPieces(kingVal) : board.weightedBlackPieces(kingVal);
@@ -49,8 +50,10 @@ float weightedBoardEval(std::string &currBoard, float kingVal, bool redTeamTurn)
 
 	if(currTeamCheckers == 0)
 		return -1;
-	else
+	else if (otherTeamCheckers == 0)
 		return 1;
+
+	// std::cout << "c:" << currTeamCheckers << "\to:" << otherTeamCheckers << std::endl;
 
 	return currTeamCheckers - otherTeamCheckers;
 }
