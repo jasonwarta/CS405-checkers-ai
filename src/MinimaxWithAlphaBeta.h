@@ -7,19 +7,27 @@
 #include <algorithm>
 #include <chrono>
 #include <math.h>
+#include <sstream>
+#include <memory>
+#include <iomanip>
+
 #include "checkers.h"
 #include "BoardEval.h"
 
+typedef std::chrono::time_point<std::chrono::system_clock> Clock;
+
 class MinimaxWithAlphaBeta {
 public:
-	MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer);
-	MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, float kingWeight);
+	MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock);
+	MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, float kingWeight, std::shared_ptr<Clock> clock);
 
 	std::string getBestBoard();
+	void printABStats();
 
 private:
-	MinimaxWithAlphaBeta(bool redPlayer) : 
+	MinimaxWithAlphaBeta(bool redPlayer, std::shared_ptr<Clock> clock) : 
 		redPlayerTurn_(redPlayer),
+		clock_(clock),
 		breakAlpha_(0),
 		breakBeta_(0) 
 	{};
@@ -36,7 +44,7 @@ private:
 	int breakAlpha_;
 	float kingWeight_;
 
-	std::chrono::time_point<std::chrono::system_clock> clock_;
+	std::shared_ptr<Clock> clock_;
 };
 
 #endif

@@ -2,23 +2,30 @@
 
 #include "MinimaxWithAlphaBeta.h"
 
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer) : MinimaxWithAlphaBeta(redPlayer) 
+MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock) : MinimaxWithAlphaBeta(redPlayer, clock) 
 {
 	kingWeight_ = NAN;
 	init(theBoard, depth);
 }
 
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, float kingWeight) : MinimaxWithAlphaBeta(redPlayer) 
+MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, float kingWeight, std::shared_ptr<Clock> clock) : MinimaxWithAlphaBeta(redPlayer, clock) 
 {
 	kingWeight_ = kingWeight;
 	init(theBoard, depth);
 }
 
 std::string MinimaxWithAlphaBeta::getBestBoard() {
-	if( breakAlpha_ > 0 || breakBeta_ > 0 )
-		std::cout << "alpha: " << breakAlpha_ << ", beta: " << breakBeta_ << std::endl;
+	printABStats();
 	return bestBoard_;
 }
+
+void MinimaxWithAlphaBeta::printABStats() {
+	std::cout << "A=";
+	std::cout << std::setfill('0') << std::setw(6) << breakAlpha_;
+	std::cout << ",B=";
+	std::cout << std::setfill('0') << std::setw(6) << breakBeta_;
+}
+
 
 void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth) {
 	CheckerBoard tempBoard(theBoard, redPlayerTurn_);
@@ -28,8 +35,6 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth) {
 		bestBoard_ = theBoard;
 		return;
 	}
-
-	clock_ = std::chrono::system_clock::now();
 
 	if(kingWeight_ != kingWeight_) {
 		// kingWeight_ is NAN. NAN == NAN always evaluates as false
@@ -77,8 +82,11 @@ NUM_TYPE MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoa
 			return weightedBoardEval(theBoard, kingWeight_, redPlayerTurn_);
 	}
 
-	if ( std::chrono::duration<double>(std::chrono::system_clock::now() - clock_).count() >= 14.0) {
-		std::cout << "out of time" << std::endl;
+	if ( std::chrono::duration<double>(std::chrono::system_clock::now() - *clock_).count() >= 14.0) {
+		if(typeid(NUM_TYPE) == typeid(int))
+			return basicBoardEval(theBoard, redPlayerTurn_);
+		else
+			return weightedBoardEval(theBoard, kingWeight_, redPlayerTurn_);
 	}
 
 	if (maximizingPlayer) {
