@@ -242,7 +242,8 @@ const std::vector<std::vector<int>> NN91_NODE_LOCATIONS {
 	// 91 total
 };
 
-const std::vector<std::vector<int>> MASK_INCLUDE_TABLE {
+const int MASK_INCLUDE_TABLE[9][8] __attribute__ ((aligned (32)))
+{
  	{ 0, 0, 0, 0, 0, 0, 0, 0},
  	{-1, 0, 0, 0, 0, 0, 0, 0},
  	{-1,-1, 0, 0, 0, 0, 0, 0},
@@ -251,7 +252,7 @@ const std::vector<std::vector<int>> MASK_INCLUDE_TABLE {
  	{-1,-1,-1,-1,-1, 0, 0, 0},
  	{-1,-1,-1,-1,-1,-1, 0, 0},
  	{-1,-1,-1,-1,-1,-1,-1, 0},
-	{-1,-1,-1,-1,-1,-1,-1,-1}
+	{-1,-1,-1,-1,-1,-1,-1,-1} 
 };
 
 #endif

@@ -69,7 +69,12 @@ public:
             }
         }
     }
+    void SIMDevaluateNN(const std::string &theBoard)
+    {
+        stringToWeightedBoard(theBoard);
+        setFirstWeights();
 
+    }
     void stringToWeightedBoard(const std::string &theBoard)
     {
         weightedStartBoard = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
