@@ -39,7 +39,7 @@ int main(int argc, char const *argv[]) {
 	Player red( true, 2.0, clock );
 	Player black( false, clock );
 
-	Game game( &red, &black, clock );
+	Game game( &red, &black, clock, &std::cout );
 	game.run();
 
 	std::cout << "reached end of program" << std::endl;

@@ -21,7 +21,7 @@ public:
 	MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock);
 	MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, float kingWeight, std::shared_ptr<Clock> clock);
 
-	std::string getBestBoard();
+	std::string getBestBoard(std::ostream *os);
 	void printABStats();
 
 private:
@@ -43,6 +43,8 @@ private:
 	int breakBeta_;
 	int breakAlpha_;
 	float kingWeight_;
+
+	std::ostream *os_;
 
 	std::shared_ptr<Clock> clock_;
 };
