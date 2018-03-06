@@ -34,7 +34,7 @@ int main(int argc, char const *argv[]) {
 	// launch server in separate thread
 	// server currently has no logic for terminating
 	// std::thread serverThread(launchServer,&comm);
-	
+
 	std::shared_ptr<Clock> clock = std::make_shared<Clock>(std::chrono::system_clock::now());
 	Player red( true, 2.0, clock );
 	Player black( false, clock );
