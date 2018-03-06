@@ -4,7 +4,7 @@
 #include <string>
 #include <algorithm>
 #include "checkers.h"
-#include "BasicBoardEval.h"
+#include "BoardEval.h"
 
 
 class MinMaxTree

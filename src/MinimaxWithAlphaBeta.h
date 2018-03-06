@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <chrono>
 #include "checkers.h"
-#include "BasicBoardEval.h"
+#include "BoardEval.h"
 
 class MinimaxWithAlphaBeta {
 public:

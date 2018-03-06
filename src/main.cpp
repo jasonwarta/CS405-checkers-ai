@@ -77,7 +77,7 @@ int main(int argc, char const *argv[]) {
 			// 	boardString = board.getBestBoard();
 			// }
 			
-			// MinMaxTree board(boardString,4,redTeamTurn);
+			// MinMaxTree board(boardString,6,redTeamTurn);
 			// boardString = board.getBestBoard();
 
 			if (totalPieceCount(boardString) <= 3 ) {
