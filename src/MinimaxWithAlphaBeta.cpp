@@ -14,16 +14,17 @@ MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, boo
 	init(theBoard, depth);
 }
 
-std::string MinimaxWithAlphaBeta::getBestBoard() {
-	printABStats();
+std::string MinimaxWithAlphaBeta::getBestBoard(std::ostream *os) {
+	printABStats(os);
 	return bestBoard_;
 }
 
-void MinimaxWithAlphaBeta::printABStats() {
-	std::cout << "A=";
-	std::cout << std::setfill('0') << std::setw(6) << breakAlpha_;
-	std::cout << ",B=";
-	std::cout << std::setfill('0') << std::setw(6) << breakBeta_;
+void MinimaxWithAlphaBeta::printABStats(std::ostream *os) {
+	(*os) << "'alpha':'";
+	(*os) << std::setfill('0') << std::setw(6) << breakAlpha_;
+	(*os) << "','beta':'";
+	(*os) << std::setfill('0') << std::setw(6) << breakBeta_;
+	(*os) << "'";
 }
 
 

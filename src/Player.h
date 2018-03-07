@@ -21,7 +21,7 @@ public:
 		kingWeight_(kingWeight), 
 		clock_(clock) {};
 
-	std::string getMove(std::string &theBoard, int depth = 4);
+	std::string getMove(std::string &theBoard, std::ostream *os, int depth = 4);
 private:
 	float kingWeight_;
 	bool redTeam_;
