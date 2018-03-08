@@ -18,22 +18,20 @@
 int main() 
 {
 	std::string board0 = "rrrrrrrrrrrr________bbbbbbbbbbbb";
-    std::vector<int> startBoard{10, 3, 2};
+    std::vector<int> startBoard{32, 40, 10, 1};
 
-    int counter = 0;
-    for(int i=0; i<NN91_NODE_LOCATIONS.size(); ++i)
-    {
-    	for(int j=0; j<NN91_NODE_LOCATIONS[i].size(); ++j)
-    	{
-    		counter++;
-    	}
-    }
-    std::cout << "COUNTER IS: " << counter << std::endl;
 
-	BasicNN tempNet(startBoard);
+
+	BasicNN tempNetOne(startBoard);
+    BasicNN tempNetTwo = tempNetOne;
 	// tempNet.printAll();
-	tempNet.SIMDevaluateNN(board0);
-	tempNet.printAll();
+	tempNetOne.evaluateNN(board0);
+    tempNetTwo.SIMDevaluateNN(board0);
+
+    std::cout << std::endl << "BOARD ONE" << std::endl;
+	tempNetOne.printAll();
+    std::cout << std::endl << "BOARD TWO" << std::endl;
+    tempNetTwo.printAll();
 	// tempNet.evolve();
 	// tempNet.evaluateNN(board0);
 	//tempNet.printAll();
