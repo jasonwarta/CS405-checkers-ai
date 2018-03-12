@@ -17,7 +17,7 @@ void MinimaxWithAlphaBeta::printABStats(std::ostream *os) {
 	(*os) << std::setfill('0') << std::setw(6) << breakAlpha_;
 	(*os) << "\",\"beta\":\"";
 	(*os) << std::setfill('0') << std::setw(6) << breakBeta_;
-	(*os) << "\"";
+	(*os) << "\",";
 }
 
 

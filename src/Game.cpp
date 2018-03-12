@@ -22,7 +22,7 @@ void Game::run() {
 		}
 
 		auto duration = std::chrono::duration<double>(std::chrono::system_clock::now() - *clock_).count();
-		(*os_) << ",\"time\":\"" << std::setw(9) << std::setfill('0') << std::fixed << std::setprecision(6) << duration << "s\"}" << std::endl;
+		(*os_) << "\"time\":\"" << std::setw(9) << std::setfill('0') << std::fixed << std::setprecision(6) << duration << "s\"}" << std::endl;
 
 		if ( theBoard.size() < 32) {
 			(*os_) << (redTeamTurn ? "Red team" : "Black team") << " lost the game" << std::endl;
