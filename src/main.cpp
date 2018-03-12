@@ -5,16 +5,28 @@
 #include <unistd.h>
 #include <cstdlib>
 #include <chrono>
+#include <ctime>
 #include <string>
 #include <mutex>
 #include <iomanip>
 #include <memory>
+#include <fstream>
+#include <sstream>
 
 #include "threadUtils.h"
 #include "Player.h"
 #include "Game.h"
 
 #include "../CS441AdvancedNN/BasicNN.h"
+
+const size_t LOSS_VAL = -1;
+const size_t DRAW_VAL = 0;
+const size_t WIN_VAL = 2;
+
+struct NetTracker {
+	BasicNN* net;
+	int64_t score = 0;
+};
 
 // void launchServer(Communicator * comm) {
 // 	uWS::Hub h;
@@ -28,45 +40,138 @@ int milli_to_micro(int milliseconds) {
 }
 
 int main(int argc, char const *argv[]) {
-	// std::cout << argc << std::endl;
-
-	std::mutex mtx;
-	// Communicator comm = {START_BOARD_STRING,&mtx};
-
-	// launch server in separate thread
-	// server currently has no logic for terminating
-	// std::thread serverThread(launchServer,&comm);
-	// 
-	std::shared_ptr<Clock> clock = std::make_shared<Clock>(std::chrono::system_clock::now());
-
-	const std::vector<int> netSize {32,40,10,1};
-	std::vector<BasicNN*> nets;
-	for(size_t i = 0; i < 30; ++i)
-		nets.push_back(new BasicNN(netSize));
-	// std::cout << "done setting up nets" << std::endl;
-
-	for(size_t i = 0; i < nets.size(); ++i) {
-		for(size_t j = i+1; j < nets.size(); ++j) {
-			// nets[i]->printData();
-			// nets[j]->printData();
-
-			Player red(true, clock, nets[i]);
-			Player black(false, clock, nets[j]);
-
-			// std::cout << "created players" << std::endl;
-
-			Game game( &red, &black, clock, &std::cout );
-			// std::cout << "created game" << std::endl;
-			game.run();
-		}
-	}
-
 	
-	// Player red( true, 2.0, clock );
-	// Player black( false, clock );
+	std::ofstream ofs;
+	std::stringstream ss;
+	std::shared_ptr<Clock> clock = std::make_shared<Clock>(std::chrono::system_clock::now());
+	const std::vector<int> netSize {32,40,10,1};
+	std::vector<NetTracker*> nets;
 
-	// Game game( &red, &black, clock, &std::cout );
-	// game.run();
+	uint64_t genCounter = 0;
+	while(true) {
+		ss.str("");
+
+		for(size_t i = 0; i < 30; ++i)
+			nets.push_back(new NetTracker {new BasicNN(netSize), 0});
+
+		ss.str("");
+		ss << "./NN/gen_" << std::setfill('0') << std::setw(3) << genCounter;
+		std::string path = ss.str();
+		ss.str("");
+		system(("mkdir -p "+path+"/nets").c_str());
+		system(("mkdir -p "+path+"/games").c_str());
+
+		for(size_t i = 0; i < nets.size(); ++i) {
+			ss << path << "/nets/" << std::setfill('0') << std::setw(2) << i;
+			ofs.open(ss.str(), std::ofstream::out | std::ofstream::app);
+			nets[i]->net->printData(&ofs);
+			ofs.close();
+			ss.str("");
+		}
+
+		for(size_t i = 0; i < nets.size(); ++i) {
+			for(size_t j = i+1; j < nets.size(); ++j) {
+				ss.str("");
+				ss << path << "/games/" << std::setfill('0') << std::setw(2) << i << "v" <<std::setfill('0') << std::setw(2) << j;
+				ofs.open(ss.str(), std::ofstream::out | std::ofstream::app);
+				
+				std::cout << ss.str() << std::endl;
+
+				Player p1(true, clock, nets[i]->net);
+				Player p2(false, clock, nets[j]->net);
+
+				size_t drawCounter = 0, p1Counter = 0, p2Counter = 0;
+
+				Game game1( &p1, &p2, clock, &ofs );
+				char result1 = game1.run();
+
+				switch(result1) {
+					case 'R':
+						p1Counter++;
+						break;
+					case 'B':
+						p2Counter++;
+						break;
+					case 'D':
+						drawCounter++;
+						break;
+					default:
+						break;
+				}
+				ofs << "\n\n";
+
+				Game game2( &p2, &p1, clock, &ofs );
+				char result2 = game2.run();
+
+				switch(result2) {
+					case 'R':
+						p2Counter++;
+						break;
+					case 'B':
+						p1Counter++;
+						break;
+					case 'D':
+						drawCounter++;
+						break;
+					default:
+						break;
+				}
+				ofs << "\n\n";
+
+				// std::cout << p1Counter << " " << p2Counter << std::endl;
+				if( !(p1Counter == 2 || p2Counter == 2) ) {
+					Game game3(&p1, &p2, clock, &ofs);
+					char result3 = game3.run();
+
+					switch(result3) {
+						case 'R':
+							p1Counter++;
+							break;
+						case 'B':
+							p2Counter++;
+							break;
+						case 'D':
+							drawCounter++;
+							break;
+						default:
+							break;
+					}
+					ofs << "\n\n";
+				}
+				// std::cout << p1Counter << " " << p2Counter << std::endl;
+
+				ofs.close();
+
+				nets[i]->score += (p1Counter*WIN_VAL) + (p2Counter*LOSS_VAL) + (drawCounter*DRAW_VAL);
+				nets[j]->score += (p2Counter*WIN_VAL) + (p1Counter*LOSS_VAL) + (drawCounter*DRAW_VAL);
+
+				std::cout << i << ":" << nets[i]->score << " " << j << ":" << nets[j]->score << std::endl;
+			}
+		}
+
+		ss << path << "/scores";
+		ofs.open(ss.str(), std::ofstream::out | std::ofstream::app);
+		ss.str("");
+		for(size_t i = 0; i < nets.size(); ++i)
+			ofs << std::setfill('0') << std::setw(2) << i << ": " << nets[i]->score << std::endl;
+		ofs.close();
+
+		std::sort(nets.begin(), nets.end(), [](NetTracker* a, NetTracker* b) {
+			return a->score > b->score;
+		});
+
+		for(size_t i = 0; i < nets.size(); ++i)
+			std::cout << std::setfill('0') << std::setw(2) << i << ": " << nets[i]->score << std::endl;
+
+		for(size_t i = 0; i < 15; ++i) 
+			nets[15+i]->net = nets[i]->net;
+
+		for(size_t i = 15; i < 30; ++i)
+			nets[i]->net->evolve();
+
+		for(NetTracker* nt : nets)
+			nt->score = 0;
+	}
 
 	std::cout << "reached end of program" << std::endl;
 	exit(0);
