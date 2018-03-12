@@ -1,4 +1,4 @@
-#include <uWS/uWS.h>
+// #include <uWS/uWS.h>
 
 #include <iostream>
 #include <thread>
@@ -45,3 +45,16 @@ int main(int argc, char const *argv[]) {
 	std::cout << "reached end of program" << std::endl;
 	exit(0);
 }
+
+
+// NN genetics
+
+// a(by)(cz)	abc, abz, ayc, ayz
+// x(by)(cz)	xbc, xbz, xyc, xyz
+// (ax)b(cz)	abc, abz, xbc, xbz
+// (ax)y(cz)	ayc, ayz, xyc, xyz
+// (ax)(by)c 	abc, ayc, xbc, xyc
+// (ax)(by)z	abz, ayz, xbz, xyz
+
+// abc, abz, ayc, ayz
+// xbc, xbz, xyc, xyz

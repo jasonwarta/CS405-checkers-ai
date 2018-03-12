@@ -1,5 +1,6 @@
 UNAME := $(shell uname)
-LDFLAGS := -pthread -lz -lssl -luv -luWS
+# LDFLAGS := -pthread -lz -lssl -luv -luWS
+LDFLAGS := -pthread
 
 ifeq ($(UNAME), Darwin)
 	LIBS += -I/usr/local/include -I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib
