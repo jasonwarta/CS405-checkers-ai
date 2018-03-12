@@ -108,6 +108,46 @@ public:
 
                 for(int k=0; k<networkSize[i-1]; k+=8) 
                 {
+                    __m256 edgesSIMD = _mm256_loadu_ps(&edges[EdgesUsed]);
+                    __m256 nodeSIMD = _mm256_loadu_ps(&layers[NodesUsed-j-networkSize[i-1]+k]);
+                    __m256 nodeWeights = _mm256_mul_ps(edgesSIMD, nodeSIMD);
+
+                    int sizeSIMD = std::min(networkSize[i-1]-k, 8);
+                    nodeWeights = _mm256_and_ps(nodeWeights, *(__m256*)&MASK_INCLUDE_TABLE[sizeSIMD][0]);
+                    addStorage = _mm256_add_ps(addStorage, nodeWeights);
+
+                    _mm256_store_ps(&summedStorage[0], addStorage);
+                    EdgesUsed+=sizeSIMD;
+                }
+                
+                // Horizontal add of 8 elements
+                addStorage = _mm256_hadd_ps(addStorage, addStorage);
+                addStorage = _mm256_hadd_ps(addStorage, addStorage);                
+                _mm256_store_ps(&summedStorage[0], addStorage);
+
+                layers[NodesUsed] = tanh(summedStorage[0] + summedStorage[4]);
+                // layers[NodesUsed] = currNode / (1 + std::abs(currNode));
+                
+                NodesUsed++;
+            }
+        }
+    }
+    void AlignedEvaluateNN(const std::string &theBoard)
+    {
+        setFirstWeights(theBoard);
+        EdgesUsed = 0;
+        NodesUsed = networkSize[0]; // should also be 32
+        float summedStorage[8] __attribute__ ((aligned (32)));
+        float additionStorage[8] __attribute__ ((aligned (32))) {0,0,0,0,0,0,0,0};
+
+        for(int i=1; i<networkSize.size(); ++i) 
+        {
+            for(int j=0; j<networkSize[i]; ++j) 
+            {
+                __m256 addStorage = _mm256_load_ps(&additionStorage[0]);
+
+                for(int k=0; k<networkSize[i-1]; k+=8) 
+                {
                     
                     __m256 edgesSIMD = _mm256_loadu_ps(&edges[EdgesUsed]);
                     __m256 nodeSIMD = _mm256_loadu_ps(&layers[NodesUsed-j-networkSize[i-1]+k]);
