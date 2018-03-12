@@ -2,15 +2,14 @@
 
 #include "MinimaxWithAlphaBeta.h"
 
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock) : MinimaxWithAlphaBeta(redPlayer, clock) 
-{
-	kingWeight_ = NAN;
-	init(theBoard, depth);
-}
+// MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, NN91_Basic *net) : MinimaxWithAlphaBeta(redPlayer, clock, net) 
+// {
+// 	kingWeight_ = NAN;
+// 	init(theBoard, depth);
+// }
 
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, float kingWeight, std::shared_ptr<Clock> clock) : MinimaxWithAlphaBeta(redPlayer, clock) 
+MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, NN91_Basic *net) : MinimaxWithAlphaBeta(redPlayer, clock, net) 
 {
-	kingWeight_ = kingWeight;
 	init(theBoard, depth);
 }
 
@@ -37,26 +36,26 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth) {
 		return;
 	}
 
-	if(kingWeight_ != kingWeight_) {
-		// kingWeight_ is NAN. NAN == NAN always evaluates as false
-		// using ints
+	// if(kingWeight_ != kingWeight_) {
+	// 	// kingWeight_ is NAN. NAN == NAN always evaluates as false
+	// 	// using ints
 				
-		int alpha = -10000;
-		int beta = 10000;
+	// 	int alpha = -10000;
+	// 	int beta = 10000;
 
-		int bestVal = minimaxWithAlphaBetaRecursive(possBoards[0], depth-1, alpha, beta, true);
-		bestBoard_ = possBoards[0];
+	// 	int bestVal = minimaxWithAlphaBetaRecursive(possBoards[0], depth-1, alpha, beta, true);
+	// 	bestBoard_ = possBoards[0];
 
-		for(auto it = possBoards.begin()+1; it != possBoards.end(); ++it) {
-			int val = minimaxWithAlphaBetaRecursive(*it, depth-1, alpha, beta, true);
-			if ( val > bestVal ) {
-				bestVal = val;
-				bestBoard_ = *it;
-			}
-		}
+	// 	for(auto it = possBoards.begin()+1; it != possBoards.end(); ++it) {
+	// 		int val = minimaxWithAlphaBetaRecursive(*it, depth-1, alpha, beta, true);
+	// 		if ( val > bestVal ) {
+	// 			bestVal = val;
+	// 			bestBoard_ = *it;
+	// 		}
+	// 	}
 
-	}
-	else { // using floats
+	// }
+	// else { // using floats
 		float alpha = -10000.0;
 		float beta = 10000.0;
 
@@ -70,24 +69,20 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth) {
 				bestBoard_ = *it;
 			}
 		}
-	}
+	// }
 }
 
 template<typename NUM_TYPE>
 NUM_TYPE MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard, int depth, NUM_TYPE alpha, NUM_TYPE beta, bool maximizingPlayer) {
 	
 	if(depth == 0) {
-		if(typeid(NUM_TYPE) == typeid(int))
-			return basicBoardEval(theBoard, redPlayerTurn_);
-		else
-			return weightedBoardEval(theBoard, kingWeight_, redPlayerTurn_);
+		net_->evaluateNN(theBoard);
+		return net_->getLastNode();
 	}
 
 	if ( std::chrono::duration<double>(std::chrono::system_clock::now() - *clock_).count() >= 14.0) {
-		if(typeid(NUM_TYPE) == typeid(int))
-			return basicBoardEval(theBoard, redPlayerTurn_);
-		else
-			return weightedBoardEval(theBoard, kingWeight_, redPlayerTurn_);
+		net_->evaluateNN(theBoard);
+		return net_->getLastNode();
 	}
 
 	if (maximizingPlayer) {

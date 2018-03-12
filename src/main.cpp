@@ -14,6 +14,8 @@
 #include "Player.h"
 #include "Game.h"
 
+#include "../CS441AdvancedNN/NN91_Basic.h"
+
 // void launchServer(Communicator * comm) {
 // 	uWS::Hub h;
 // 	createServerInstance(h,(*comm));
@@ -34,13 +36,37 @@ int main(int argc, char const *argv[]) {
 	// launch server in separate thread
 	// server currently has no logic for terminating
 	// std::thread serverThread(launchServer,&comm);
-
+	// 
 	std::shared_ptr<Clock> clock = std::make_shared<Clock>(std::chrono::system_clock::now());
-	Player red( true, 2.0, clock );
-	Player black( false, clock );
 
-	Game game( &red, &black, clock, &std::cout );
-	game.run();
+	const std::vector<int> netSize {32,40,10,1};
+	std::vector<NN91_Basic*> nets;
+	for(size_t i = 0; i < 30; ++i)
+		nets.push_back(new NN91_Basic(netSize));
+	// std::cout << "done setting up nets" << std::endl;
+
+	for(size_t i = 0; i < nets.size(); ++i) {
+		for(size_t j = i+1; j < nets.size(); ++j) {
+			std::cout << i << std::endl;
+			std::cout << j << std::endl;
+
+			Player red(true, 1.0, clock, nets[i]);
+			Player black(false, 1.0, clock, nets[j]);
+
+			// std::cout << "created players" << std::endl;
+
+			Game game( &red, &black, clock, &std::cout );
+			// std::cout << "created game" << std::endl;
+			game.run();
+		}
+	}
+
+	
+	// Player red( true, 2.0, clock );
+	// Player black( false, clock );
+
+	// Game game( &red, &black, clock, &std::cout );
+	// game.run();
 
 	std::cout << "reached end of program" << std::endl;
 	exit(0);

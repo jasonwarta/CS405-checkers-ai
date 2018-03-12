@@ -13,6 +13,7 @@
 #include <random>
 #include <iomanip>
 #include "../src/consts.h"
+#include <ostream>
 
 
 #include <math.h> // for tanh. may change if we find a faster sigmoid
@@ -33,6 +34,7 @@ public:
         // Choose a random king value
         std::uniform_real_distribution<> theKingVal(1.0, 3.0);
         kingValue_ = theKingVal(random);
+        std::cout << kingValue_ << std::endl;
 
         // set up each weight
         std::uniform_real_distribution<> startWeightVal(-0.2,0.2);
@@ -47,6 +49,7 @@ public:
 
     void evaluateNN(const std::string &theBoard)
     {
+        // std::cout << "Evaluating net" << std::endl;
         stringToWeightedBoard(theBoard);
         setFirstWeights();
         // NodeCount = 91 && edgecount = 854
@@ -68,6 +71,7 @@ public:
                 // layers[nodeCount] = currNode / (1 + std::abs(currNode));
             }
         }
+        // std::cout << "done evaluating net" << std::endl;
     }
     void SIMDevaluateNN(const std::string &theBoard)
     {
@@ -167,6 +171,20 @@ public:
             std::cout << edges[i] << " ";
         }
         std::cout << std::endl;
+    }
+
+    void printData(std::ostream *os = &std::cout) {
+        (*os) << "Edges" << std::endl;
+        for(auto &e : edges)
+            (*os) << e << ' ';
+        (*os) << std::endl;
+
+        (*os) << "Sigma" << std::endl;
+        for(auto &s : sigma_)
+            (*os) << s << ' ';
+        (*os) << std::endl;
+
+        (*os) << "King Weight:\t" << kingValue_ << std::endl;
     }
 
 
