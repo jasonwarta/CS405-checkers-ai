@@ -4,7 +4,7 @@
 
 MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, BasicNN *net) : MinimaxWithAlphaBeta(redPlayer, clock, net) 
 {
-	init(theBoard, depth);
+	init(theBoard, depth, redPlayer);
 }
 
 std::string MinimaxWithAlphaBeta::getBestBoard(std::ostream *os) {
@@ -21,8 +21,8 @@ void MinimaxWithAlphaBeta::printABStats(std::ostream *os) {
 }
 
 
-void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth) {
-	CheckerBoard tempBoard(theBoard, redPlayerTurn_);
+void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth, bool redPlayer) {
+	CheckerBoard tempBoard(theBoard, redPlayer);
 	std::vector< std::string > possBoards = std::move(tempBoard.getAllRandoMoves());
 
 	if(possBoards.size() == 0) {
@@ -45,11 +45,11 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth) {
 	}
 }
 
-template<typename NUM_TYPE>
-NUM_TYPE MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard, int depth, NUM_TYPE alpha, NUM_TYPE beta, bool maximizingPlayer) {
+float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard, int depth, float alpha, float beta, bool maximizingPlayer) {
 	
 	if(depth == 0) {
 		net_->evaluateNN(theBoard);
+		// std::cout << net_->getLastNode() << std::endl;
 		return net_->getLastNode();
 	}
 
@@ -62,7 +62,7 @@ NUM_TYPE MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoa
 		CheckerBoard tempBoard(theBoard, redPlayerTurn_);
 		std::vector<std::string> possBoards = std::move(tempBoard.getAllRandoMoves());
 
-		NUM_TYPE bestVal = -10000;
+		float bestVal = -10000;
 
 		if(possBoards.size() == 0)
 			return bestVal;
@@ -81,7 +81,7 @@ NUM_TYPE MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoa
 		CheckerBoard tempBoard(theBoard, !redPlayerTurn_);
 		std::vector<std::string> possBoards = std::move(tempBoard.getAllRandoMoves());
 
-		NUM_TYPE worstVal = 10000;
+		float worstVal = 10000;
 
 		if(possBoards.size() == 0)
 			return worstVal;

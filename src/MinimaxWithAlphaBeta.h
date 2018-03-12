@@ -32,10 +32,9 @@ private:
 		net_(net) 
 	{};
 
-	void init(std::string &theBoard, int depth);
+	void init(std::string &theBoard, int depth, bool redPlayer);
 
-	template<typename NUM_TYPE>
-	NUM_TYPE minimaxWithAlphaBetaRecursive(std::string &theBoard, int depth, NUM_TYPE alpha, NUM_TYPE beta, bool maximizingPlayer);
+	float minimaxWithAlphaBetaRecursive(std::string &theBoard, int depth, float alpha, float beta, bool maximizingPlayer);
 
 private:
 	std::string bestBoard_;

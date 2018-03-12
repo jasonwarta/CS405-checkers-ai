@@ -239,7 +239,7 @@ public:
    	}
     float getLastNode()
     {
-        return edges[edges.size()-1];
+        return layers[layers.size()-1];
     } 
 
     void printAll()

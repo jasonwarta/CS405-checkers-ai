@@ -6,14 +6,16 @@
 #include "checkers.h"
 #include "BoardEval.h"
 
+#include "../CS441AdvancedNN/BasicNN.h"
 
 class MinMaxTree
 {
 public:
 
-	MinMaxTree(std::string &theBoard, int depth, bool redPlayer)
+	MinMaxTree(std::string &theBoard, int depth, bool redPlayer, BasicNN *net)
 	{
 		redPlayerTurn_ = redPlayer;
+		net_ = net;
 
 		CheckerBoard tempBoard(theBoard, redPlayerTurn_);
 		std::vector<std::string> possBoards = std::move(tempBoard.getAllRandoMoves());
@@ -50,10 +52,15 @@ private:
 	// change to float when we hook up NN
 	int minMaxTreeRecurse(std::string &theBoard, int depth, bool maximizingPlayer, int currentBest)
 	{
+		// std::cout << depth << std::endl;
 
 		if(depth == 0) // maybe other checks here later?...
 		{
-			return basicBoardEval(theBoard, redPlayerTurn_);
+			// net_->printData();
+			net_->evaluateNN(theBoard);
+			// std::cout << net_->getLastNode() << " " << theBoard << std::endl;
+			return net_->getLastNode();
+			// return basicBoardEval(theBoard, redPlayerTurn_);
 		}
 
 		if(maximizingPlayer)
@@ -100,6 +107,7 @@ private:
 	std::string bestBoard_;
 	bool redPlayerTurn_;
 
+	BasicNN *net_;
 };
 
 #endif
