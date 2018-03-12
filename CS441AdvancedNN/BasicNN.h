@@ -195,7 +195,7 @@ public:
             }
         }
     }
-    
+
     void setFirstWeights(const std::string &theBoard)
     {
         for(size_t i = 0; i < 32; ++i) {
@@ -262,6 +262,29 @@ public:
             std::cout << edges[i] << " ";
         }
         std::cout << std::endl;
+    }
+
+    BasicNN & operator=(BasicNN & other) {
+        if (this != &other) {
+            // this->layers.empty();
+            std::copy(other.layers.begin(), other.layers.end(), this->layers.begin());
+
+            // this->edges.empty();
+            std::copy(other.edges.begin(), other.edges.end(), this->edges.begin());
+
+            // this->sigma_.empty();
+            std::copy(other.sigma_.begin(), other.sigma_.end(), this->sigma_.begin());
+
+            // this->networkSize.empty();
+            std::copy(other.networkSize.begin(), other.networkSize.end(), this->networkSize.begin());
+
+            this->kingValue_ = other.kingValue_;
+            this->redTeam = other.redTeam;
+            this->EdgesUsed = other.EdgesUsed;
+            this->NodesUsed = other.NodesUsed;
+            this->currNode = other.currNode;
+        }
+        return *this;
     }
   
     
