@@ -6,7 +6,7 @@ ifeq ($(UNAME), Darwin)
 	LIBS += -I/usr/local/include -I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib
 endif
 
-TARGET_EXEC ?= server
+TARGET_EXEC ?= main
 
 BUILD_DIR ?= ./build
 SRC_DIRS ?= ./src
@@ -40,7 +40,7 @@ clean:
 MKDIR_P ?= mkdir -p
 
 run: 
-	./build/server
+	./build/main
 
 up: $(BUILD_DIR)/$(TARGET_EXEC) run
 
