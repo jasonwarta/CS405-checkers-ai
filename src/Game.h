@@ -29,7 +29,7 @@ public:
 		os_(os)
 	{};
 
-	void run();
+	char run();
 
 private:
 	Player * red_;

@@ -2,7 +2,7 @@
 
 #include "Game.h"
 
-void Game::run() {
+char Game::run() {
 	size_t turnCounter = 0;
 	bool redTeamTurn = true;
 	std::string theBoard = START_BOARD_STRING;
@@ -25,19 +25,22 @@ void Game::run() {
 		(*os_) << "\"time\":\"" << std::setw(9) << std::setfill('0') << std::fixed << std::setprecision(6) << duration << "s\"}" << std::endl;
 
 		if ( theBoard.size() < 32) {
-			(*os_) << (redTeamTurn ? "Red team" : "Black team") << " lost the game" << std::endl;
+			return redTeamTurn ? 'B' : 'R';
+			// (*os_) << (redTeamTurn ? "Red team" : "Black team") << " lost the game" << std::endl;
 			break;
 		} 
 		else if ( !rPieceCount(theBoard) ) {
 			(*os_) << "Red team lost the game" << std::endl;
-			break;
+			return 'B';
 		}
 		else if ( !bPieceCount(theBoard) ) {
 			(*os_) << "Black team lost the game" << std::endl;
-			break;
+			return 'R';
 		}
 
 		redTeamTurn = !redTeamTurn;
 		turnCounter++;
 	}
+	(*os_) << "Draw" << std::endl;
+	return 'D';
 }
