@@ -13,11 +13,11 @@ std::string MinimaxWithAlphaBeta::getBestBoard(std::ostream *os) {
 }
 
 void MinimaxWithAlphaBeta::printABStats(std::ostream *os) {
-	(*os) << "'alpha':'";
+	(*os) << "\"alpha\":\"";
 	(*os) << std::setfill('0') << std::setw(6) << breakAlpha_;
-	(*os) << "','beta':'";
+	(*os) << "\",\"beta\":\"";
 	(*os) << std::setfill('0') << std::setw(6) << breakBeta_;
-	(*os) << "'";
+	(*os) << "\"";
 }
 
 

@@ -9,7 +9,7 @@ void Game::run() {
 
 	// main loop, only exit when done
 	while (true && turnCounter < 200) {
-		(*os_) << "{'move':'" << std::setfill('0') << std::setw(3) << turnCounter << "','board':'" << theBoard << "',";
+		(*os_) << "{\"move\":\"" << std::setfill('0') << std::setw(3) << turnCounter << "\",\"board\":\"" << theBoard << "\",";
 
 		*clock_ = std::chrono::system_clock::now();
 
@@ -22,7 +22,7 @@ void Game::run() {
 		}
 
 		auto duration = std::chrono::duration<double>(std::chrono::system_clock::now() - *clock_).count();
-		(*os_) << ",'time':'" << std::setw(9) << std::setfill('0') << std::fixed << std::setprecision(6) << duration << "s'}" << std::endl;
+		(*os_) << ",\"time\":\"" << std::setw(9) << std::setfill('0') << std::fixed << std::setprecision(6) << duration << "s\"}" << std::endl;
 
 		if ( theBoard.size() < 32) {
 			(*os_) << (redTeamTurn ? "Red team" : "Black team") << " lost the game" << std::endl;

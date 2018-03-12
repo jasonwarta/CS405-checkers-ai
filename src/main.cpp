@@ -47,8 +47,8 @@ int main(int argc, char const *argv[]) {
 
 	for(size_t i = 0; i < nets.size(); ++i) {
 		for(size_t j = i+1; j < nets.size(); ++j) {
-			nets[i]->printData();
-			nets[j]->printData();
+			// nets[i]->printData();
+			// nets[j]->printData();
 
 			Player red(true, clock, nets[i]);
 			Player black(false, clock, nets[j]);
