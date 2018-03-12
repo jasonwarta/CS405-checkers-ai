@@ -81,9 +81,31 @@ public:
     }
     void stringToWeightedBoard(const std::string &theBoard)
     {
-        weightedStartBoard = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-                              0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-                              -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f};
+        std::cout << "something" << std::endl;
+        for(size_t i = 0; i < weightedStartBoard.size(); ++i) {
+            switch(theBoard[i]) {
+                case 'R':
+                    weightedStartBoard[i] = redTeam ? kingValue_ : -kingValue_;
+                    break;
+                case 'r':
+                    weightedStartBoard[i] = redTeam ? 1.0f : -1.0f;
+                    break;
+                case 'B':
+                    weightedStartBoard[i] = redTeam ? -kingValue_ : kingValue_;
+                    break;
+                case 'b':
+                    weightedStartBoard[i] = redTeam ? -1.0f : 1.0f;
+                    break;
+                default:
+                    weightedStartBoard[i] = 0.0f;
+                    break;
+            }
+        }
+        std::cout << "done" << std::endl;
+
+        // weightedStartBoard = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+        //                       0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        //                       -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f};
     }
     
     void setFirstWeights()
@@ -195,6 +217,8 @@ private:
     std::vector<int> networkSize;
     std::vector<float> weightedStartBoard;
     float kingValue_;
+
+    bool redTeam;
 
     int edgeCount;
     int nodeCount;

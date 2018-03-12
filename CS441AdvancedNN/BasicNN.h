@@ -92,6 +92,21 @@ public:
             }
         }
     }
+
+    void printData(std::ostream *os = &std::cout) {
+        (*os) << "Edges" << std::endl;
+        for(auto &e : edges)
+            (*os) << e << ' ';
+        (*os) << std::endl;
+
+        (*os) << "Sigma" << std::endl;
+        for(auto &s : sigma_)
+            (*os) << s << ' ';
+        (*os) << std::endl;
+
+        (*os) << "King Weight:\t" << kingValue_ << std::endl;
+    }
+
     void SIMDevaluateNN(const std::string &theBoard)
     {
         setFirstWeights(theBoard);
@@ -180,11 +195,27 @@ public:
             }
         }
     }
+    
     void setFirstWeights(const std::string &theBoard)
     {
-        for(int i=0; i<networkSize[0]; ++i)
-        {
-            layers[i] = 2.2f; // For now: Node = "2.2"
+        for(size_t i = 0; i < 32; ++i) {
+            switch(theBoard[i]) {
+                case 'R':
+                    layers[i] = redTeam ? kingValue_ : -kingValue_;
+                    break;
+                case 'r':
+                    layers[i] = redTeam ? 1.0f : -1.0f;
+                    break;
+                case 'B':
+                    layers[i] = redTeam ? -kingValue_ : kingValue_;
+                    break;
+                case 'b':
+                    layers[i] = redTeam ? -1.0f : 1.0f;
+                    break;
+                default:
+                    layers[i] = 0.0f;
+                    break;
+            }
         }
     }
     
@@ -206,6 +237,10 @@ public:
         }
         edges.resize(totalEdges);
    	}
+    float getLastNode()
+    {
+        return edges[edges.size()-1];
+    } 
 
     void printAll()
     {
@@ -237,6 +272,7 @@ private:
     std::vector<int> networkSize;
     float kingValue_;
 
+    bool redTeam;
     int EdgesUsed;
     int NodesUsed;
     float currNode;

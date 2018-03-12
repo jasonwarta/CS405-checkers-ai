@@ -2,13 +2,7 @@
 
 #include "MinimaxWithAlphaBeta.h"
 
-// MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, NN91_Basic *net) : MinimaxWithAlphaBeta(redPlayer, clock, net) 
-// {
-// 	kingWeight_ = NAN;
-// 	init(theBoard, depth);
-// }
-
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, NN91_Basic *net) : MinimaxWithAlphaBeta(redPlayer, clock, net) 
+MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, BasicNN *net) : MinimaxWithAlphaBeta(redPlayer, clock, net) 
 {
 	init(theBoard, depth);
 }
@@ -36,40 +30,19 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth) {
 		return;
 	}
 
-	// if(kingWeight_ != kingWeight_) {
-	// 	// kingWeight_ is NAN. NAN == NAN always evaluates as false
-	// 	// using ints
-				
-	// 	int alpha = -10000;
-	// 	int beta = 10000;
+	float alpha = -10000.0;
+	float beta = 10000.0;
 
-	// 	int bestVal = minimaxWithAlphaBetaRecursive(possBoards[0], depth-1, alpha, beta, true);
-	// 	bestBoard_ = possBoards[0];
+	float bestVal = minimaxWithAlphaBetaRecursive(possBoards[0], depth-1, alpha, beta, true);
+	bestBoard_ = possBoards[0];
 
-	// 	for(auto it = possBoards.begin()+1; it != possBoards.end(); ++it) {
-	// 		int val = minimaxWithAlphaBetaRecursive(*it, depth-1, alpha, beta, true);
-	// 		if ( val > bestVal ) {
-	// 			bestVal = val;
-	// 			bestBoard_ = *it;
-	// 		}
-	// 	}
-
-	// }
-	// else { // using floats
-		float alpha = -10000.0;
-		float beta = 10000.0;
-
-		float bestVal = minimaxWithAlphaBetaRecursive(possBoards[0], depth-1, alpha, beta, true);
-		bestBoard_ = possBoards[0];
-
-		for(auto it = possBoards.begin()+1; it != possBoards.end(); ++it) {
-			float val = minimaxWithAlphaBetaRecursive(*it, depth-1, alpha, beta, true);
-			if ( val > bestVal ) {
-				bestVal = val;
-				bestBoard_ = *it;
-			}
+	for(auto it = possBoards.begin()+1; it != possBoards.end(); ++it) {
+		float val = minimaxWithAlphaBetaRecursive(*it, depth-1, alpha, beta, true);
+		if ( val > bestVal ) {
+			bestVal = val;
+			bestBoard_ = *it;
 		}
-	// }
+	}
 }
 
 template<typename NUM_TYPE>

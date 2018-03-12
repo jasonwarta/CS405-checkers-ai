@@ -14,7 +14,7 @@
 #include "Player.h"
 #include "Game.h"
 
-#include "../CS441AdvancedNN/NN91_Basic.h"
+#include "../CS441AdvancedNN/BasicNN.h"
 
 // void launchServer(Communicator * comm) {
 // 	uWS::Hub h;
@@ -40,18 +40,18 @@ int main(int argc, char const *argv[]) {
 	std::shared_ptr<Clock> clock = std::make_shared<Clock>(std::chrono::system_clock::now());
 
 	const std::vector<int> netSize {32,40,10,1};
-	std::vector<NN91_Basic*> nets;
+	std::vector<BasicNN*> nets;
 	for(size_t i = 0; i < 30; ++i)
-		nets.push_back(new NN91_Basic(netSize));
+		nets.push_back(new BasicNN(netSize));
 	// std::cout << "done setting up nets" << std::endl;
 
 	for(size_t i = 0; i < nets.size(); ++i) {
 		for(size_t j = i+1; j < nets.size(); ++j) {
-			std::cout << i << std::endl;
-			std::cout << j << std::endl;
+			nets[i]->printData();
+			nets[j]->printData();
 
-			Player red(true, 1.0, clock, nets[i]);
-			Player black(false, 1.0, clock, nets[j]);
+			Player red(true, clock, nets[i]);
+			Player black(false, clock, nets[j]);
 
 			// std::cout << "created players" << std::endl;
 
