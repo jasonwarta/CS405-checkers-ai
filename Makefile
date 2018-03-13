@@ -19,7 +19,7 @@ DEPS := $(OBJS:.o=.d)
 INC_DIRS := $(shell find $(SRC_DIRS) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-CPPFLAGS ?= -std=c++14 $(INC_FLAGS) -MMD -MP
+CPPFLAGS ?= -std=c++14 $(INC_FLAGS) -MMD -MP -mavx
 
 prod: CPPFLAGS += -O3
 
