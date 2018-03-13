@@ -15,6 +15,8 @@
 #include <iomanip>
 #include <cmath> //pow
 #include <string>
+#include <fstream>
+#include <sstream>
 
 #include <math.h> // for tanh. may change if we find a faster sigmoid
 #include <immintrin.h> // -mavx -march=native?
@@ -25,6 +27,58 @@
 class BasicNN 
 {
 public:
+    BasicNN(std::ifstream &ifs) 
+    {
+        std::string line;
+        while(getline(ifs,line)) {
+            if(line.c_str()[0]) {
+                std::istringstream is;
+                is.str(line);
+
+                std::string label;
+                is >> label;
+
+                switch(label.c_str()[0]) {
+                    case 'n': 
+                        {
+                            networkSize.clear();
+                            int temp;
+                            while(is >>temp) {
+                                networkSize.push_back(temp);
+                            }
+                        }
+                        break;
+
+                    case 'e':
+                        {
+                            edges.clear();
+                            float temp;
+                            while(is >> temp) {
+                                edges.push_back(temp);
+                            }
+                        }
+                        break;
+
+                    case 's':
+                        {
+                            sigma_.clear();
+                            float temp;
+                            while(is >> temp) {
+                                sigma_.push_back(temp);
+                            }
+                        }
+                        break;
+
+                    case 'k':
+                        is >> kingValue_;
+
+                    default:
+                        break;
+                }
+            }
+        }
+        // this->printData();
+    }
 
     BasicNN(const std::vector<int> &netSize)
     {
@@ -60,7 +114,7 @@ public:
         std::uniform_real_distribution<> changeKingVal(-0.1, 0.1);
         kingValue_ += changeKingVal(random);
 
-        int t = 1/sqrt(2*sqrt(layers.size()));
+        float t = 1/sqrt(2*sqrt(layers.size()));
         std::normal_distribution<float> distribute(0.0, 1.0);
         for(int i=0; i<layers.size(); ++i)
         {
@@ -69,45 +123,50 @@ public:
         }
     }
 
-    void evaluateNN(const std::string &theBoard)
-    {
-        setFirstWeights(theBoard);
-        EdgesUsed = 0;
-        NodesUsed = networkSize[0]; // should be 32
-        for(int i=1; i<networkSize.size(); ++i) 
-        {
-            for(int j=0; j<networkSize[i]; ++ j) 
-            {
-                currNode = 0;
-                for(int k=0; k<networkSize[i-1]; ++k) 
-                {
-                    // Node - j - size(k) + k = previus set of nodes... hopefully
-                    currNode += layers[NodesUsed-j-networkSize[i-1]+k] * edges[EdgesUsed];
-                    EdgesUsed++;
-                }
-                // layers[NodesUsed] = currNode / (1 + std::abs(currNode));
-                layers[NodesUsed] = tanh(currNode);
-                // layers[NodesUsed] = currNode;
-                NodesUsed++;
-            }
-        }
-    }
+    // void evaluateNN(const std::string &theBoard)
+    // {
+    //     setFirstWeights(theBoard);
+    //     EdgesUsed = 0;
+    //     NodesUsed = networkSize[0]; // should be 32
+    //     for(int i=1; i<networkSize.size(); ++i) 
+    //     {
+    //         for(int j=0; j<networkSize[i]; ++ j) 
+    //         {
+    //             currNode = 0;
+    //             for(int k=0; k<networkSize[i-1]; ++k) 
+    //             {
+    //                 // Node - j - size(k) + k = previus set of nodes... hopefully
+    //                 currNode += layers[NodesUsed-j-networkSize[i-1]+k] * edges[EdgesUsed];
+    //                 EdgesUsed++;
+    //             }
+    //             // layers[NodesUsed] = currNode / (1 + std::abs(currNode));
+    //             layers[NodesUsed] = tanh(currNode);
+    //             // layers[NodesUsed] = currNode;
+    //             NodesUsed++;
+    //         }
+    //     }
+    // }
 
     void printData(std::ostream *os = &std::cout) {
-        (*os) << "Edges" << std::endl;
+        (*os) << "net_size ";
+        for(auto &ns : networkSize)
+            (*os) << ns << ' ';
+        (*os) << std::endl;
+
+        (*os) << "edges ";
         for(auto &e : edges)
             (*os) << e << ' ';
         (*os) << std::endl;
 
-        (*os) << "Sigma" << std::endl;
+        (*os) << "sigma ";
         for(auto &s : sigma_)
             (*os) << s << ' ';
         (*os) << std::endl;
 
-        (*os) << "King Weight:\t" << kingValue_ << std::endl;
+        (*os) << "kw " << kingValue_ << std::endl;
     }
 
-    void SIMDevaluateNN(const std::string &theBoard)
+    void evaluateNN(const std::string &theBoard)
     {
         setFirstWeights(theBoard);
         EdgesUsed = 0;
