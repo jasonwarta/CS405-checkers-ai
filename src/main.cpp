@@ -47,6 +47,11 @@ int main(int argc, char const *argv[]) {
 	const std::vector<int> netSize {32,40,10,1};
 	std::vector<NetTracker*> nets;
 
+	// std::ifstream ifs;
+	// ifs.open("NN/gen_000/nets/00_old");
+	// BasicNN net(ifs);
+	// ifs.close();
+
 	for(size_t i = 0; i < 30; ++i)
 		nets.push_back(new NetTracker {new BasicNN(netSize), 0});
 
@@ -63,7 +68,7 @@ int main(int argc, char const *argv[]) {
 		for(size_t i = 0; i < nets.size(); ++i) {
 			ss.str("");
 			ss << path << "/nets/" << std::setfill('0') << std::setw(2) << i;
-			ofs.open(ss.str(), std::ofstream::out | std::ofstream::app);
+			ofs.open(ss.str(), std::ofstream::out);
 			nets[i]->net->printData(&ofs);
 			ofs.close();
 			ss.str("");
@@ -75,7 +80,7 @@ int main(int argc, char const *argv[]) {
 			for(size_t j = i+1; j < nets.size(); ++j) {
 				ss.str("");
 				ss << path << "/games/" << std::setfill('0') << std::setw(2) << i << "v" <<std::setfill('0') << std::setw(2) << j;
-				ofs.open(ss.str(), std::ofstream::out | std::ofstream::app);
+				ofs.open(ss.str(), std::ofstream::out);
 				
 				std::cout << ss.str() << std::endl;
 				ss.str("");
@@ -152,7 +157,7 @@ int main(int argc, char const *argv[]) {
 
 		ss.str("");
 		ss << path << "/scores";
-		ofs.open(ss.str(), std::ofstream::out | std::ofstream::app);
+		ofs.open(ss.str(), std::ofstream::out);
 		for(size_t i = 0; i < nets.size(); ++i)
 			ofs << std::setfill('0') << std::setw(2) << i << ": " << nets[i]->score << std::endl;
 		ofs.close();
