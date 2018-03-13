@@ -2,10 +2,9 @@
 
 #include "Game.h"
 
-char Game::run() {
+char Game::run(std::string theBoard) {
 	size_t turnCounter = 0;
 	bool redTeamTurn = true;
-	std::string theBoard = START_BOARD_STRING;
 
 	// main loop, only exit when done
 	while (true && turnCounter < 200) {

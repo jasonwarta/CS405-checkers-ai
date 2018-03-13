@@ -83,6 +83,8 @@ private:
 
 };
 
+std::string getRandomStartBoard();
+
 
 class weights {
 public:

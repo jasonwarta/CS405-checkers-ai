@@ -47,27 +47,29 @@ int main(int argc, char const *argv[]) {
 	const std::vector<int> netSize {32,40,10,1};
 	std::vector<NetTracker*> nets;
 
+	for(size_t i = 0; i < 30; ++i)
+		nets.push_back(new NetTracker {new BasicNN(netSize), 0});
+
 	uint64_t genCounter = 0;
+
 	while(true) {
-		ss.str("");
-
-		for(size_t i = 0; i < 30; ++i)
-			nets.push_back(new NetTracker {new BasicNN(netSize), 0});
-
 		ss.str("");
 		ss << "./NN/gen_" << std::setfill('0') << std::setw(3) << genCounter;
 		std::string path = ss.str();
-		ss.str("");
 		system(("mkdir -p "+path+"/nets").c_str());
 		system(("mkdir -p "+path+"/games").c_str());
+		ss.str("");
 
 		for(size_t i = 0; i < nets.size(); ++i) {
+			ss.str("");
 			ss << path << "/nets/" << std::setfill('0') << std::setw(2) << i;
 			ofs.open(ss.str(), std::ofstream::out | std::ofstream::app);
 			nets[i]->net->printData(&ofs);
 			ofs.close();
 			ss.str("");
 		}
+
+		std::string startBoard = getRandomStartBoard();
 
 		for(size_t i = 0; i < nets.size(); ++i) {
 			for(size_t j = i+1; j < nets.size(); ++j) {
@@ -76,6 +78,7 @@ int main(int argc, char const *argv[]) {
 				ofs.open(ss.str(), std::ofstream::out | std::ofstream::app);
 				
 				std::cout << ss.str() << std::endl;
+				ss.str("");
 
 				Player p1(true, clock, nets[i]->net);
 				Player p2(false, clock, nets[j]->net);
@@ -83,7 +86,7 @@ int main(int argc, char const *argv[]) {
 				size_t drawCounter = 0, p1Counter = 0, p2Counter = 0;
 
 				Game game1( &p1, &p2, clock, &ofs );
-				char result1 = game1.run();
+				char result1 = game1.run(startBoard);
 
 				switch(result1) {
 					case 'R':
@@ -101,7 +104,7 @@ int main(int argc, char const *argv[]) {
 				ofs << "\n\n";
 
 				Game game2( &p2, &p1, clock, &ofs );
-				char result2 = game2.run();
+				char result2 = game2.run(startBoard);
 
 				switch(result2) {
 					case 'R':
@@ -118,7 +121,6 @@ int main(int argc, char const *argv[]) {
 				}
 				ofs << "\n\n";
 
-				// std::cout << p1Counter << " " << p2Counter << std::endl;
 				if( !(p1Counter == 2 || p2Counter == 2) ) {
 					Game game3(&p1, &p2, clock, &ofs);
 					char result3 = game3.run();
@@ -138,7 +140,6 @@ int main(int argc, char const *argv[]) {
 					}
 					ofs << "\n\n";
 				}
-				// std::cout << p1Counter << " " << p2Counter << std::endl;
 
 				ofs.close();
 
@@ -149,12 +150,13 @@ int main(int argc, char const *argv[]) {
 			}
 		}
 
+		ss.str("");
 		ss << path << "/scores";
 		ofs.open(ss.str(), std::ofstream::out | std::ofstream::app);
-		ss.str("");
 		for(size_t i = 0; i < nets.size(); ++i)
 			ofs << std::setfill('0') << std::setw(2) << i << ": " << nets[i]->score << std::endl;
 		ofs.close();
+		ss.str("");
 
 		std::sort(nets.begin(), nets.end(), [](NetTracker* a, NetTracker* b) {
 			return a->score > b->score;
@@ -171,6 +173,8 @@ int main(int argc, char const *argv[]) {
 
 		for(NetTracker* nt : nets)
 			nt->score = 0;
+
+		genCounter++;
 	}
 
 	std::cout << "reached end of program" << std::endl;

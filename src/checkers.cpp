@@ -32,6 +32,14 @@
 		==================================================== CHECKER BOARD CLASS ====================================================
 	*/
 
+	std::string getRandomStartBoard(){
+		std::string theBoard = START_BOARD_STRING;
+		theBoard = CheckerBoard(theBoard,true).getRandoMove();
+		theBoard = CheckerBoard(theBoard,false).getRandoMove();
+		theBoard = CheckerBoard(theBoard,true).getRandoMove();
+		return theBoard;
+	}
+
 	CheckerBoard::CheckerBoard(std::string &startBoard, bool redPlayerTurn)
 	{
 		redTeamTurn_ = redPlayerTurn;

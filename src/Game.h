@@ -29,7 +29,7 @@ public:
 		os_(os)
 	{};
 
-	char run();
+	char run(std::string theBoard = START_BOARD_STRING);
 
 private:
 	Player * red_;
