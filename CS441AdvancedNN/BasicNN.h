@@ -323,22 +323,22 @@ public:
         std::cout << std::endl;
     }
 
-    BasicNN & operator=(BasicNN & other) {
-        if (this != &other) {
+    // BasicNN & operator=(BasicNN & other) {
+    //     if (this != &other) {
 
-            std::copy(other.layers.begin(), other.layers.end(), this->layers.begin());
-            std::copy(other.edges.begin(), other.edges.end(), this->edges.begin());
-            std::copy(other.sigma_.begin(), other.sigma_.end(), this->sigma_.begin());
-            std::copy(other.networkSize.begin(), other.networkSize.end(), this->networkSize.begin());
+    //         std::copy(other.layers.begin(), other.layers.end(), this->layers.begin());
+    //         std::copy(other.edges.begin(), other.edges.end(), this->edges.begin());
+    //         std::copy(other.sigma_.begin(), other.sigma_.end(), this->sigma_.begin());
+    //         std::copy(other.networkSize.begin(), other.networkSize.end(), this->networkSize.begin());
 
-            this->kingValue_ = other.kingValue_;
-            this->redTeam = other.redTeam;
-            this->EdgesUsed = other.EdgesUsed;
-            this->NodesUsed = other.NodesUsed;
-            this->currNode = other.currNode;
-        }
-        return *this;
-    }
+    //         this->kingValue_ = other.kingValue_;
+    //         this->redTeam = other.redTeam;
+    //         this->EdgesUsed = other.EdgesUsed;
+    //         this->NodesUsed = other.NodesUsed;
+    //         this->currNode = other.currNode;
+    //     }
+    //     return *this;
+    // }
   
     
 private:
