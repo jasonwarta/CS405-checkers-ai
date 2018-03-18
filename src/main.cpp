@@ -28,17 +28,6 @@ struct NetTracker {
 	int64_t score = 0;
 };
 
-// void launchServer(Communicator * comm) {
-// 	uWS::Hub h;
-// 	createServerInstance(h,(*comm));
-// 	h.run();
-// }
-
-// Linux sleep command takes microseconds, most other things think in milliseconds
-int milli_to_micro(int milliseconds) {
-	return 1000*milliseconds;
-}
-
 int main(int argc, char const *argv[]) {
 	
 	std::ofstream ofs;
@@ -46,11 +35,6 @@ int main(int argc, char const *argv[]) {
 	std::shared_ptr<Clock> clock = std::make_shared<Clock>(std::chrono::system_clock::now());
 	const std::vector<int> netSize {32,40,10,1};
 	std::vector<NetTracker*> nets;
-
-	// std::ifstream ifs;
-	// ifs.open("NN/gen_000/nets/00_old");
-	// BasicNN net(ifs);
-	// ifs.close();
 
 	for(size_t i = 0; i < 30; ++i)
 		nets.push_back(new NetTracker {new BasicNN(netSize), 0});
@@ -171,7 +155,7 @@ int main(int argc, char const *argv[]) {
 			std::cout << std::setfill('0') << std::setw(2) << i << ": " << nets[i]->score << std::endl;
 
 		for(size_t i = 0; i < 15; ++i) 
-			nets[15+i]->net = nets[i]->net;
+			(*nets[15+i]->net) = (*nets[i]->net);
 
 		for(size_t i = 15; i < 30; ++i)
 			nets[i]->net->evolve();
