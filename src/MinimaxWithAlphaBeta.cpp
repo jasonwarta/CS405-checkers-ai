@@ -26,7 +26,7 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth, bool redPlayer
 	std::vector< std::string > possBoards = std::move(tempBoard.getAllRandoMoves());
 
 	if(possBoards.size() == 0) {
-		bestBoard_ = theBoard;
+		bestBoard_ = "";
 		return;
 	}
 
