@@ -46,4 +46,4 @@ up: $(BUILD_DIR)/$(TARGET_EXEC) run
 
 prod: clean up
 
-dev: clean up
+dev: up
