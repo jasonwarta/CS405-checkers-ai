@@ -10,6 +10,7 @@
 #include <chrono>
 #include <memory>
 #include <ostream>
+#include <queue>
 
 #include "Player.h"
 #include "threadUtils.h"
@@ -36,6 +37,7 @@ private:
 	Player * black_;
 	std::ostream *os_;
 
+	std::queue<std::string> moveTracker_;
 	std::shared_ptr<Clock> clock_;
 };
 
