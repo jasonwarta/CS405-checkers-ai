@@ -16,18 +16,18 @@ char Game::run(std::string theBoard) {
 		if( redTeamTurn ) {
 			// if (stalemate1 && stalemate2)
 			// 	theBoard = red_->getMove(theBoard, os_, 10);
-			// else if (stalemate1)
-			// 	theBoard = red_->getMove(theBoard, os_, 8);
-			// else 
+			if (stalemate1)
+				theBoard = red_->getMove(theBoard, os_, 8);
+			else 
 				theBoard = red_->getMove(theBoard, os_, 6);
 		}
 
 		else {
 			// if (stalemate1 && stalemate2)
 			// 	theBoard = black_->getMove(theBoard, os_, 10);
-			// else if (stalemate1)
-			// 	theBoard = black_->getMove(theBoard, os_, 8);
-			// else
+			if (stalemate1)
+				theBoard = black_->getMove(theBoard, os_, 8);
+			else
 				theBoard = black_->getMove(theBoard, os_, 6);
 		}
 
