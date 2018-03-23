@@ -13,7 +13,9 @@ std::string MinimaxWithAlphaBeta::getBestBoard(std::ostream *os) {
 }
 
 void MinimaxWithAlphaBeta::printABStats(std::ostream *os) {
-	(*os) << "\"alpha\":\"";
+	(*os) << "\"expansions\":\"";
+	(*os) << std::setfill('0') << std::setw(10) << boardExpansions_;
+	(*os) << "\",\"alpha\":\"";
 	(*os) << std::setfill('0') << std::setw(6) << breakAlpha_;
 	(*os) << "\",\"beta\":\"";
 	(*os) << std::setfill('0') << std::setw(6) << breakBeta_;
@@ -62,6 +64,8 @@ float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard,
 		CheckerBoard tempBoard(theBoard, redPlayerTurn_);
 		std::vector<std::string> possBoards = std::move(tempBoard.getAllRandoMoves());
 
+		boardExpansions_ += possBoards.size();
+
 		float bestVal = -10000;
 
 		if(possBoards.size() == 0)
@@ -81,6 +85,8 @@ float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard,
 		CheckerBoard tempBoard(theBoard, !redPlayerTurn_);
 		std::vector<std::string> possBoards = std::move(tempBoard.getAllRandoMoves());
 
+		boardExpansions_ += possBoards.size();
+	
 		float worstVal = 10000;
 
 		if(possBoards.size() == 0)

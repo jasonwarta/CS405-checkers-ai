@@ -39,8 +39,9 @@ private:
 private:
 	std::string bestBoard_;
 	bool redPlayerTurn_;
-	int breakBeta_;
-	int breakAlpha_;
+	uint64_t breakBeta_;
+	uint64_t breakAlpha_;
+	uint64_t boardExpansions_;
 
 	std::ostream *os_;
 
