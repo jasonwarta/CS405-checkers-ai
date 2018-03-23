@@ -17,14 +17,15 @@
 #include "Player.h"
 #include "Game.h"
 
-#include "../CS441AdvancedNN/BasicNN.h"
+#include "NN91_Basic.h"
 
 const size_t LOSS_VAL = -1;
 const size_t DRAW_VAL = 0;
 const size_t WIN_VAL = 2;
+const std::vector<int> NET_SIZE {5,4,3};
 
 struct NetTracker {
-	BasicNN* net;
+	NN91_Basic* net;
 	int64_t score = 0;
 };
 
@@ -33,11 +34,11 @@ int main(int argc, char const *argv[]) {
 	std::ofstream ofs;
 	std::stringstream ss;
 	std::shared_ptr<Clock> clock = std::make_shared<Clock>(std::chrono::system_clock::now());
-	const std::vector<int> netSize {32,40,10,1};
+	
 	std::vector<NetTracker*> nets;
 
 	for(size_t i = 0; i < 30; ++i)
-		nets.push_back(new NetTracker {new BasicNN(netSize), 0});
+		nets.push_back(new NetTracker {new NN91_Basic(NET_SIZE), 0});
 
 	uint64_t genCounter = 0;
 

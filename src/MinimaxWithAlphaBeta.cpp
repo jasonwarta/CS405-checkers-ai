@@ -2,7 +2,7 @@
 
 #include "MinimaxWithAlphaBeta.h"
 
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, BasicNN *net) : MinimaxWithAlphaBeta(redPlayer, clock, net) 
+MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, NN91_Basic *net) : MinimaxWithAlphaBeta(redPlayer, clock, net) 
 {
 	init(theBoard, depth, redPlayer);
 }
@@ -50,13 +50,13 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth, bool redPlayer
 float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard, int depth, float alpha, float beta, bool maximizingPlayer) {
 	
 	if(depth == 0) {
-		net_->evaluateNN(theBoard);
+		net_->evaluateNN(theBoard, redPlayerTurn_);
 		// std::cout << net_->getLastNode() << std::endl;
 		return net_->getLastNode();
 	}
 
 	if ( std::chrono::duration<double>(std::chrono::system_clock::now() - *clock_).count() >= 14.0) {
-		net_->evaluateNN(theBoard);
+		net_->evaluateNN(theBoard, redPlayerTurn_);
 		return net_->getLastNode();
 	}
 

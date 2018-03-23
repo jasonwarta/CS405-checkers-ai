@@ -16,6 +16,7 @@
 #include <iomanip>
 #include <ostream>
 #include <math.h> // for tanh. may change if we find a faster sigmoid
+#include <immintrin.h>
 
 #include "consts.h"
 #include "alignocator.h"
@@ -150,18 +151,24 @@ public:
     }
 
     void printData(std::ostream *os = &std::cout) {
-        (*os) << "Edges" << std::endl;
+        (*os) << "net_size ";
+        for(auto &ns : networkSize_)
+            (*os) << ns << ' ';
+        (*os) << std::endl;
+
+        (*os) << "edges ";
         for(auto &e : edges_)
             (*os) << e << ' ';
         (*os) << std::endl;
 
-        (*os) << "Sigma" << std::endl;
+        (*os) << "sigma ";
         for(auto &s : sigma_)
             (*os) << s << ' ';
         (*os) << std::endl;
 
-        (*os) << "King Weight:\t" << kingValue_ << std::endl;
+        (*os) << "kw " << kingValue_ << std::endl;
     }
+
 private:
 
     // populates weightedStartBoard based on if there is a checker on

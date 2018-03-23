@@ -12,23 +12,24 @@
 #include <iomanip>
 
 #include "checkers.h"
-#include "../CS441AdvancedNN/BasicNN.h"
+#include "NN91_Basic.h"
 
 typedef std::chrono::time_point<std::chrono::system_clock> Clock;
 
 class MinimaxWithAlphaBeta {
 public:
-	MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, BasicNN *net);
+	MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, NN91_Basic *net);
 
 	std::string getBestBoard(std::ostream *os);
 	void printABStats(std::ostream *os);
 
 private:
-	MinimaxWithAlphaBeta(bool redPlayer, std::shared_ptr<Clock> clock, BasicNN *net) : 
+	MinimaxWithAlphaBeta(bool redPlayer, std::shared_ptr<Clock> clock, NN91_Basic *net) : 
 		redPlayerTurn_(redPlayer),
 		clock_(clock),
 		breakAlpha_(0),
 		breakBeta_(0),
+		boardExpansions_(0),
 		net_(net) 
 	{};
 
@@ -45,7 +46,7 @@ private:
 
 	std::ostream *os_;
 
-	BasicNN *net_;
+	NN91_Basic *net_;
 	std::shared_ptr<Clock> clock_;
 };
 

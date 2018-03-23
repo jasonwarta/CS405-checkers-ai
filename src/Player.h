@@ -7,9 +7,8 @@
 #include <math.h>
 #include <memory>
 
-#include "MinMaxTree.h"
 #include "MinimaxWithAlphaBeta.h"
-#include "../CS441AdvancedNN/BasicNN.h"
+#include "NN91_Basic.h"
 
 typedef std::chrono::time_point<std::chrono::system_clock> Clock;
 
@@ -17,7 +16,7 @@ class Player
 {
 public:
 	Player( bool redTeam, std::shared_ptr<Clock> clock ) : redTeam_(redTeam), clock_(clock) {};
-	Player( bool redTeam, std::shared_ptr<Clock> clock, BasicNN *net) : 
+	Player( bool redTeam, std::shared_ptr<Clock> clock, NN91_Basic *net) : 
 		redTeam_(redTeam), 
 		clock_(clock),
 		net_(net) {};
@@ -26,7 +25,7 @@ public:
 private:
 	bool redTeam_;
 	std::shared_ptr<Clock> clock_;
-	BasicNN *net_;
+	NN91_Basic *net_;
 };
 
 #endif

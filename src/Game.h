@@ -15,7 +15,8 @@
 #include "Player.h"
 #include "threadUtils.h"
 #include "consts.h"
-#include "MinMaxTree.h"
+#include "BoardEval.h"
+
 #include "MinimaxWithAlphaBeta.h"
 
 typedef std::chrono::time_point<std::chrono::system_clock> Clock;

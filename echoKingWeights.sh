@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-NN_DIR="NN_55gen"
+NN_DIR="NN"
 
 for f in `ls "$NN_DIR"`;do 
 	echo "`sed 's/gen_/\nGeneration: /'<<<$f`"
