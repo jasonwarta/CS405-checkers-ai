@@ -70,7 +70,6 @@ char Game::run(std::string theBoard) {
 				stalemate1 = true;
 				std::queue<std::string> empty;
 				std::swap(moveTracker_, empty);	
-				moveTracker_ = {};
 			}
 		}
 
