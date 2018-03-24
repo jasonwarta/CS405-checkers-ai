@@ -48,10 +48,9 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth, bool redPlayer
 }
 
 float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard, int depth, float alpha, float beta, bool maximizingPlayer) {
-	
+
 	if(depth == 0) {
 		net_->evaluateNN(theBoard, redPlayerTurn_);
-		// std::cout << net_->getLastNode() << std::endl;
 		return net_->getLastNode();
 	}
 

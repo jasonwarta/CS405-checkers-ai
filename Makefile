@@ -1,5 +1,4 @@
 UNAME := $(shell uname)
-# LDFLAGS := -pthread -lz -lssl -luv -luWS
 LDFLAGS := -pthread
 
 ifeq ($(UNAME), Darwin)

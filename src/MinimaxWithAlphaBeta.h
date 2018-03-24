@@ -20,8 +20,8 @@ class MinimaxWithAlphaBeta {
 public:
 	MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, NN91_Basic *net);
 
-	std::string getBestBoard(std::ostream *os);
-	void printABStats(std::ostream *os);
+	std::string getBestBoard(std::ostream *os = &std::cout);
+	void printABStats(std::ostream *os = &std::cout);
 
 private:
 	MinimaxWithAlphaBeta(bool redPlayer, std::shared_ptr<Clock> clock, NN91_Basic *net) : 

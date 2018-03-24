@@ -17,6 +17,7 @@
 #include <ostream>
 #include <math.h> // for tanh. may change if we find a faster sigmoid
 #include <immintrin.h>
+#include <fstream>
 
 #include "consts.h"
 #include "alignocator.h"
@@ -24,6 +25,61 @@
 class NN91_Basic 
 {
 public:
+    NN91_Basic(std::ifstream &ifs) 
+    {
+        std::string line;
+        while(getline(ifs,line)) {
+            if(line.c_str()[0]) {
+                std::istringstream is;
+                is.str(line);
+
+                std::string label;
+                is >> label;
+
+                switch(label.c_str()[0]) {
+                    case 'n': 
+                        {
+                            networkSize_.clear();
+                            int temp;
+                            int totalTemp = 0;
+                            while(is >>temp) {
+                                networkSize_.push_back(temp);
+                                totalTemp += temp;
+                            }
+                            nodes_.resize(totalTemp);
+                        }
+                        break;
+
+                    case 'e':
+                        {
+                            edges_.clear();
+                            float temp;
+                            while(is >> temp) {
+                                edges_.push_back(temp);
+                            }
+                        }
+                        break;
+
+                    case 's':
+                        {
+                            sigma_.clear();
+                            float temp;
+                            while(is >> temp) {
+                                sigma_.push_back(temp);
+                            }
+                        }
+                        break;
+
+                    case 'k':
+                        is >> kingValue_;
+
+                    default:
+                        break;
+                }
+            }
+        }
+        weightedStartBoard_.resize(32);
+    }
 
     /*
     Network start values: 
@@ -72,8 +128,8 @@ public:
         std::normal_distribution<float> distribute(0.0, 1.0);
         for(int i=0; i<nodes_.size(); ++i)
         {
-            sigma_[i] = sigma_[i] * std::exp(t * distribute(generator));
             edges_[i] = edges_[i] + sigma_[i]*distribute(generator);
+            sigma_[i] = sigma_[i] * std::exp(t * distribute(generator));
         }
     }
     
