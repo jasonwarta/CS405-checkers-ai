@@ -90,8 +90,12 @@ int main(int argc, char const *argv[]) {
 		ss.str("");
 		ss << "./NN/gen_" << std::setfill('0') << std::setw(3) << genCounter;
 		std::string path = ss.str();
-		system(("mkdir -p "+path+"/nets").c_str());
-		system(("mkdir -p "+path+"/games").c_str());
+		if ( system(("mkdir -p "+path+"/nets").c_str()) != 0 || 
+			 system(("mkdir -p "+path+"/games").c_str()) != 0 ) 
+		{
+			std::cout << "error creating directories for neural net logging" << std::endl;
+			return 0;
+		}
 		ss.str("");
 
 		for(size_t i = 0; i < nets.size(); ++i) {
