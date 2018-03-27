@@ -42,7 +42,7 @@ struct Score {
 	// game 2: 2v1. call with toggle = false
 	void assignScore(char result, bool toggle) {
 		std::lock_guard<std::mutex> guard(*(this->mtx));
-		std::cout << result << std::endl;
+		std::cout << (toggle ? "1v2" : "2v1") << ": " << result << std::endl;
 		switch(result) {
 			case 'R':
 				if (toggle)
