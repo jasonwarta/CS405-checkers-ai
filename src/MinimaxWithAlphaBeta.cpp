@@ -2,7 +2,7 @@
 
 #include "MinimaxWithAlphaBeta.h"
 
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, NN91_Basic *net) : MinimaxWithAlphaBeta(redPlayer, clock, net) 
+MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, NeuralNet *net) : MinimaxWithAlphaBeta(redPlayer, clock, net) 
 {
 	init(theBoard, depth, redPlayer);
 }

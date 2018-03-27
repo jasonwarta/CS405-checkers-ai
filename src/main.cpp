@@ -16,18 +16,62 @@
 #include "threadUtils.h"
 #include "Player.h"
 #include "Game.h"
-
-#include "NN91_Basic.h"
+#include "consts.h"
+#include "defs.h"
 
 const int8_t LOSS_VAL = -1;
 const int8_t DRAW_VAL = 0;
 const int8_t WIN_VAL = 2;
+
 const std::vector<int> NET_SIZE {5,4,3};
 
 struct NetTracker {
-	NN91_Basic* net;
+	NeuralNet* net;
 	int64_t score = 0;
 };
+
+struct Score {
+	std::mutex * mtx;
+
+	int8_t draw = 0;
+	int8_t p1 = 0;
+	int8_t p2 = 0;
+
+	// given Players 1 and 2, the games should be played as following:
+	// game 1: 1v2. call with toggle = true
+	// game 2: 2v1. call with toggle = false
+	void assignScore(char result, bool toggle) {
+		std::lock_guard<std::mutex> guard(*(this->mtx));
+		std::cout << result << std::endl;
+		switch(result) {
+			case 'R':
+				if (toggle)
+					p1++;
+				else 
+					p2++;
+				break;
+			case 'B':
+				if (toggle)
+					p2++;
+				else
+					p1++;
+				break;
+			case 'D':
+				draw++;
+				break;
+			default:
+				break;
+		}
+	}
+};
+
+void playGame(Player * p1, Player * p2, std::string startBoard, Score * score, bool toggle, std::ostream * os) 
+{
+	std::shared_ptr<Clock> clock = std::make_shared<Clock>(std::chrono::system_clock::now());
+	Game game( p1, p2, clock, os );
+	score->assignScore(game.run(startBoard), toggle);
+}
+
 
 int main(int argc, char const *argv[]) {
 	
@@ -38,7 +82,7 @@ int main(int argc, char const *argv[]) {
 	std::vector<NetTracker*> nets;
 
 	for(size_t i = 0; i < 30; ++i)
-		nets.push_back(new NetTracker {new NN91_Basic(NET_SIZE), 0});
+		nets.push_back(new NetTracker {new NeuralNet(NET_SIZE), 0});
 
 	uint64_t genCounter = 0;
 
@@ -70,71 +114,51 @@ int main(int argc, char const *argv[]) {
 				std::cout << ss.str() << std::endl;
 				ss.str("");
 
+				// duplicate nets to avoid rewriting everything in a threadsafe style
+				// NeuralNet * p1NetCopy = new NeuralNet(NET_SIZE);
+				// (*p1NetCopy) = (*nets[i]->net);
+
+				// NeuralNet * p2NetCopy = new NeuralNet(NET_SIZE);
+				// (*p2NetCopy) = (*nets[j]->net);
+
+
 				Player p1(true, clock, nets[i]->net);
+				// Player p1copy(true, clock, p1NetCopy);
+
 				Player p2(false, clock, nets[j]->net);
+				// Player p2copy(false, clock, p2NetCopy);
 
-				size_t drawCounter = 0, p1Counter = 0, p2Counter = 0;
 
-				Game game1( &p1, &p2, clock, &ofs );
-				char result1 = game1.run(startBoard);
+				std::mutex mtx;
+				Score score = {&mtx, 0, 0, 0};
 
-				switch(result1) {
-					case 'R':
-						p1Counter++;
-						break;
-					case 'B':
-						p2Counter++;
-						break;
-					case 'D':
-						drawCounter++;
-						break;
-					default:
-						break;
-				}
+				// std::stringstream game1ss;
+				// std::stringstream game2ss;
+				
+				playGame(&p1, &p2, startBoard, &score, true, &ofs);
+				playGame(&p2, &p1, startBoard, &score, false, &ofs);
+
+				// std::thread game1(playGame, &p1, &p2, startBoard, &score, true, &game1ss );
+				// std::thread game2(playGame, &p2copy, &p1copy, startBoard, &score, false, &game2ss );
+
+				// game1.join();
+				// game2.join();
+				// std::cout << "threads have joined" << std::endl;
+
+				// ofs << game1ss.str() << "\n\n" << game2ss.str() << "\n\n";
 				ofs << "\n\n";
 
-				Game game2( &p2, &p1, clock, &ofs );
-				char result2 = game2.run(startBoard);
-
-				switch(result2) {
-					case 'R':
-						p2Counter++;
-						break;
-					case 'B':
-						p1Counter++;
-						break;
-					case 'D':
-						drawCounter++;
-						break;
-					default:
-						break;
-				}
-				ofs << "\n\n";
-
-				if( !(p1Counter == 2 || p2Counter == 2) ) {
+				if( score.p1 == score.p2 ) {
+					std::cout << "playing game 3" << std::endl;
 					Game game3(&p1, &p2, clock, &ofs);
-					char result3 = game3.run();
-
-					switch(result3) {
-						case 'R':
-							p1Counter++;
-							break;
-						case 'B':
-							p2Counter++;
-							break;
-						case 'D':
-							drawCounter++;
-							break;
-						default:
-							break;
-					}
+					score.assignScore(game3.run(), true);
 					ofs << "\n\n";
 				}
 
 				ofs.close();
 
-				nets[i]->score += (p1Counter*WIN_VAL) + (p2Counter*LOSS_VAL) + (drawCounter*DRAW_VAL);
-				nets[j]->score += (p2Counter*WIN_VAL) + (p1Counter*LOSS_VAL) + (drawCounter*DRAW_VAL);
+				nets[i]->score += (score.p1*WIN_VAL) + (score.p2*LOSS_VAL) + (score.draw*DRAW_VAL);
+				nets[j]->score += (score.p2*WIN_VAL) + (score.p1*LOSS_VAL) + (score.draw*DRAW_VAL);
 
 				std::cout << i << ":" << nets[i]->score << " " << j << ":" << nets[j]->score << std::endl;
 			}

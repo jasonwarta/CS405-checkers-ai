@@ -20,6 +20,7 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 CPPFLAGS ?= -std=c++14 $(INC_FLAGS) -MMD -MP -mavx
 
+dev: CPPFLAGS += -g
 prod: CPPFLAGS += -O3
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)

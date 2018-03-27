@@ -8,15 +8,13 @@
 #include <memory>
 
 #include "MinimaxWithAlphaBeta.h"
-#include "NN91_Basic.h"
-
-typedef std::chrono::time_point<std::chrono::system_clock> Clock;
+#include "defs.h"
 
 class Player
 {
 public:
 	Player( bool redTeam, std::shared_ptr<Clock> clock ) : redTeam_(redTeam), clock_(clock) {};
-	Player( bool redTeam, std::shared_ptr<Clock> clock, NN91_Basic *net) : 
+	Player( bool redTeam, std::shared_ptr<Clock> clock, NeuralNet *net) : 
 		redTeam_(redTeam), 
 		clock_(clock),
 		net_(net) {};
@@ -25,7 +23,7 @@ public:
 private:
 	bool redTeam_;
 	std::shared_ptr<Clock> clock_;
-	NN91_Basic *net_;
+	NeuralNet *net_;
 };
 
 #endif

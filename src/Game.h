@@ -17,9 +17,10 @@
 #include "consts.h"
 #include "BoardEval.h"
 
+#include "defs.h"
 #include "MinimaxWithAlphaBeta.h"
 
-typedef std::chrono::time_point<std::chrono::system_clock> Clock;
+// typedef std::chrono::time_point<std::chrono::system_clock> Clock;
 
 class Game
 {
