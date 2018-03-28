@@ -164,48 +164,7 @@ public:
             }
         }
     }
-/*
-    // All ints but the last one in networkSize_ must be mults of 8
-    void AlignedEvaluateNN(const std::string &theBoard, bool isRedTeam)
-    {
-        redTeam_ = isRedTeam;
 
-        setFirstWeights(theBoard);
-        EdgesUsed_ = 0;
-        NodesUsed_ = networkSize_[0]; // should also be 32
-        float summedStorage[8] __attribute__ ((aligned (32)));
-        float additionStorage[8] __attribute__ ((aligned (32))) {0,0,0,0,0,0,0,0};
-
-        for(int i=1; i<networkSize_.size(); ++i) 
-        {
-            for(int j=0; j<networkSize_[i]; ++j) 
-            {
-                __m256 addStorage = _mm256_load_ps(&additionStorage[0]);
-
-                for(int k=0; k<networkSize_[i-1]; k+=8) 
-                {
-                    
-                    __m256 edgesSIMD = _mm256_load_ps(&edges_[EdgesUsed_]);
-                    __m256 nodeSIMD = _mm256_load_ps(&nodes_[NodesUsed_-j-networkSize_[i-1]+k]);
-                    __m256 nodeWeights = _mm256_mul_ps(edgesSIMD, nodeSIMD);
-
-                    addStorage = _mm256_add_ps(addStorage, nodeWeights);
-
-                    EdgesUsed_+=8;
-                }
-                
-                // Horizontal add of 8 elements
-                addStorage = _mm256_hadd_ps(addStorage, addStorage);
-                addStorage = _mm256_hadd_ps(addStorage, addStorage);                
-                _mm256_store_ps(&summedStorage[0], addStorage);
-
-                nodes_[NodesUsed_] = tanh(summedStorage[3] + summedStorage[4]);
-                
-                NodesUsed_++;
-            }
-        }
-    }
-*/
     float getLastNode()
     {
         return nodes_[nodes_.size()-1];
