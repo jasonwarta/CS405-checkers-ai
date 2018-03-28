@@ -1,32 +1,36 @@
 //Cameron Showalter
 //CS405 && CS441
-// NN91_Basic.h
+// BasicNN.h
 // Verson: too many to remember anymore
 
-#ifndef NN91_Basic_h
-#define NN91_Basic_h
 
 
+#ifndef BASIC_NN_H
+#define BASIC_NN_H
 
 
 #include <iostream>
 #include <vector>
 #include <cstdlib>
+#include <algorithm>
 #include <ctime>
 #include <random>
 #include <iomanip>
-#include <ostream>
-#include <math.h> // for tanh. may change if we find a faster sigmoid
-#include <immintrin.h>
+#include <cmath> //pow
+#include <string>
 #include <fstream>
+#include <sstream>
+#include <math.h> // for tanh. may change if we find a faster sigmoid
+#include <immintrin.h> // -mavx
 
 #include "consts.h"
 #include "alignocator.h"
 
-class NN91_Basic 
+
+class BasicNN 
 {
 public:
-    NN91_Basic(std::ifstream &ifs) 
+    BasicNN(std::ifstream &ifs) 
     {
         std::string line;
         while(getline(ifs,line)) {
@@ -79,18 +83,16 @@ public:
                 }
             }
         }
-        weightedStartBoard_.resize(32);
     }
-
     /*
     Network start values: 
         K = U(1.0, 3.0) == kingValue_
         w = U(-0.2, 0.2) == edges_[i] where i = 0, 1, ... ,n-1
         s = 0.05 == sigma_[i] where i = 0, 1, ... ,n-1
     */
-    NN91_Basic(const std::vector<int> &netSize) 
+    BasicNN(const std::vector<int> &netSize)
     {
-    	setNeuralSizes(netSize);
+        setNeuralSizes(netSize);
 
         // seed randomness
         std::random_device rd;
@@ -106,6 +108,9 @@ public:
         {
             edges_[i] = startWeightVal(random);
         }
+
+        // set up the sigma
+        sigma_.resize(nodes_.size(), 0.05f);
     }
 
     /*
@@ -127,21 +132,47 @@ public:
 
         float t = 1/sqrt(2*sqrt(nodes_.size()));
         std::normal_distribution<float> distribute(0.0, 1.0);
-        for(int i=0; i<nodes_.size(); ++i)
+        for(int i=0; i<edges_.size(); ++i)
         {
             edges_[i] = edges_[i] + sigma_[i]*distribute(generator);
             sigma_[i] = sigma_[i] * std::exp(t * distribute(generator));
         }
     }
-    
 
+    // Slow way:
     void evaluateNN(const std::string &theBoard, bool isRedTeam)
     {
         redTeam_ = isRedTeam;
+        setFirstWeights(theBoard);
+        EdgesUsed_ = 0;
+        NodesUsed_ = networkSize_[0]; // should be 32
+        for(int i=1; i<networkSize_.size(); ++i) 
+        {
+            for(int j=0; j<networkSize_[i]; ++ j) 
+            {
+                // tried declaring float inside method and as class
+                // both timings were about the same
+                float currNode = 0;
+                for(int k=0; k<networkSize_[i-1]; ++k) 
+                {
+                    currNode += nodes_[NodesUsed_-j-networkSize_[i-1]+k] * edges_[EdgesUsed_];
+                    EdgesUsed_++;
+                }
 
-        stringToWeightedBoard(theBoard);
+                nodes_[NodesUsed_] = tanh(currNode);
+                NodesUsed_++;
+            }
+        }
+    }
+/*
+    // All ints but the last one in networkSize_ must be mults of 8
+    void AlignedEvaluateNN(const std::string &theBoard, bool isRedTeam)
+    {
+        redTeam_ = isRedTeam;
 
-        setFirstWeights();
+        setFirstWeights(theBoard);
+        EdgesUsed_ = 0;
+        NodesUsed_ = networkSize_[0]; // should also be 32
         float summedStorage[8] __attribute__ ((aligned (32)));
         float additionStorage[8] __attribute__ ((aligned (32))) {0,0,0,0,0,0,0,0};
 
@@ -154,13 +185,13 @@ public:
                 for(int k=0; k<networkSize_[i-1]; k+=8) 
                 {
                     
-                    __m256 edges_SIMD = _mm256_load_ps(&edges_[edgeCount_]);
-                    __m256 nodeSIMD = _mm256_load_ps(&nodes_[nodeCount_-j-networkSize_[i-1]+k]);
-                    __m256 nodeWeights = _mm256_mul_ps(edges_SIMD, nodeSIMD);
+                    __m256 edgesSIMD = _mm256_load_ps(&edges_[EdgesUsed_]);
+                    __m256 nodeSIMD = _mm256_load_ps(&nodes_[NodesUsed_-j-networkSize_[i-1]+k]);
+                    __m256 nodeWeights = _mm256_mul_ps(edgesSIMD, nodeSIMD);
 
                     addStorage = _mm256_add_ps(addStorage, nodeWeights);
 
-                    edgeCount_+=8;
+                    EdgesUsed_+=8;
                 }
                 
                 // Horizontal add of 8 elements
@@ -168,22 +199,21 @@ public:
                 addStorage = _mm256_hadd_ps(addStorage, addStorage);                
                 _mm256_store_ps(&summedStorage[0], addStorage);
 
-                nodes_[nodeCount_] = tanh(summedStorage[3] + summedStorage[4]);
-                nodeCount_++;
+                nodes_[NodesUsed_] = tanh(summedStorage[3] + summedStorage[4]);
+                
+                NodesUsed_++;
             }
         }
     }
-
+*/
     float getLastNode()
     {
         return nodes_[nodes_.size()-1];
     } 
-    
-    // More-so for testing. Actuall program shouldn't need to call this
     void printAll()
     {
         std::cout << std::endl << "------------------NODES----------------" << std::endl;
-        nodeCount_ = 0;
+        int nodeCount_ = 0;
         for(int i=0; i<networkSize_.size(); ++i)
         {
             for(int j=0; j<networkSize_[i]; ++j)
@@ -227,162 +257,68 @@ public:
     }
 
 private:
-
-    // populates weightedStartBoard based on if there is a checker on
-    // that square and if that square is yours.
-    void stringToWeightedBoard(const std::string &theBoard)
+    // Looks at the checkerboard, and sets first set of weights
+    // based on whose team you're on
+    void setFirstWeights(const std::string &theBoard)
     {
-        for(size_t i = 0; i < weightedStartBoard_.size(); ++i) 
+        for(size_t i = 0; i < theBoard.size(); ++i) 
         {
             switch(theBoard[i]) 
             {
                 case 'R':
-                    weightedStartBoard_[i] = redTeam_ ? kingValue_ : -kingValue_;
+                    nodes_[i] = redTeam_ ? kingValue_ : -kingValue_;
                     break;
                 case 'r':
-                    weightedStartBoard_[i] = redTeam_ ? 1.0f : -1.0f;
+                    nodes_[i] = redTeam_ ? 1.0f : -1.0f;
                     break;
                 case 'B':
-                    weightedStartBoard_[i] = redTeam_ ? -kingValue_ : kingValue_;
+                    nodes_[i] = redTeam_ ? -kingValue_ : kingValue_;
                     break;
                 case 'b':
-                    weightedStartBoard_[i] = redTeam_ ? -1.0f : 1.0f;
+                    nodes_[i] = redTeam_ ? -1.0f : 1.0f;
                     break;
                 default:
-                    weightedStartBoard_[i] = 0.0f;
+                    nodes_[i] = 0.0f;
                     break;
             }
         }
     }
     
-    // Converts the weightedBoard to the first 91 Nodes of the Network.
-    // Each node looks at a different square. All 3x3, 4x4, 5x5... 8x8. (91 total)
-    void setFirstWeights()
-    {
-        // Only actually use 91. Last 5 to make AVX happy
-        nodeCount_ = 96;
-        edgeCount_ = 0;
-
-        for(int i=0; i<NN91_NODE_LOCATIONS.size(); ++i)
-        {
-            for(int j=0; j<NN91_NODE_LOCATIONS[i].size(); ++j)
-            {
-                nodes_[i] += weightedStartBoard_[NN91_NODE_LOCATIONS[i][j]] * edges_[edgeCount_];
-                edgeCount_++;
-            }
-            nodes_[i] = tanh(nodes_[i]);
-        }
-        edgeCount_ += 2; // become aligned for SIMD. Not actually used anywhere
-        
-        // Set last 5 nodes_ to 0 for aligned SIMD
-        for(int i=91; i<96; ++i)
-        {
-            nodes_[i] = 0;
-        }
-    }
-
-    // one call to set all vectors to the right size
-    // prevents lots of push_backs
-    void setNeuralSizes(const std::vector<int> &nodeSizes)
+    // Does resizes on network creation to avoid lots of push_backs later
+    void setNeuralSizes(const std::vector<int> &layerSizes)
    	{
+        networkSize_ = layerSizes;
 
-        // Set up network size: [91, nodeSizes*8, 1]
-        networkSize_.resize(nodeSizes.size()+2);
-        networkSize_[0] = 96;
-        for(int i=0; i<nodeSizes.size(); ++i)
-        {
-            networkSize_[i+1] = nodeSizes[i]*8;
-        }
-        networkSize_[networkSize_.size()-1] = 1;
-
-        // set up nodes_
         int totalNodes = 0;
-        for(int i=0; i<networkSize_.size(); ++i) 
+        for(int i=0; i<layerSizes.size(); ++i) 
         {
-            totalNodes += networkSize_[i];
+            totalNodes += layerSizes[i];
         }
         nodes_.resize(totalNodes, 0.0f);
 
-        // set up edges_
-        int totalEdges = 856; // 854 Edges from first set of nodes_ to the input vector + 2 for SIMD alignment
-        for(int i=0; i<networkSize_.size()-1; ++i)
+        int totalEdges = 0;
+        for(int i=0; i<layerSizes.size()-1; ++i)
         {
-            totalEdges += networkSize_[i] * networkSize_[i+1];
+            totalEdges += layerSizes[i] * layerSizes[i+1];
         }
         edges_.resize(totalEdges);
-
-        // set up other vectors
-        weightedStartBoard_.resize(32);
-        sigma_.resize(nodes_.size(), 0.05f);
    	}
-
-    // Mainly for testing
-    void randomWeights(std::vector<float> & rando) {
-        std::random_device rd;
-        std::mt19937 random(rd());
-        for(int i = 0; i < rando.size(); ++i) {
-            std::uniform_real_distribution<> randomfloats(-1.0f, 1.0f);
-            rando[i] = randomfloats(random);
-        }
-    }
-
 
 private:
     std::vector<float, alignocator<float, 32>> nodes_;
     std::vector<float, alignocator<float, 32>> edges_;
-    std::vector<float, alignocator<float, 32>> sigma_;
+    std::vector<float> sigma_;
     std::vector<int> networkSize_;
-    std::vector<float> weightedStartBoard_;
 
     float kingValue_;
     bool redTeam_;
-    int edgeCount_;
-    int nodeCount_;
+    int EdgesUsed_;
+    int NodesUsed_;
+    
 };
 
 
 
 
 
-#endif /* NN91_Basic_h */
-
-
-
-
-
-
-
-
-
-
-/*
-
-
-    // generic slow way:
-    void evaluateNN(const std::string &theBoard, bool isRedTeam)
-    {
-        redTeam_ = isRedTeam;
-
-        stringToWeightedBoard(theBoard);
-        setFirstWeights();
-        // NodeCount = 96 && edgecount = 854
-        for(int i=1; i<networkSize_.size(); ++i)
-        {
-            for(int j=0; j<networkSize_[i]; ++j)
-            {
-                float currNode_ = 0;
-                for(int k=0; k<networkSize_[i-1]; ++k) 
-                {
-                    // Node - j - size(k) + k = previus set of nodes_... hopefully
-                    currNode_ += nodes_[nodeCount_-j-networkSize_[i-1]+k] * edges_[edgeCount_];
-                    edgeCount_++;
-                }
-
-                nodes_[nodeCount_] = tanh(currNode_);
-                nodeCount_++;
-            }
-        }
-    }
-
-
-*/
+#endif /* NeuralNet_h */

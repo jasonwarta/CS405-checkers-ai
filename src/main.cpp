@@ -23,7 +23,7 @@ const int8_t LOSS_VAL = -1;
 const int8_t DRAW_VAL = 0;
 const int8_t WIN_VAL = 2;
 
-const std::vector<int> NET_SIZE {5,4,3};
+const std::vector<int> NET_SIZE {32,5,4,3};
 
 struct NetTracker {
 	NeuralNet* net;
