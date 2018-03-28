@@ -4,6 +4,14 @@
 #include <vector>
 #include <string>
 
+const int8_t LOSS_VAL = -1;
+const int8_t DRAW_VAL = 0;
+const int8_t WIN_VAL = 2;
+
+const int8_t NUM_THREADS = 2;
+
+const std::vector<int> NET_SIZE {32,40,10,1};
+
 extern const std::string START_BOARD_STRING;
 
 const std::vector<std::vector<int>> RED_MOVE_BOARD { 
