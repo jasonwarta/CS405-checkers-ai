@@ -40,12 +40,16 @@ struct NetTracker {
 	NeuralNet* net;
 	int64_t score = 0;
 
-	void assignScore(Score * score, bool p1) {
+	void assignScore(Score * gameScore, bool p1) {
+		std::cout << p1 << " " << (int)gameScore->p1 << " " << (int)gameScore->p2 << std::endl;
 		std::lock_guard<std::mutex> guard(*(this->mtx));
+std::cout << p1 << " " << (int)gameScore->p1 << " " << (int)gameScore->p2 << std::endl;
 		if ( p1 )
-			score += (score->p1*WIN_VAL) + (score->p2*LOSS_VAL) + (score->draw*DRAW_VAL);
+			score += (gameScore->p1*WIN_VAL) + (gameScore->p2*LOSS_VAL) + (gameScore->draw*DRAW_VAL);
 		else
-			score += (score->p2*WIN_VAL) + (score->p1*LOSS_VAL) + (score->draw*DRAW_VAL);
+			score += (gameScore->p2*WIN_VAL) + (gameScore->p1*LOSS_VAL) + (gameScore->draw*DRAW_VAL);
+
+		std::cout << score << std::endl;
 	}
 };
 
@@ -93,6 +97,9 @@ struct Match {
 
 		std::cout << ss.str() << std::endl;
 
+		std::cout << (int)score.p1 << std::endl;
+		std::cout << (int)score.p2 << std::endl;
+
 		lhs->assignScore(&score,true);
 		rhs->assignScore(&score,false);
 	}
@@ -105,6 +112,9 @@ void play(std::mutex &mtx, std::queue<Match*> &matches) {
 		if (matches.size() > 0) {
 			m = *matches.front();
 			matches.pop();
+		} else {
+			mtx.unlock();
+			return;
 		}
 		mtx.unlock();
 

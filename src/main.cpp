@@ -28,7 +28,7 @@ int main(int argc, char const *argv[]) {
 	
 	std::vector<NetTracker*> nets;
 
-	for(size_t i = 0; i < 30; ++i)
+	for(size_t i = 0; i < POPULATION_SIZE; ++i)
 		nets.push_back(new NetTracker {new std::mutex, new NeuralNet(NET_SIZE), 0});
 
 	uint64_t genCounter = 0;
@@ -79,9 +79,18 @@ int main(int argc, char const *argv[]) {
 			threads.push_back( std::thread(play, std::ref(mtx), std::ref(matchesQueue)) );
 		}
 		
-		for (auto &t : threads) {
-			t.join();
+		for (int i = 0; i < threads.size(); ++i)
+		{
+			threads[i].join();
 		}
+
+		ss.str("");
+		ss << path << "/scores";
+		ofs.open(ss.str(), std::ofstream::out);
+		for(size_t i = 0; i < nets.size(); ++i)
+			ofs << std::setfill('0') << std::setw(2) << i << ": " << nets[i]->score << std::endl;
+		ofs.close();
+		ss.str("");
 
 		std::sort(nets.begin(), nets.end(), [](NetTracker* a, NetTracker* b) {
 			return a->score > b->score;
@@ -90,10 +99,10 @@ int main(int argc, char const *argv[]) {
 		for(size_t i = 0; i < nets.size(); ++i)
 			std::cout << std::setfill('0') << std::setw(2) << i << ": " << nets[i]->score << std::endl;
 
-		for(size_t i = 0; i < 15; ++i) 
-			(*nets[15+i]->net) = (*nets[i]->net);
+		for(size_t i = 0; i < (POPULATION_SIZE/2); ++i) 
+			(*nets[(POPULATION_SIZE/2)+i]->net) = (*nets[i]->net);
 
-		for(size_t i = 15; i < 30; ++i)
+		for(size_t i = (POPULATION_SIZE/2); i < POPULATION_SIZE; ++i)
 			nets[i]->net->evolve();
 
 		for(NetTracker* nt : nets)
