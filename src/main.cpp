@@ -12,6 +12,7 @@
 #include <memory>
 #include <fstream>
 #include <sstream>
+#include <experimental/filesystem>
 
 #include "threadUtils.h"
 #include "Player.h"
@@ -20,22 +21,30 @@
 #include "defs.h"
 #include "MatchHandling.h"
 
+namespace fs = std::experimental::filesystem;
+
 int main(int argc, char const *argv[]) {
-	
 	std::ofstream ofs;
 	std::stringstream ss;
 	std::shared_ptr<Clock> clock = std::make_shared<Clock>(std::chrono::system_clock::now());
 	
 	std::vector<NetTracker*> nets;
 
-	for(size_t i = 0; i < POPULATION_SIZE; ++i)
-		nets.push_back(new NetTracker {new std::mutex, new NeuralNet(NET_SIZE), 0});
+	if(argc > 1) {
+		std::ifstream ifs;
+	    for(auto& f: fs::directory_iterator(argv[1])) {
+			ifs.open(f.path());
+			nets.push_back(new NetTracker {new std::mutex, new NeuralNet(ifs), 0});
+			ifs.close();
+		}		
+	} else {
+		for(size_t i = 0; i < POPULATION_SIZE; ++i)
+			nets.push_back(new NetTracker {new std::mutex, new NeuralNet(NET_SIZE), 0});
+	}
 
 	uint64_t genCounter = 0;
 
-	
-
-	while(true) {
+	// while(true) {
 
 		std::mutex mtx;
 		std::queue<Match*> matchesQueue;
@@ -73,16 +82,20 @@ int main(int argc, char const *argv[]) {
 			}
 		}
 
-		std::vector<std::thread> threads;
-		for (int i = 0; i < NUM_THREADS; ++i)
-		{
-			threads.push_back( std::thread(play, std::ref(mtx), std::ref(matchesQueue)) );
-		}
+		play(mtx,matchesQueue);
+		// std::vector<std::thread> threads;
+		// for (int i = 0; i < NUM_THREADS; ++i)
+		// {
+		// 	threads.push_back( std::thread(play, std::ref(mtx), std::ref(matchesQueue)) );
+		// }
 		
-		for (int i = 0; i < threads.size(); ++i)
-		{
-			threads[i].join();
-		}
+		// for (int i = 0; i < threads.size(); ++i)
+		// {
+		// 	threads[i].join();
+		// }
+
+		// std::thread t1(play, std::ref(mtx), std::ref(matchesQueue));
+		// t1.join();
 
 		ss.str("");
 		ss << path << "/scores";
@@ -101,15 +114,16 @@ int main(int argc, char const *argv[]) {
 
 		for(size_t i = 0; i < (POPULATION_SIZE/2); ++i) 
 			(*nets[(POPULATION_SIZE/2)+i]->net) = (*nets[i]->net);
-
+		std::cout << "point 1" << std::endl;
 		for(size_t i = (POPULATION_SIZE/2); i < POPULATION_SIZE; ++i)
 			nets[i]->net->evolve();
-
+		std::cout << "point 2" << std::endl;
 		for(NetTracker* nt : nets)
 			nt->score = 0;
+		std::cout << "point 3" << std::endl;
 
 		genCounter++;
-	}
+	// }
 
 	std::cout << "reached end of program" << std::endl;
 	exit(0);

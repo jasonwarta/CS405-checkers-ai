@@ -1,5 +1,5 @@
 UNAME := $(shell uname)
-LDFLAGS := -pthread
+LDFLAGS := -pthread -lstdc++fs
 
 ifeq ($(UNAME), Darwin)
 	LIBS += -I/usr/local/include -I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib
@@ -18,13 +18,13 @@ DEPS := $(OBJS:.o=.d)
 INC_DIRS := $(shell find $(SRC_DIRS) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-CPPFLAGS ?= -std=c++14 $(INC_FLAGS) -MMD -MP -mavx
+CPPFLAGS ?= -std=c++17 $(INC_FLAGS) -MMD -MP -mavx 
 
 dev: CPPFLAGS += -g
 prod: CPPFLAGS += -O3
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
-	$(CC) -std=c++14 $(OBJS) -o $@ $(LDFLAGS)
+	$(CC) -std=c++17 $(OBJS) -o $@ $(LDFLAGS)
 
 $(BUILD_DIR)/%.cpp.o: %.cpp
 	$(MKDIR_P) $(dir $@)
@@ -47,3 +47,6 @@ up: $(BUILD_DIR)/$(TARGET_EXEC) run
 prod: clean up
 
 dev: up
+
+load:
+	./build/main $(PATH)
