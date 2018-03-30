@@ -110,7 +110,7 @@ public:
         }
 
         // set up the sigma
-        sigma_.resize(nodes_.size(), 0.05f);
+        sigma_.resize(edges_.size(), 0.05f);
     }
 
     /*

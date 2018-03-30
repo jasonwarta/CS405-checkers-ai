@@ -9,7 +9,7 @@ const int8_t DRAW_VAL = 0;
 const int8_t WIN_VAL = 2;
 
 const int8_t NUM_THREADS = 4;
-const int POPULATION_SIZE = 4;
+const int POPULATION_SIZE = 30;
 
 const std::vector<int> NET_SIZE {32,40,10,1};
 

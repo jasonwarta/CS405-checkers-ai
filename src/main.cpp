@@ -28,26 +28,26 @@ int main(int argc, char const *argv[]) {
 	std::stringstream ss;
 	std::shared_ptr<Clock> clock = std::make_shared<Clock>(std::chrono::system_clock::now());
 	
-	std::vector<NetTracker*> nets;
+	std::vector<std::shared_ptr<NetTracker>> nets;
 
 	if(argc > 1) {
 		std::ifstream ifs;
 	    for(auto& f: fs::directory_iterator(argv[1])) {
 			ifs.open(f.path());
-			nets.push_back(new NetTracker {new std::mutex, new NeuralNet(ifs), 0});
+			nets.push_back(std::make_shared<NetTracker>(NetTracker {new std::mutex, new NeuralNet(ifs)}));
 			ifs.close();
 		}		
 	} else {
 		for(size_t i = 0; i < POPULATION_SIZE; ++i)
-			nets.push_back(new NetTracker {new std::mutex, new NeuralNet(NET_SIZE), 0});
+			nets.push_back(std::make_shared<NetTracker>(NetTracker {new std::mutex, new NeuralNet(NET_SIZE)}));
 	}
 
 	uint64_t genCounter = 0;
 
-	// while(true) {
-
+	while(true) {
+		// std::cout << "in while loop" << std::endl;
 		std::mutex mtx;
-		std::queue<Match*> matchesQueue;
+		std::queue<std::shared_ptr<Match>> matchesQueue;
 		// Matches matches {&mtx};
 
 		ss.str("");
@@ -60,7 +60,7 @@ int main(int argc, char const *argv[]) {
 			return 0;
 		}
 		ss.str("");
-
+		// std::cout << "made dirs" << std::endl;
 		for(size_t i = 0; i < nets.size(); ++i) {
 			ss.str("");
 			ss << path << "/nets/" << std::setfill('0') << std::setw(2) << i;
@@ -69,7 +69,7 @@ int main(int argc, char const *argv[]) {
 			ofs.close();
 			ss.str("");
 		}
-
+		// std::cout << "printed stats" << std::endl;
 		std::string startBoard = getRandomStartBoard();
 
 		for(size_t i = 0; i < nets.size(); ++i) {
@@ -77,22 +77,23 @@ int main(int argc, char const *argv[]) {
 				ss.str("");
 				ss << path << "/games/" << std::setfill('0') << std::setw(2) << i << "v" <<std::setfill('0') << std::setw(2) << j;
 
-				matchesQueue.push(new Match {nets[i], nets[j], &startBoard, ss.str()});
+				matchesQueue.push(std::make_shared<Match>(Match {nets[i], nets[j], startBoard, ss.str()}));
 				ss.str("");
 			}
 		}
+		// std::cout << "set up queue" << std::endl;
 
-		play(mtx,matchesQueue);
-		// std::vector<std::thread> threads;
-		// for (int i = 0; i < NUM_THREADS; ++i)
-		// {
-		// 	threads.push_back( std::thread(play, std::ref(mtx), std::ref(matchesQueue)) );
-		// }
+		// play(mtx,matchesQueue);
+		std::vector<std::thread> threads;
+		for (int i = 0; i < NUM_THREADS; ++i)
+		{
+			threads.push_back( std::thread(play, std::ref(mtx), std::ref(matchesQueue)) );
+		}
 		
-		// for (int i = 0; i < threads.size(); ++i)
-		// {
-		// 	threads[i].join();
-		// }
+		for (int i = 0; i < threads.size(); ++i)
+		{
+			threads[i].join();
+		}
 
 		// std::thread t1(play, std::ref(mtx), std::ref(matchesQueue));
 		// t1.join();
@@ -105,7 +106,7 @@ int main(int argc, char const *argv[]) {
 		ofs.close();
 		ss.str("");
 
-		std::sort(nets.begin(), nets.end(), [](NetTracker* a, NetTracker* b) {
+		std::sort(nets.begin(), nets.end(), [](std::shared_ptr<NetTracker> a, std::shared_ptr<NetTracker> b) {
 			return a->score > b->score;
 		});
 
@@ -114,16 +115,16 @@ int main(int argc, char const *argv[]) {
 
 		for(size_t i = 0; i < (POPULATION_SIZE/2); ++i) 
 			(*nets[(POPULATION_SIZE/2)+i]->net) = (*nets[i]->net);
-		std::cout << "point 1" << std::endl;
+		// std::cout << "point 1" << std::endl;
 		for(size_t i = (POPULATION_SIZE/2); i < POPULATION_SIZE; ++i)
 			nets[i]->net->evolve();
-		std::cout << "point 2" << std::endl;
-		for(NetTracker* nt : nets)
+		// std::cout << "point 2" << std::endl;
+		for(auto &nt : nets)
 			nt->score = 0;
-		std::cout << "point 3" << std::endl;
+		// std::cout << "point 3" << std::endl;
 
 		genCounter++;
-	// }
+	}
 
 	std::cout << "reached end of program" << std::endl;
 	exit(0);

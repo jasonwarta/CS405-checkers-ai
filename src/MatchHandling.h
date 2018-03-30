@@ -2,6 +2,7 @@
 #define MATCHHANDLING_H
 
 #include "consts.h"
+#include "defs.h"
 
 struct Score {
 	int8_t draw = 0;
@@ -59,10 +60,10 @@ std::string playGame(Player * p1, Player * p2, std::string startBoard, Score * s
 }
 
 struct Match {
-	NetTracker* lhs;
-	NetTracker* rhs;
-	std::string * startBoard;
-	std::string fname;
+	std::shared_ptr<NetTracker> lhs = nullptr;
+	std::shared_ptr<NetTracker> rhs = nullptr;
+	std::string startBoard = "";
+	std::string fname = "";
 
 	void playMatch() {
 		std::ofstream ofs;
@@ -80,8 +81,8 @@ struct Match {
 		Player p1(true, clock, &lhs_net);
 		Player p2(false, clock, &rhs_net);
 
-		ss << playGame(&p1, &p2, *startBoard, &score, true, &ofs);
-		ss << playGame(&p2, &p1, *startBoard, &score, false, &ofs);
+		ss << playGame(&p1, &p2, startBoard, &score, true, &ofs);
+		ss << playGame(&p2, &p1, startBoard, &score, false, &ofs);
 
 		ofs << "\n\n";
 		if( score.p1 == score.p2 ) {
@@ -96,14 +97,21 @@ struct Match {
 		lhs->assignScore(&score,true);
 		rhs->assignScore(&score,false);
 	}
+
+	void operator=(Match &match) {
+		this->lhs = std::move(match.lhs);
+		this->rhs = std::move(match.rhs);
+		this->startBoard = match.startBoard;
+		this->fname = match.fname;
+	}
 };
 
-void play(std::mutex &mtx, std::queue<Match*> &matches) {
+void play(std::mutex &mtx, std::queue<std::shared_ptr<Match>> &matches) {
 	while(matches.size() > 0) {
 		mtx.lock();
-		Match m;
+		Match m {};
 		if (matches.size() > 0) {
-			m = Match(*matches.front());
+			m = (*matches.front());
 			matches.pop();
 		} else {
 			mtx.unlock();
