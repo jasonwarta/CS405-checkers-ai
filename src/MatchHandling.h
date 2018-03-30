@@ -106,7 +106,7 @@ struct Match {
 	}
 };
 
-void play(std::mutex &mtx, std::queue<std::shared_ptr<Match>> &matches) {
+void play(std::mutex &mtx, std::queue<std::unique_ptr<Match>> &matches) {
 	while(matches.size() > 0) {
 		mtx.lock();
 		Match m {};

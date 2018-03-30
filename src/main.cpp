@@ -47,7 +47,7 @@ int main(int argc, char const *argv[]) {
 	while(true) {
 		// std::cout << "in while loop" << std::endl;
 		std::mutex mtx;
-		std::queue<std::shared_ptr<Match>> matchesQueue;
+		std::queue<std::unique_ptr<Match>> matchesQueue;
 		// Matches matches {&mtx};
 
 		ss.str("");
@@ -77,7 +77,7 @@ int main(int argc, char const *argv[]) {
 				ss.str("");
 				ss << path << "/games/" << std::setfill('0') << std::setw(2) << i << "v" <<std::setfill('0') << std::setw(2) << j;
 
-				matchesQueue.push(std::make_shared<Match>(Match {nets[i], nets[j], startBoard, ss.str()}));
+				matchesQueue.push(std::make_unique<Match>(Match {nets[i], nets[j], startBoard, ss.str()}));
 				ss.str("");
 			}
 		}

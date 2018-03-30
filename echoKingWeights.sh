@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 NN_DIR="NN"
+POP_SIZE=`grep POPULATION_SIZE src/consts.h|sed 's/.*= \?\([0-9]*\);/\1/'`
 
 for f in `ls "$NN_DIR"`;do 
 	echo "`sed 's/gen_/\nGeneration: /'<<<$f`"
@@ -11,5 +12,5 @@ for f in `ls "$NN_DIR"`;do
 		SCORE=`grep "$NET: " "$NN_DIR"/$f/scores 2>/dev/null|sed "s/$NET: //"`
 		echo -e "net: $NET  \tkw: $KW\tScore: $SCORE"
 	done
-	echo Avg KingWeight: `echo "$SUM / 30" | bc -l`
+	echo Avg KingWeight: `echo "$SUM / $POP_SIZE" | bc -l`
 done
