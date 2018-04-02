@@ -1,8 +1,13 @@
 #ifndef MATCHHANDLING_H
 #define MATCHHANDLING_H
 
+#include <vector>
+#include <random>
+
 #include "consts.h"
 #include "defs.h"
+
+
 
 struct Score {
 	int8_t draw = 0;
@@ -40,6 +45,7 @@ struct NetTracker {
 	std::mutex * mtx;
 	NeuralNet* net;
 	int64_t score = 0;
+	std::vector<uint8_t> opponents = {};
 
 	void assignScore(Score * gameScore, bool p1) {
 		std::lock_guard<std::mutex> guard(*(this->mtx));
@@ -121,6 +127,17 @@ void play(std::mutex &mtx, std::queue<std::unique_ptr<Match>> &matches) {
 
 		m.playMatch();
 	}
+}
+
+int getRandomIndex(int index, std::mt19937 &rand, std::uniform_int_distribution<> &randIndex, std::vector<std::shared_ptr<NetTracker>> &nets) {
+	int i = randIndex(rand);
+	while(index == i || 
+		  std::find(
+		  	nets[index]->opponents.begin(), 
+		  	nets[index]->opponents.end(), i) != nets[index]->opponents.end() || 
+		  nets[i]->opponents.size() >= MAX_MATCHES)
+		i = randIndex(rand);
+	return i;
 }
 
 #endif

@@ -42,6 +42,10 @@ int main(int argc, char const *argv[]) {
 			nets.push_back(std::make_shared<NetTracker>(NetTracker {new std::mutex, new NeuralNet(NET_SIZE)}));
 	}
 
+	std::random_device r;
+	std::mt19937 rand(r());
+	std::uniform_int_distribution<> randIndex(0,POPULATION_SIZE-1);
+
 	uint64_t genCounter = 0;
 
 	while(true) {
@@ -72,15 +76,42 @@ int main(int argc, char const *argv[]) {
 		// std::cout << "printed stats" << std::endl;
 		std::string startBoard = getRandomStartBoard();
 
-		for(size_t i = 0; i < nets.size(); ++i) {
-			for(size_t j = i+1; j < nets.size(); ++j) {
-				ss.str("");
-				ss << path << "/games/" << std::setfill('0') << std::setw(2) << i << "v" <<std::setfill('0') << std::setw(2) << j;
+		// for(size_t i = 0; i < nets.size(); ++i) {
+		// 	for(size_t j = i+1; j < nets.size(); ++j) {
+		// 		ss.str("");
+		// 		ss << path << "/games/" << std::setfill('0') << std::setw(2) << i << "v" <<std::setfill('0') << std::setw(2) << j;
 
-				matchesQueue.push(std::make_unique<Match>(Match {nets[i], nets[j], startBoard, ss.str()}));
+		// 		matchesQueue.push(std::make_unique<Match>(Match {nets[i], nets[j], startBoard, ss.str()}));
+		// 		ss.str("");
+		// 	}
+		// }
+
+		for(size_t i = 0; i < nets.size(); ++i) {
+			for(size_t j = 0; j < MIN_MATCHES; ++j) {
+				if (nets[i]->opponents.size() >= MAX_MATCHES)
+					break;
+
+				int opponentIdx = getRandomIndex(i, rand, randIndex, nets);
+
+				nets[i]->opponents.push_back(opponentIdx);
+				nets[opponentIdx]->opponents.push_back(i);
+
+				ss.str("");
+				ss << path << "/games/" << std::setfill('0') << std::setw(2) << i << "v" <<std::setfill('0') << std::setw(2) << opponentIdx;
+				
+				matchesQueue.push(std::make_unique<Match>(Match {nets[i], nets[opponentIdx], startBoard, ss.str()}));
 				ss.str("");
 			}
 		}
+
+		std::cout << matchesQueue.size() << std::endl;
+		for(size_t i = 0; i < nets.size(); ++i) {
+			std::cout << std::setfill('0') << std::setw(2) << i << ": ";
+			for(size_t j = 0; j < nets[i]->opponents.size(); ++j)
+				std::cout << std::setfill('0') << std::setw(2) << (int)nets[i]->opponents[j] << " ";
+			std::cout << std::endl;
+		}
+
 		// std::cout << "set up queue" << std::endl;
 
 		// play(mtx,matchesQueue);
@@ -107,7 +138,7 @@ int main(int argc, char const *argv[]) {
 		ss.str("");
 
 		std::sort(nets.begin(), nets.end(), [](std::shared_ptr<NetTracker> a, std::shared_ptr<NetTracker> b) {
-			return a->score > b->score;
+			return ((float)a->score/a->opponents.size()) > ((float)b->score/b->opponents.size());
 		});
 
 		for(size_t i = 0; i < nets.size(); ++i)
