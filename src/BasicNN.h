@@ -140,9 +140,15 @@ public:
     }
 
     // Slow way:
-    void evaluateNN(const std::string &theBoard, bool isRedTeam)
+    void evaluateNN(std::string &theBoard, bool isRedTeam)
     {
+        if(theBoard.size() != networkSize_[0])
+        {
+            std::cout << "Warning: string passed to Network does not match input layer size. resizing string." << std::endl;
+            theBoard.resize(networkSize_[0], '_');
+        }
         redTeam_ = isRedTeam;
+
         setFirstWeights(theBoard);
         EdgesUsed_ = 0;
         NodesUsed_ = networkSize_[0]; // should be 32
@@ -184,14 +190,16 @@ public:
         }
 
         std::cout << std::endl << "------------------EDGES----------------" << std::endl;
-        for(int i=0; i<854; ++i)
+        for(int i=0; i<edges_.size(); ++i)
         {
             std::cout << edges_[i] << " ";
         }
         std::cout << std::endl << std::endl;
-        for(int i=854; i<edges_.size(); ++i)
+
+        std::cout << std::endl << "------------------SIGMA----------------" << std::endl;
+        for(int i=0; i<sigma_.size(); ++i)
         {
-            std::cout << edges_[i] << " ";
+            std::cout << sigma_[i] << " ";
         }
         std::cout << std::endl;
     }

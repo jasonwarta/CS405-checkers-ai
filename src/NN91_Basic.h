@@ -154,9 +154,9 @@ public:
                 for(int k=0; k<networkSize_[i-1]; k+=8) 
                 {
                     
-                    __m256 edges_SIMD = _mm256_load_ps(&edges_[edgeCount_]);
+                    __m256 edgesSIMD = _mm256_load_ps(&edges_[edgeCount_]);
                     __m256 nodeSIMD = _mm256_load_ps(&nodes_[nodeCount_-j-networkSize_[i-1]+k]);
-                    __m256 nodeWeights = _mm256_mul_ps(edges_SIMD, nodeSIMD);
+                    __m256 nodeWeights = _mm256_mul_ps(edgesSIMD, nodeSIMD);
 
                     addStorage = _mm256_add_ps(addStorage, nodeWeights);
 
