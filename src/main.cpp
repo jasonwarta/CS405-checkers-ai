@@ -92,6 +92,8 @@ int main(int argc, char const *argv[]) {
 					break;
 
 				int opponentIdx = getRandomIndex(i, rand, randIndex, nets);
+				// if (opponentIdx == -1)
+				// 	break;
 
 				nets[i]->opponents.push_back(opponentIdx);
 				nets[opponentIdx]->opponents.push_back(i);
@@ -146,13 +148,15 @@ int main(int argc, char const *argv[]) {
 
 		for(size_t i = 0; i < (POPULATION_SIZE/2); ++i) 
 			(*nets[(POPULATION_SIZE/2)+i]->net) = (*nets[i]->net);
-		// std::cout << "point 1" << std::endl;
+		std::cout << "point 1" << std::endl;
 		for(size_t i = (POPULATION_SIZE/2); i < POPULATION_SIZE; ++i)
 			nets[i]->net->evolve();
-		// std::cout << "point 2" << std::endl;
-		for(auto &nt : nets)
+		std::cout << "point 2" << std::endl;
+		for(auto &nt : nets) {
 			nt->score = 0;
-		// std::cout << "point 3" << std::endl;
+			nt->opponents.clear();
+		}
+		std::cout << "point 3" << std::endl;
 
 		genCounter++;
 	}

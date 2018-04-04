@@ -131,13 +131,15 @@ void play(std::mutex &mtx, std::queue<std::unique_ptr<Match>> &matches) {
 
 int getRandomIndex(int index, std::mt19937 &rand, std::uniform_int_distribution<> &randIndex, std::vector<std::shared_ptr<NetTracker>> &nets) {
 	int i = randIndex(rand);
+	int counter = 0;
 	while(index == i || 
 		  std::find(
 		  	nets[index]->opponents.begin(), 
-		  	nets[index]->opponents.end(), i) != nets[index]->opponents.end() || 
-		  nets[i]->opponents.size() >= MAX_MATCHES)
+		  	nets[index]->opponents.end(), i) != nets[index]->opponents.end())
 		i = randIndex(rand);
 	return i;
+	// if (counter++ > 10000000)
+	// 	return -1;
 }
 
 #endif
