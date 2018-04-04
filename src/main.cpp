@@ -175,5 +175,9 @@ int main(int argc, char const *argv[]) {
 // (ax)(by)c 	abc, ayc, xbc, xyc
 // (ax)(by)z	abz, ayz, xbz, xyz
 
+// given two start/mid/end game NN combos, 'abc' and 'xyz',
+// the following combination of nets would assure that every
+// possible combination of nets is tested
+// 
 // abc, abz, ayc, ayz
 // xbc, xbz, xyc, xyz
