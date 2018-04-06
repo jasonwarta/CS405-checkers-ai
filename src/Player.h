@@ -14,16 +14,18 @@ class Player
 {
 public:
 	Player( bool redTeam, std::shared_ptr<Clock> clock ) : redTeam_(redTeam), clock_(clock) {};
-	Player( bool redTeam, std::shared_ptr<Clock> clock, NeuralNet *net) : 
+	Player( bool redTeam, std::shared_ptr<Clock> clock, NeuralNet *net, bool usingPieceCount = false) : 
 		redTeam_(redTeam), 
 		clock_(clock),
-		net_(net) {};
+		net_(net),
+		usingPieceCount_(usingPieceCount) {};
 
 	std::string getMove(std::string &theBoard, std::ostream *os, int depth = 4);
 private:
 	bool redTeam_;
 	std::shared_ptr<Clock> clock_;
 	NeuralNet *net_;
+	bool usingPieceCount_;
 };
 
 #endif

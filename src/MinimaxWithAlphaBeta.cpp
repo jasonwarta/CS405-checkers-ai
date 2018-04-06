@@ -2,7 +2,7 @@
 
 #include "MinimaxWithAlphaBeta.h"
 
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, NeuralNet *net) : MinimaxWithAlphaBeta(redPlayer, clock, net) 
+MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, NeuralNet *net, bool usingPieceCount) : MinimaxWithAlphaBeta(redPlayer, clock, net, usingPieceCount) 
 {
 	init(theBoard, depth, redPlayer);
 }
@@ -50,13 +50,21 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth, bool redPlayer
 float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard, int depth, float alpha, float beta, bool maximizingPlayer) {
 
 	if(depth == 0) {
-		net_->evaluateNN(theBoard, redPlayerTurn_);
-		return net_->getLastNode();
+		if(!usingPieceCount_) {
+			net_->evaluateNN(theBoard, redPlayerTurn_);
+			return net_->getLastNode();
+		} else {
+			return basicBoardEval(theBoard, redPlayerTurn_);
+		}
 	}
 
 	if ( std::chrono::duration<double>(std::chrono::system_clock::now() - *clock_).count() >= 14.0) {
-		net_->evaluateNN(theBoard, redPlayerTurn_);
-		return net_->getLastNode();
+		if(!usingPieceCount_) {
+			net_->evaluateNN(theBoard, redPlayerTurn_);
+			return net_->getLastNode();
+		} else {
+			return basicBoardEval(theBoard, redPlayerTurn_);
+		}
 	}
 
 	if (maximizingPlayer) {

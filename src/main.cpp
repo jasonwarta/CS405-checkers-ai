@@ -20,6 +20,7 @@
 #include "consts.h"
 #include "defs.h"
 #include "MatchHandling.h"
+#include "testRun.h"
 
 namespace fs = std::experimental::filesystem;
 
@@ -31,12 +32,27 @@ int main(int argc, char const *argv[]) {
 	std::vector<std::shared_ptr<NetTracker>> nets;
 
 	if(argc > 1) {
-		std::ifstream ifs;
-	    for(auto& f: fs::directory_iterator(argv[1])) {
-			ifs.open(f.path());
-			nets.push_back(std::make_shared<NetTracker>(NetTracker {new std::mutex, new NeuralNet(ifs)}));
+		if (std::string("-nets").compare(argv[1]) != -1) {
+			std::ifstream ifs;
+			for(auto& f: fs::directory_iterator(argv[2])) {
+				ifs.open(f.path());
+				nets.push_back(std::make_shared<NetTracker>(NetTracker {new std::mutex, new NeuralNet(ifs)}));
+				ifs.close();
+			}
+		}
+		else if (std::string("-test").compare(argv[1]) != -1) {
+			std::ifstream ifs;
+			ifs.open(argv[2]);
+			NeuralNet * net = new NeuralNet(ifs);
 			ifs.close();
-		}		
+
+			Player p1(true, clock, net);
+			Player p2(false, clock, nullptr, true);
+
+			testRun(&p1, &p2);
+
+			exit(0);
+		}	
 	} else {
 		for(size_t i = 0; i < POPULATION_SIZE; ++i)
 			nets.push_back(std::make_shared<NetTracker>(NetTracker {new std::mutex, new NeuralNet(NET_SIZE)}));

@@ -13,24 +13,26 @@
 
 #include "checkers.h"
 #include "defs.h"
+#include "BoardEval.h"
 
 // typedef std::chrono::time_point<std::chrono::system_clock> Clock;
 
 class MinimaxWithAlphaBeta {
 public:
-	MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, NeuralNet *net);
+	MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, NeuralNet *net, bool usingPieceCount);
 
 	std::string getBestBoard(std::ostream *os = &std::cout);
 	void printABStats(std::ostream *os = &std::cout);
 
 private:
-	MinimaxWithAlphaBeta(bool redPlayer, std::shared_ptr<Clock> clock, NeuralNet *net) : 
+	MinimaxWithAlphaBeta(bool redPlayer, std::shared_ptr<Clock> clock, NeuralNet *net, bool usingPieceCount) : 
 		redPlayerTurn_(redPlayer),
 		clock_(clock),
 		breakAlpha_(0),
 		breakBeta_(0),
 		boardExpansions_(0),
-		net_(net) 
+		net_(net),
+		usingPieceCount_(usingPieceCount)
 	{};
 
 	void init(std::string &theBoard, int depth, bool redPlayer);
@@ -43,6 +45,8 @@ private:
 	uint64_t breakBeta_;
 	uint64_t breakAlpha_;
 	uint64_t boardExpansions_;
+
+	bool usingPieceCount_;
 
 	std::ostream *os_;
 

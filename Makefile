@@ -30,6 +30,8 @@ $(BUILD_DIR)/%.cpp.o: %.cpp
 	$(MKDIR_P) $(dir $@)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LIBS) -c $< -o $@
 
+all: $(BUILD_DIR)/$(TARGET_EXEC)
+
 .PHONY: clean
 
 clean:
@@ -42,11 +44,14 @@ MKDIR_P ?= mkdir -p
 run: 
 	./build/main
 
-up: $(BUILD_DIR)/$(TARGET_EXEC) run
+up: all run
 
 prod: clean up
 
 dev: up
 
 load:
-	./build/main $(PATH)
+	./build/main -nets $(NET_DIR)
+
+test:
+	./build/main -test $(NET)
