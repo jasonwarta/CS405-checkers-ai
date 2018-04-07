@@ -20,6 +20,7 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 CPPFLAGS ?= -std=c++17 $(INC_FLAGS) -MMD -MP -mavx 
 
+all: CPPFLAGS += -g
 dev: CPPFLAGS += -g
 prod: CPPFLAGS += -O3
 
