@@ -1,0 +1,14 @@
+{"move":"000","board":"rrrrrrrrrr_r_____b_rb_bbbbbbbbbb","expansions":"0000003911","alpha":"000240","beta":"000297","time":"00.073648s"}
+{"move":"001","board":"rrrrrrrrrr_____r_b_rb_bbbbbbbbbb","expansions":"0000002531","alpha":"000179","beta":"000111","time":"00.030375s"}
+{"move":"002","board":"rrrrrrrrrr___b_r___rb_bbbbbbbbbb","expansions":"0000000834","alpha":"000069","beta":"000014","time":"00.010128s"}
+{"move":"003","board":"rrrrrrrr_r_____r_r_rb_bbbbbbbbbb","expansions":"0000000200","alpha":"000020","beta":"000002","time":"00.002489s"}
+{"move":"004","board":"rrrrrrrr_r___b_r___rb__bbbbbbbbb","expansions":"0000000689","alpha":"000055","beta":"000017","time":"00.008512s"}
+{"move":"005","board":"rrrrrrrr_______rr__rb__bbbbbbbbb","expansions":"0000000483","alpha":"000024","beta":"000021","time":"00.005156s"}
+{"move":"006","board":"rrrrrrrr_____b_r___r___bbbbbbbbb","expansions":"0000004538","alpha":"000160","beta":"000244","time":"00.048481s"}
+{"move":"007","board":"rrrrrrr____r_b_r___r___bbbbbbbbb","expansions":"0000007183","alpha":"000488","beta":"000296","time":"00.082424s"}
+{"move":"008","board":"rrrrrrr_b__r___r___r___bbbbbbbbb","expansions":"0000010310","alpha":"000368","beta":"000718","time":"00.126040s"}
+{"move":"009","board":"rrrr_rr____r_r_r___r___bbbbbbbbb","expansions":"0000007966","alpha":"000365","beta":"000369","time":"00.069504s"}
+{"move":"010","board":"rrrr_rr____r_r_r__br____bbbbbbbb","expansions":"0000003077","alpha":"000123","beta":"000093","time":"00.024537s"}
+{"move":"011","board":"rrrr_rr____r_r_____r__r_bbbbbbbb","expansions":"0000004783","alpha":"000167","beta":"000199","time":"00.035743s"}
+{"move":"012","board":"rrrr_rr____r_r____br____b_bbbbbb","expansions":"0000054168","alpha":"001549","beta":"003990","time":"00.492150s"}
+{"move":"013","board":"rrr__rrr___r_r____br____b_bbbbbb","expansions":"0000013642","alpha":"000662","beta":"000408","time":"00.180088s"}
