@@ -32,7 +32,7 @@ int main(int argc, char const *argv[]) {
 	std::vector<std::shared_ptr<NetTracker>> nets;
 
 	if(argc > 1) {
-		if (std::string("-nets").compare(argv[1]) != -1) {
+		if (std::string("-nets").compare(argv[1]) != 0 {
 			std::cout << "-nets" << " " << argv[2] << std::endl;
 			std::ifstream ifs;
 			for(auto& f: fs::directory_iterator(argv[2])) {
@@ -41,7 +41,7 @@ int main(int argc, char const *argv[]) {
 				ifs.close();
 			}
 		}
-		else if (std::string("-test").compare(argv[1]) != -1) {
+		else if (std::string("-test").compare(argv[1]) != 0) {
 			std::cout << "-test" << " " << argv[2] << std::endl;
 			std::ifstream ifs;
 			ifs.open(argv[2]);
