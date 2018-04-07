@@ -12,7 +12,7 @@
             "program": "${workspaceFolder}/build/main",
             "args": [
                 "-test",
-                "${workspaceFolder}/NN/gen_185/nets/00"
+                "${workspaceFolder}/NN_185gens/gen_185/nets/00"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
@@ -53,7 +53,7 @@
             "program": "${workspaceFolder}/build/main",
             "args": [
                 "-nets",
-                "${workspaceFolder}/NN/gen_185/nets"
+                "${workspaceFolder}/NN_185gens/gen_185/nets"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
