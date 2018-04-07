@@ -33,6 +33,7 @@ int main(int argc, char const *argv[]) {
 
 	if(argc > 1) {
 		if (std::string("-nets").compare(argv[1]) != -1) {
+			std::cout << "-nets" << " " << argv[2] << std::endl;
 			std::ifstream ifs;
 			for(auto& f: fs::directory_iterator(argv[2])) {
 				ifs.open(f.path());
@@ -41,13 +42,14 @@ int main(int argc, char const *argv[]) {
 			}
 		}
 		else if (std::string("-test").compare(argv[1]) != -1) {
+			std::cout << "-test" << " " << argv[2] << std::endl;
 			std::ifstream ifs;
 			ifs.open(argv[2]);
 			NeuralNet * net = new NeuralNet(ifs);
 			ifs.close();
 
 			net->printData();
-			
+
 			Player p1(true, clock, net);
 			Player p2(false, clock, nullptr, true);
 
