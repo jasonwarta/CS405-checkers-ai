@@ -17,7 +17,7 @@ void Score::assignScore(char result, bool toggle, std::ostream *os)
         else
             this->p1++;
         break;
-    case 'D':
+    case 'D':55
         this->draw++;
         break;
     default:
@@ -27,6 +27,12 @@ void Score::assignScore(char result, bool toggle, std::ostream *os)
 
 void Score::print(std::ostream * os) {
     (*os) << "1:" << (int)(this->p1) << ", 2:" << (int)(this->p2) << ", D:" << (int)(this->draw) << std::endl;
+}
+
+bool Score::operator==(const Score & other) const {
+    return  this->draw == other.draw &&
+            this->p1 == other.p1 &&
+            this->p2 == other.p2;
 }
 
 void NetTracker::assignScore(Score *gameScore, bool p1)

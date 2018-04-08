@@ -3,3 +3,4 @@ build/*
 node_modules/*
 **/a.out
 NN**
+testing/build/*

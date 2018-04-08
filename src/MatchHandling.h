@@ -18,8 +18,9 @@ struct Score {
 	// given Players 1 and 2, the games should be played as following:
 	// game 1: 1v2. call with toggle = true
 	// game 2: 2v1. call with toggle = false
-	void assignScore(char result, bool toggle, std::ostream * os);
+	void assignScore(char result, bool toggle, std::ostream * os = &std::cout);
 	void print(std::ostream *os = &std::cout);
+	bool operator==(Score &other) const;
 };
 
 struct NetTracker {
