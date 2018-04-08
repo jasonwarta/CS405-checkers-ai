@@ -37,12 +37,18 @@ bool Score::operator==(const Score & other) const {
 
 void NetTracker::assignScore(Score *gameScore, bool p1)
 {
-    gameScore->print();
+    // gameScore->print();
     std::lock_guard<std::mutex> guard(*(this->mtx));
     if (p1)
         score += (gameScore->p1 * WIN_VAL) + (gameScore->p2 * LOSS_VAL) + (gameScore->draw * DRAW_VAL);
     else
         score += (gameScore->p2 * WIN_VAL) + (gameScore->p1 * LOSS_VAL) + (gameScore->draw * DRAW_VAL);
+}
+bool NetTracker::operator == (const NetTracker & other) const {
+    return  this->mtx == other.mtx &&
+            this->net == other.net &&
+            this->score == other.score &&
+            this->opponents == other.opponents;
 }
 
 std::string playGame(Player *p1, Player *p2, std::string startBoard, Score *score, bool toggle, std::ostream *os)

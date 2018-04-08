@@ -30,6 +30,7 @@ struct NetTracker {
 	std::vector<uint8_t> opponents = {};
 
 	void assignScore(Score * gameScore, bool p1);
+	bool operator==(const NetTracker &other) const;
 };
 
 
