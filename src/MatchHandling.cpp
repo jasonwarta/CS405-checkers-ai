@@ -7,26 +7,31 @@ void Score::assignScore(char result, bool toggle, std::ostream *os)
     {
     case 'R':
         if (toggle)
-            p1++;
+            this->p1++;
         else
-            p2++;
+            this->p2++;
         break;
     case 'B':
         if (toggle)
-            p2++;
+            this->p2++;
         else
-            p1++;
+            this->p1++;
         break;
     case 'D':
-        draw++;
+        this->draw++;
         break;
     default:
         break;
     }
 }
 
+void Score::print(std::ostream * os) {
+    (*os) << "1:" << (int)(this->p1) << ", 2:" << (int)(this->p2) << ", D:" << (int)(this->draw) << std::endl;
+}
+
 void NetTracker::assignScore(Score *gameScore, bool p1)
 {
+    gameScore->print();
     std::lock_guard<std::mutex> guard(*(this->mtx));
     if (p1)
         score += (gameScore->p1 * WIN_VAL) + (gameScore->p2 * LOSS_VAL) + (gameScore->draw * DRAW_VAL);
@@ -88,6 +93,7 @@ void Match::operator=(Match & match)
 
 void play(std::mutex &mtx, std::queue<std::unique_ptr<Match>> &matches)
 {
+    // (*matches.front()).playMatch();
     while (matches.size() > 0)
     {
         mtx.lock();

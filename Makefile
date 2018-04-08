@@ -1,5 +1,5 @@
 UNAME := $(shell uname)
-LDFLAGS := -pthread -lstdc++fs
+LDFLAGS := -pthread -lstdc++fs -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror -Wno-unused
 
 ifeq ($(UNAME), Darwin)
 	LIBS += -I/usr/local/include -I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib
@@ -20,7 +20,7 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 CPPFLAGS ?= -std=c++17 $(INC_FLAGS) -MMD -MP -mavx 
 
-all: CPPFLAGS += -g
+all: CPPFLAGS += -g -O3
 dev: CPPFLAGS += -g
 prod: CPPFLAGS += -O3
 
@@ -54,5 +54,5 @@ dev: up
 load:
 	./build/main -nets $(NET_DIR)
 
-test:
+testrun:
 	./build/main -test $(NET)
