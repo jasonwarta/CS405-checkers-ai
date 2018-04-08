@@ -11,16 +11,16 @@
 #include "Game.h"
 
 struct Score {
-	int8_t draw = 0;
 	int8_t p1 = 0;
 	int8_t p2 = 0;
+	int8_t draw = 0;
 
 	// given Players 1 and 2, the games should be played as following:
 	// game 1: 1v2. call with toggle = true
 	// game 2: 2v1. call with toggle = false
 	void assignScore(char result, bool toggle, std::ostream * os = &std::cout);
 	void print(std::ostream *os = &std::cout);
-	bool operator==(Score &other) const;
+	bool operator==(const Score &other) const;
 };
 
 struct NetTracker {

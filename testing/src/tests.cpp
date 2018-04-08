@@ -11,51 +11,29 @@ const double ERROR = 0.0000001;
 
 TEST_CASE("Testing Score Struct", "[Match Handling]")
 {
-    Score score = {0, 0, 0};
+    Score score;
 
-    // std::cout << sore << std::endl;
+    score = {0, 0, 0};
     score.assignScore('D', true);
-    Score expectedScore {0, 0, 0};
-    REQUIRE(expectedScore == score);
+    REQUIRE(Score({0, 0, 1}) == score);
 
-    // const int NUM = 5;
-    // random_device rndDev;
-    // mt19937 randomNum(rndDev());
-    // uniform_real_distribution<> randomLen(0, 842);
-    // std::vector<double> lenCollection;
-    // for (int i = 0; i < NUM; i++)
-    // {
-    //     lenCollection.push_back(randomLen(rndDev));
-    // }
-    // //Testing Triangles
-    // for (auto v : lenCollection)
-    // {
-    //     REQUIRE(testCalcX(1, 3, v) == calcX(1, 3, v));
-    //     REQUIRE(testCalcX(2, 3, v) == calcX(2, 3, v));
-    //     REQUIRE(testCalcY(1, 3, v) == calcY(1, 3, v));
-    //     REQUIRE(testCalcY(2, 3, v) == calcY(2, 3, v));
-    // }
-    // //Testing Squares
-    // for (auto v : lenCollection)
-    // {
-    //     REQUIRE(testCalcX(1, 4, v) == calcX(1, 4, v));
-    //     REQUIRE(testCalcX(2, 4, v) == calcX(2, 4, v));
-    //     REQUIRE(testCalcX(3, 4, v) == calcX(3, 4, v));
-    //     REQUIRE(testCalcY(1, 4, v) == calcY(1, 4, v));
-    //     REQUIRE(testCalcY(2, 4, v) == calcY(2, 4, v));
-    //     REQUIRE(testCalcY(3, 4, v) == calcY(3, 4, v));
-    // }
+    score = {0, 0, 0};
+    score.assignScore('D', false);
+    REQUIRE(Score({0, 0, 1}) == score);
 
-    // //Testing Pentagon
-    // for (auto v : lenCollection)
-    // {
-    //     REQUIRE(testCalcX(1, 5, v) == calcX(1, 5, v));
-    //     REQUIRE(testCalcX(2, 5, v) == calcX(2, 5, v));
-    //     REQUIRE(testCalcX(3, 5, v) == calcX(3, 5, v));
-    //     REQUIRE(testCalcX(4, 5, v) == calcX(4, 5, v));
-    //     REQUIRE(testCalcY(1, 5, v) == calcY(1, 5, v));
-    //     REQUIRE(testCalcY(2, 5, v) == calcY(2, 5, v));
-    //     REQUIRE(testCalcY(3, 5, v) == calcY(3, 5, v));
-    //     REQUIRE(testCalcY(4, 5, v) == calcY(4, 5, v));
-    // }
+    score = {0, 0, 0};
+    score.assignScore('R', true);
+    REQUIRE(Score({1, 0, 0}) == score);
+
+    score = {0, 0, 0};
+    score.assignScore('R', false);
+    REQUIRE(Score({0, 1, 0}) == score);
+
+    score = {0, 0, 0};
+    score.assignScore('B', true);
+    REQUIRE(Score({0, 1, 0}) == score);
+
+    score = {0, 0, 0};
+    score.assignScore('B', false);
+    REQUIRE(Score({1, 0, 0}) == score);
 }

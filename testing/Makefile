@@ -36,23 +36,13 @@ all: $(BUILD_DIR)/$(TARGET_EXEC)
 .PHONY: clean
 
 clean:
-	$(RM) -r $(BUILD_DIR)
+	$(RM) -r ./build
 
 -include $(DEPS)
 
 MKDIR_P ?= mkdir -p
 
-run: 
-	./build/main
+run:
+	./build/build/main
 
-up: all run
-
-prod: clean up
-
-dev: up
-
-load:
-	./build/main -nets $(NET_DIR)
-
-test:
-	./build/main -test $(NET)
+test: all run

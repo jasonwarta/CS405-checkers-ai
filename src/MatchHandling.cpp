@@ -2,7 +2,7 @@
 
 void Score::assignScore(char result, bool toggle, std::ostream *os)
 {
-    (*os) << (toggle ? "1v2" : "2v1") << ": " << result << std::endl;
+    // (*os) << (toggle ? "1v2" : "2v1") << ": " << result << std::endl;
     switch (result)
     {
     case 'R':
@@ -17,7 +17,7 @@ void Score::assignScore(char result, bool toggle, std::ostream *os)
         else
             this->p1++;
         break;
-    case 'D':55
+    case 'D':
         this->draw++;
         break;
     default:
