@@ -19,6 +19,7 @@ struct Score {
 	// game 1: 1v2. call with toggle = true
 	// game 2: 2v1. call with toggle = false
 	void assignScore(char result, bool toggle, std::ostream * os);
+	void print(std::ostream *os = &std::cout);
 };
 
 struct NetTracker {

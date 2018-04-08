@@ -20,7 +20,7 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 CPPFLAGS ?= -std=c++17 $(INC_FLAGS) -MMD -MP -mavx 
 
-all: CPPFLAGS += -g
+all: CPPFLAGS += -g -O3
 dev: CPPFLAGS += -g
 prod: CPPFLAGS += -O3
 
@@ -54,5 +54,5 @@ dev: up
 load:
 	./build/main -nets $(NET_DIR)
 
-test:
+testrun:
 	./build/main -test $(NET)

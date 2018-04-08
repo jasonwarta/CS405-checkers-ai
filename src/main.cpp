@@ -25,6 +25,16 @@
 namespace fs = std::experimental::filesystem;
 
 int main(int argc, char const *argv[]) {
+	std::random_device rd;
+	std::mt19937 random(rd());
+	std::default_random_engine generator(rd());
+
+	std::uniform_real_distribution<> changeKingVal(-0.1, 0.1);
+	for(int i = 0; i < 20; i++){
+		std::cout << changeKingVal(random) << std::endl;
+	}
+
+	std::mutex mtx;
 	std::ofstream ofs;
 	std::stringstream ss;
 	std::shared_ptr<Clock> clock = std::make_shared<Clock>(std::chrono::system_clock::now());
@@ -69,10 +79,7 @@ int main(int argc, char const *argv[]) {
 	uint64_t genCounter = 0;
 
 	while(true) {
-		// std::cout << "in while loop" << std::endl;
-		std::mutex mtx;
 		std::queue<std::unique_ptr<Match>> matchesQueue;
-		// Matches matches {&mtx};
 
 		ss.str("");
 		ss << "./NN/gen_" << std::setfill('0') << std::setw(3) << genCounter;
@@ -84,7 +91,7 @@ int main(int argc, char const *argv[]) {
 			return 0;
 		}
 		ss.str("");
-		// std::cout << "made dirs" << std::endl;
+		
 		for(size_t i = 0; i < nets.size(); ++i) {
 			ss.str("");
 			ss << path << "/nets/" << std::setfill('0') << std::setw(2) << i;
@@ -93,18 +100,8 @@ int main(int argc, char const *argv[]) {
 			ofs.close();
 			ss.str("");
 		}
-		// std::cout << "printed stats" << std::endl;
+
 		std::string startBoard = getRandomStartBoard();
-
-		// for(size_t i = 0; i < nets.size(); ++i) {
-		// 	for(size_t j = i+1; j < nets.size(); ++j) {
-		// 		ss.str("");
-		// 		ss << path << "/games/" << std::setfill('0') << std::setw(2) << i << "v" <<std::setfill('0') << std::setw(2) << j;
-
-		// 		matchesQueue.push(std::make_unique<Match>(Match {nets[i], nets[j], startBoard, ss.str()}));
-		// 		ss.str("");
-		// 	}
-		// }
 
 		for(size_t i = 0; i < nets.size(); ++i) {
 			for(size_t j = 0; j < MIN_MATCHES; ++j) {
@@ -112,8 +109,6 @@ int main(int argc, char const *argv[]) {
 					break;
 
 				int opponentIdx = getRandomIndex(i, rand, randIndex, nets);
-				// if (opponentIdx == -1)
-				// 	break;
 
 				nets[i]->opponents.push_back(opponentIdx);
 				nets[opponentIdx]->opponents.push_back(i);
@@ -134,9 +129,6 @@ int main(int argc, char const *argv[]) {
 			std::cout << std::endl;
 		}
 
-		// std::cout << "set up queue" << std::endl;
-
-		// play(mtx,matchesQueue);
 		std::vector<std::thread> threads;
 		for (int i = 0; i < NUM_THREADS; ++i)
 		{
@@ -147,9 +139,6 @@ int main(int argc, char const *argv[]) {
 		{
 			threads[i].join();
 		}
-
-		// std::thread t1(play, std::ref(mtx), std::ref(matchesQueue));
-		// t1.join();
 
 		ss.str("");
 		ss << path << "/scores";
@@ -168,15 +157,14 @@ int main(int argc, char const *argv[]) {
 
 		for(size_t i = 0; i < (POPULATION_SIZE/2); ++i) 
 			(*nets[(POPULATION_SIZE/2)+i]->net) = (*nets[i]->net);
-		std::cout << "point 1" << std::endl;
+		
 		for(size_t i = (POPULATION_SIZE/2); i < POPULATION_SIZE; ++i)
 			nets[i]->net->evolve();
-		std::cout << "point 2" << std::endl;
+		
 		for(auto &nt : nets) {
 			nt->score = 0;
 			nt->opponents.clear();
 		}
-		std::cout << "point 3" << std::endl;
 
 		genCounter++;
 	}
