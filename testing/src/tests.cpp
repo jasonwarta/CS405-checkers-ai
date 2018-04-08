@@ -17,6 +17,9 @@ TEST_CASE("Testing Score Struct", "[MatchHandling]")
     Score score;
 
     score = {0, 0, 0};
+    REQUIRE(score == score);
+
+    score = {0, 0, 0};
     score.assignScore('D', true);
     REQUIRE(Score({0, 0, 1}) == score);
 
@@ -47,6 +50,9 @@ TEST_CASE("Testing NetTracker struct","[MatchHandling]")
     std::mutex mtx;
     NetTracker nt;
     Score score;
+
+    nt = {&mtx, &nn, 0};
+    REQUIRE(nt == nt);
 
     score = {0, 0, 1};
     nt = {&mtx, &nn, 0};
