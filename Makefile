@@ -8,6 +8,7 @@ endif
 TARGET_EXEC ?= main
 
 BUILD_DIR ?= ./build
+TEST_BUILD_DIR ?= ./test_build
 SRC_DIRS ?= ./src
 
 CC := g++
@@ -56,3 +57,12 @@ load:
 
 testrun:
 	./build/main -test $(NET)
+
+$(TEST_BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
+	$(CC) -std=c++17 $(OBJS) -o $@ $(LDFLAGS)
+
+$(TEST_BUILD_DIR)/%.cpp.o: %.cpp
+	$(MKDIR_P) $(dir $@)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LIBS) -c $< -o $@
+
+test: $(TEST_BUILD_DIR)/$(TARGET_EXEC)
