@@ -42,7 +42,7 @@ clean:
 
 MKDIR_P ?= mkdir -p
 
-run: 
+run:
 	./build/main
 
 up: all run
