@@ -1,10 +1,13 @@
 import json
 import matplotlib.pyplot as plt
 
-json_data = open('../NN_185gens/gen_185/games/00v01').read()
+json_data = open('00v01').read()
 jsonToPython = json.loads(json_data)
 
-print jsonToPython["move"]
+for i in range(1,22):
+    print jsonToPython[i]["move"] + " " + jsonToPython[i]["time"]
+    plt.plot(jsonToPython[i]["move"],jsonToPython[i]["time"],'ro')
+plt.show()
 
 # jsonData = jsonToPython["data"]
 # for item in jsonData:
