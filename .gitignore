@@ -2,5 +2,5 @@ server
 build/*
 node_modules/*
 **/a.out
-NN**
+NN**/
 testing/build/*
