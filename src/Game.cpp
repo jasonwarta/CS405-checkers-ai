@@ -17,18 +17,18 @@ char Game::run(std::string theBoard) {
 			// if (stalemate1 && stalemate2)
 			// 	theBoard = red_->getMove(theBoard, os_, 10);
 			if (stalemate1) 
-				theBoard = red_->getMove(theBoard, os_, 8);
+				theBoard = red_->getMove(theBoard, os_, 10);
 			else 
-				theBoard = red_->getMove(theBoard, os_, 6);
+				theBoard = red_->getMove(theBoard, os_, 8);
 		}
 
 		else {
 			// if (stalemate1 && stalemate2)
 			// 	theBoard = black_->getMove(theBoard, os_, 10);
 			if (stalemate1)
-				theBoard = black_->getMove(theBoard, os_, 8);
+				theBoard = black_->getMove(theBoard, os_, 10);
 			else
-				theBoard = black_->getMove(theBoard, os_, 6);
+				theBoard = black_->getMove(theBoard, os_, 8);
 		}
 
 		auto duration = std::chrono::duration<double>(std::chrono::system_clock::now() - *clock_).count();

@@ -41,8 +41,8 @@ public:
                     case 'n': 
                         {
                             networkSize_.clear();
-                            int temp;
-                            int totalTemp = 0;
+                            uint temp;
+                            uint totalTemp = 0;
                             while(is >>temp) {
                                 networkSize_.push_back(temp);
                                 totalTemp += temp;
@@ -102,7 +102,7 @@ public:
 
         // set up each weight
         std::uniform_real_distribution<> startWeightVal(-0.2,0.2);
-        for(int i=0; i<edges_.size(); ++i)
+        for(uint i=0; i<edges_.size(); ++i)
         {
             edges_[i] = startWeightVal(random);
         }
@@ -127,7 +127,7 @@ public:
 
         float t = 1/sqrt(2*sqrt(nodes_.size()));
         std::normal_distribution<float> distribute(0.0, 1.0);
-        for(int i=0; i<nodes_.size(); ++i)
+        for(uint i=0; i<nodes_.size(); ++i)
         {
             edges_[i] = edges_[i] + sigma_[i]*distribute(generator);
             sigma_[i] = sigma_[i] * std::exp(t * distribute(generator));
@@ -145,13 +145,13 @@ public:
         float summedStorage[8] __attribute__ ((aligned (32)));
         float additionStorage[8] __attribute__ ((aligned (32))) {0,0,0,0,0,0,0,0};
 
-        for(int i=1; i<networkSize_.size(); ++i) 
+        for(uint i=1; i<networkSize_.size(); ++i) 
         {
-            for(int j=0; j<networkSize_[i]; ++j) 
+            for(uint j=0; j<networkSize_[i]; ++j) 
             {
                 __m256 addStorage = _mm256_load_ps(&additionStorage[0]);
 
-                for(int k=0; k<networkSize_[i-1]; k+=8) 
+                for(uint k=0; k<networkSize_[i-1]; k+=8) 
                 {
                     
                     __m256 edgesSIMD = _mm256_load_ps(&edges_[edgeCount_]);
@@ -184,9 +184,9 @@ public:
     {
         std::cout << std::endl << "------------------NODES----------------" << std::endl;
         nodeCount_ = 0;
-        for(int i=0; i<networkSize_.size(); ++i)
+        for(uint i=0; i<networkSize_.size(); ++i)
         {
-            for(int j=0; j<networkSize_[i]; ++j)
+            for(uint j=0; j<networkSize_[i]; ++j)
             {
                 std::cout << nodes_[nodeCount_] << " ";
                 nodeCount_++;
@@ -195,12 +195,12 @@ public:
         }
 
         std::cout << std::endl << "------------------EDGES----------------" << std::endl;
-        for(int i=0; i<854; ++i)
+        for(uint i=0; i<854; ++i)
         {
             std::cout << edges_[i] << " ";
         }
         std::cout << std::endl << std::endl;
-        for(int i=854; i<edges_.size(); ++i)
+        for(uint i=854; i<edges_.size(); ++i)
         {
             std::cout << edges_[i] << " ";
         }
@@ -263,9 +263,9 @@ private:
         nodeCount_ = 96;
         edgeCount_ = 0;
 
-        for(int i=0; i<NN91_NODE_LOCATIONS.size(); ++i)
+        for(uint i=0; i<NN91_NODE_LOCATIONS.size(); ++i)
         {
-            for(int j=0; j<NN91_NODE_LOCATIONS[i].size(); ++j)
+            for(uint j=0; j<NN91_NODE_LOCATIONS[i].size(); ++j)
             {
                 nodes_[i] += weightedStartBoard_[NN91_NODE_LOCATIONS[i][j]] * edges_[edgeCount_];
                 edgeCount_++;
@@ -275,7 +275,7 @@ private:
         edgeCount_ += 2; // become aligned for SIMD. Not actually used anywhere
         
         // Set last 5 nodes_ to 0 for aligned SIMD
-        for(int i=91; i<96; ++i)
+        for(uint i=91; i<96; ++i)
         {
             nodes_[i] = 0;
         }
@@ -289,7 +289,7 @@ private:
         // Set up network size: [91, nodeSizes*8, 1]
         networkSize_.resize(nodeSizes.size()+2);
         networkSize_[0] = 96;
-        for(int i=0; i<nodeSizes.size(); ++i)
+        for(uint i=0; i<nodeSizes.size(); ++i)
         {
             networkSize_[i+1] = nodeSizes[i]*8;
         }
@@ -297,7 +297,7 @@ private:
 
         // set up nodes_
         int totalNodes = 0;
-        for(int i=0; i<networkSize_.size(); ++i) 
+        for(uint i=0; i<networkSize_.size(); ++i) 
         {
             totalNodes += networkSize_[i];
         }
@@ -305,7 +305,7 @@ private:
 
         // set up edges_
         int totalEdges = 856; // 854 Edges from first set of nodes_ to the input vector + 2 for SIMD alignment
-        for(int i=0; i<networkSize_.size()-1; ++i)
+        for(uint i=0; i<networkSize_.size()-1; ++i)
         {
             totalEdges += networkSize_[i] * networkSize_[i+1];
         }
@@ -320,7 +320,7 @@ private:
     void randomWeights(std::vector<float> & rando) {
         std::random_device rd;
         std::mt19937 random(rd());
-        for(int i = 0; i < rando.size(); ++i) {
+        for(uint i = 0; i < rando.size(); ++i) {
             std::uniform_real_distribution<> randomfloats(-1.0f, 1.0f);
             rando[i] = randomfloats(random);
         }
