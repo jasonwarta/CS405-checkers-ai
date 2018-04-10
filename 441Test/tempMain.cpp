@@ -19,7 +19,7 @@ int main()
 {
 
     // config options:
-
+	std::vector<int> bondie24Size {32, 40, 10, 1};
     std::vector<int> networkSizeBasic {32, 40, 16, 1};
 
     // NN91 class automatically adds input and output nodes. 
@@ -30,6 +30,7 @@ int main()
     bool isRedTeam = true;
 
     // Different boards:
+    	BasicNN bondie24Basic(bondie24Size);
         BasicNN basicNet(networkSizeBasic);
         NN91_Basic NN91_BasicNet(networkSizeNN91);
 
@@ -40,7 +41,7 @@ int main()
     auto evalBasicNetStart = std::chrono::system_clock::now();
     for(int i=0; i<NumBoards; ++i)
     {
-        basicNet.evaluateNN(board0, isRedTeam);
+        bondie24Basic.evaluateNN(board0, isRedTeam);
     }
     auto evalBasicNetEnd = std::chrono::system_clock::now();
 
