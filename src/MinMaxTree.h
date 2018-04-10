@@ -6,7 +6,7 @@
 #include "checkers.h"
 #include "BoardEval.h"
 
-#include "../CS441AdvancedNN/BasicNN.h"
+#include "BasicNN.h"
 
 class MinMaxTree
 {

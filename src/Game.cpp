@@ -51,7 +51,8 @@ char Game::run(std::string theBoard) {
 		redTeamTurn = !redTeamTurn;
 		turnCounter++;
 
-		if(theBoard.compare(moveTracker_.front()) == 0) {
+		if (!moveTracker_.empty() && theBoard.compare(moveTracker_.front()) == 0)
+		{
 			// if (stalemate1 && stalemate2) {
 			// 	return 'D';
 			// }

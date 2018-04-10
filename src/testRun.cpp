@@ -28,24 +28,27 @@ char gameLoop(Player *red, Player *black, int blackTeamDepth, std::string theBoa
 		std::cout << "\"time\":\"" << std::setw(9) << std::setfill('0') << std::fixed << std::setprecision(6) << duration << "s\"}" << std::endl;
 
 		if ( theBoard.size() < 32) {
-			return redTeamTurn ? 'B' : 'R';
 			std::cout << (redTeamTurn ? "Red team" : "Black team") << " lost the game" << std::endl;
-			break;
-		} 
-		else if ( !rPieceCount(theBoard) ) {
-			std::cout << "Red team lost the game" << std::endl;
-			return 'B';
-		}
-		else if ( !bPieceCount(theBoard) ) {
-			std::cout << "Black team lost the game" << std::endl;
-			return 'R';
-		}
+			return redTeamTurn ? 'B' : 'R';
+		} else {
+			PieceMap pieces(theBoard);
 
+			if ( pieces.redPieces() == 0) {
+				std::cout << "Red team lost the game" << std::endl;
+				return 'B';
+			}
+			else if ( pieces.blackPieces() == 0) {
+				std::cout << "Black team lost the game" << std::endl;
+				return 'R';
+			}
+		}
+		
 		redTeamTurn = !redTeamTurn;
 		turnCounter++;
-
-		if(theBoard.compare(moveTracker.front()) == 0) {
+		
+		if(!moveTracker.empty() && theBoard.compare(moveTracker.front()) == 0) {
 			if (stalemate1) {
+				std::cout << "Stalemate: Draw" << std::endl;
 				return 'D';
 			}
 			else {

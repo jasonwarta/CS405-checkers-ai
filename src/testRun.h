@@ -9,6 +9,8 @@
 #include <memory>
 #include <mutex>
 #include <ctime>
+#include <math.h>
+#include <ostream>
 
 #include "Player.h"
 #include "consts.h"
