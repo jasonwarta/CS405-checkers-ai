@@ -11,20 +11,26 @@ def openSingleFile(file):
 
     jsonToPython = json.loads((b'[' + output + b'{"string":"foo"}' + b']').decode('utf-8'))
     json_size = len(jsonToPython)
+    gameCheck = False
 
     for index in range(1,json_size-1):
-        print(jsonToPython[index]["move"] + " " + jsonToPython[index]["time"])
-        plt.plot(jsonToPython[index]["move"],jsonToPython[index]["time"],'ro')
+        if(jsonToPython[index]["move"] == "00"):
+            gameCheck = True
+        else:
+            print(jsonToPython[index]["move"] + " " + jsonToPython[index]["time"])
+            plt.plot(jsonToPython[index]["move"],jsonToPython[index]["time"],'ro')
 
+averageTimeToEvolve = [][]
 def openMultipleFiles():
     for cur_file in data_files:
         output = check_output("grep { " + "../NN_185gens/gen_185/games/" + cur_file + " | sed -e 's/$/,/'",shell=True)
         jsonToPython = json.loads((b'[' + output + b'{"string":"foo"}' + b']').decode('utf-8'))
-        json_size = len(jsonToPython)
 
+        json_size = len(jsonToPython)
         for i in range(1,json_size-1):
             print(jsonToPython[i]["move"] + " " + jsonToPython[i]["time"])
-            plt.plot(jsonToPython[i]["move"],jsonToPython[i]["time"],'ro')
+
+            #plt.plot(jsonToPython[i]["move"],jsonToPython[i]["time"],'ro')
 
 def main():
 
