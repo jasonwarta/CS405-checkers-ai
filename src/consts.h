@@ -15,7 +15,7 @@ const int8_t MIN_MATCHES = 5;
 // should be about 2x MIN_MATCHES
 const int8_t MAX_MATCHES = 10;
 
-const std::vector<int> NET_SIZE {32,40,10,1};
+const std::vector<int> NET_SIZE {32, 40, 10, 1};
 
 extern const std::string START_BOARD_STRING;
 
