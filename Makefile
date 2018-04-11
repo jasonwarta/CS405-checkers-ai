@@ -57,3 +57,7 @@ load:
 
 test:
 	./build/main -test $(NET)
+
+# no path defined for -play due to complexity of passing args through make
+# sample call to -play is below, and assumes you are calling from the root of the project
+# ./build/main -play NN_185gens/gen_185/nets/00 127.0.0.1:8080 test1 B

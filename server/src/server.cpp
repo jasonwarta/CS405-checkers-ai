@@ -66,7 +66,11 @@ void sendMove(WebSocket * ws, NeuralNet * net, string & boardString) {
 
 	CheckerBoard checkers(boardString, computerColor);
 	std::vector<std::string> vec = checkers.getAllRandoMoves();
-	string otherMoves = std::accumulate(vec.begin(), vec.end(), "\n");
+	string otherMoves = "";
+
+	for(std::string & s : vec) {
+		otherMoves += s + ",";
+	}
 
 	msg.prepareReply(
 		"move",

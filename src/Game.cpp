@@ -34,16 +34,18 @@ char Game::run(std::string theBoard) {
 		auto duration = std::chrono::duration<double>(std::chrono::system_clock::now() - *clock_).count();
 		(*os_) << "\"time\":\"" << std::setw(9) << std::setfill('0') << std::fixed << std::setprecision(6) << duration << "s\"}" << std::endl;
 
+		PieceMap pm(theBoard);
+
 		if ( theBoard.size() < 32) {
 			return redTeamTurn ? 'B' : 'R';
 			(*os_) << (redTeamTurn ? "Red team" : "Black team") << " lost the game" << std::endl;
 			break;
 		} 
-		else if ( !rPieceCount(theBoard) ) {
+		else if ( !pm.redPieces() ) {
 			(*os_) << "Red team lost the game" << std::endl;
 			return 'B';
 		}
-		else if ( !bPieceCount(theBoard) ) {
+		else if ( !pm.blackPieces() ) {
 			(*os_) << "Black team lost the game" << std::endl;
 			return 'R';
 		}

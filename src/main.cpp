@@ -13,6 +13,7 @@
 #include <fstream>
 #include <sstream>
 #include <experimental/filesystem>
+#include <stdio.h>
 
 #include "threadUtils.h"
 #include "Player.h"
@@ -21,6 +22,8 @@
 #include "defs.h"
 #include "MatchHandling.h"
 #include "testRun.h"
+#include "json.hpp"
+#include "playOnNet.h"
 
 namespace fs = std::experimental::filesystem;
 
@@ -29,10 +32,10 @@ int main(int argc, char const *argv[]) {
 	std::mt19937 random(rd());
 	std::default_random_engine generator(rd());
 
-	std::uniform_real_distribution<> changeKingVal(-0.1, 0.1);
-	for(int i = 0; i < 20; i++){
-		std::cout << changeKingVal(random) << std::endl;
-	}
+	// std::uniform_real_distribution<> changeKingVal(-0.1, 0.1);
+	// for(int i = 0; i < 20; i++){
+	// 	std::cout << changeKingVal(random) << std::endl;
+	// }
 
 	std::mutex mtx;
 	std::ofstream ofs;
@@ -43,6 +46,7 @@ int main(int argc, char const *argv[]) {
 
 	if(argc > 1) {
 		if (std::string("-nets").compare(argv[1]) == 0) {
+			// use `./main -nets path/to/directory/of/nets`
 			std::cout << "-nets" << " " << argv[2] << std::endl;
 			std::ifstream ifs;
 			for(auto& f: fs::directory_iterator(argv[2])) {
@@ -52,6 +56,7 @@ int main(int argc, char const *argv[]) {
 			}
 		}
 		else if (std::string("-test").compare(argv[1]) == 0) {
+			// use `./main -test path/to/network_file`
 			std::cout << "-test" << " " << argv[2] << std::endl;
 			std::ifstream ifs;
 			ifs.open(argv[2]);
@@ -66,6 +71,37 @@ int main(int argc, char const *argv[]) {
 			testRun(&p1, &p2);
 
 			exit(0);
+		}
+		else if (std::string("-play").compare(argv[1]) == 0) {
+			// use `./main -play path/to/network_file serverAddress gameName color`
+			// color can be any one of [R,r,red,B,b,black]
+			// example call, from the project root:
+			// ./build/main -play NN_185gens/gen_185/nets/00 127.0.0.1:8080 test1 B
+			std::cout << argv[0] << " " << argv[1] << " " << argv[2] << " " << argv[3] << " " << argv[4] << " " << argv[5] << std::endl;
+
+			// load net
+			std::ifstream ifs;
+			ifs.open(argv[2]);
+			NeuralNet * net = new NeuralNet(ifs);
+			ifs.close();
+
+			bool redTeam;
+			std::cout << argv[5] << std::endl;
+			if (std::string(argv[5]) == "R" || std::string(argv[5]) == "r" || std::string(argv[5]) == "red")
+				redTeam = true;
+			else if (std::string(argv[5]) == "B" || std::string(argv[5]) == "b" || std::string(argv[5]) == "black")
+				redTeam = false;
+			else {
+				std::cout << "Invalid player color" << std::endl;
+				return 0;
+			}
+
+
+			std::cout << "red team: " << redTeam << std::endl;
+
+			NetworkGame ng(net, argv[3], argv[4], redTeam);
+			ng.playGame();
+			return 0;
 		}	
 	} else {
 		for(size_t i = 0; i < POPULATION_SIZE; ++i)

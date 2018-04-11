@@ -4,3 +4,4 @@ node_modules/*
 NN**/
 testing/build/*
 compileMe
+.vscode/settings.json
