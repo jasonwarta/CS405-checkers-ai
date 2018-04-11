@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <chrono>
 #include <thread>
+#include <utility>
 #include <algorithm>
 
 #include "json.hpp"
@@ -15,6 +16,7 @@
 #include "checkers.h"
 
 std::string getStdoutFromCommand(std::string cmd);
+typedef std::pair<std::string,std::string> Status;
 
 class NetworkGame
 {
@@ -25,7 +27,7 @@ public:
         gameName_(gameName),
         redTeam_(redTeam) {};
 
-    std::string getLastMove();
+    Status getLastMove();
     std::string sendMove(std::string move);
     void playGame();
 

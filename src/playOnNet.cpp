@@ -15,7 +15,7 @@ std::string getStdoutFromCommand(std::string cmd) {
     return data;
 }
 
-std::string NetworkGame::getLastMove()
+Status NetworkGame::getLastMove()
 {
     std::stringstream ss;
     ss << "curl -s " << address_ << "/?info_game=true -d '{";
@@ -26,21 +26,22 @@ std::string NetworkGame::getLastMove()
     std::string result = getStdoutFromCommand(ss.str());
     
     if (result == "")
-        return "error: no result";
+        return std::make_pair("error","no result");
 
     json_t data = JSON_parse(result);
     if (data["error"])
-        return to_string(data["error"]);
+        return std::make_pair("error",to_string(data["error"]));
 
     if (data["boards"]) {
         std::string lastBoard = "";
+        std::string status = to_string(data["status"]);
         for (auto &b : data["boards"]) {
             lastBoard = to_string(b);
         }
-        return lastBoard;
+        return std::make_pair(status, lastBoard);
     }
 
-    return "error parsing JSON";
+    return std::make_pair("error","couldn't parse JSON");
 }
 
 std::string NetworkGame::sendMove(std::string move) {
@@ -71,9 +72,21 @@ void NetworkGame::playGame()
     std::cout << "starting game" << std::endl;
 
     uint moveCounter = 0;
-    std::string theBoard = getLastMove();
+    Status boardStatus = getLastMove();
+    std::string myStatusString = redTeam_ ? "red_turn" : "black_turn";
     
-    while(true && moveCounter < 200) {
+    while(boardStatus.first != myStatusString) {
+        std::cout << boardStatus.first << " " << boardStatus.second << std::endl;
+        if (boardStatus.first == "red_won" || boardStatus.first == "black_won")
+            return;
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        boardStatus = getLastMove();
+    }
+
+    std::string theBoard = boardStatus.second;
+
+    while(true) {
         
         std::cout << theBoard << " " << theBoard.size() << std::endl;
         if (theBoard.find("error") != std::string::npos)
@@ -97,16 +110,17 @@ void NetworkGame::playGame()
 
         std::vector<std::string> possibleBoards = CheckerBoard(move, !redTeam_).getAllRandoMoves();
 
-        while(true) {
-            std::string lastMove = getLastMove();
-            if (std::string(lastMove).compare(move) != 0)
+        boardStatus = getLastMove();
+        while(boardStatus.first != myStatusString) {
+            std::cout << boardStatus.first << " " << boardStatus.second << std::endl;
+            if(boardStatus.first == "red_won" || boardStatus.first == "black_won")
                 break;
-
-            std::cout << "waiting" << std::endl;
+            
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            boardStatus = getLastMove();
         }
         
-        theBoard = getLastMove();
+        theBoard = getLastMove().second;
         
         if (std::find(possibleBoards.begin(), possibleBoards.end(), theBoard) == possibleBoards.end())
             std::cout << "Invalid Move Detected" << std::endl;
