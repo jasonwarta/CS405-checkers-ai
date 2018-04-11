@@ -1,3 +1,5 @@
+.DEFAULT_GOAL := all
+
 UNAME := $(shell uname)
 LDFLAGS := -pthread -lstdc++fs
 
