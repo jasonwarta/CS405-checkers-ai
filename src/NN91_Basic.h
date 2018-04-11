@@ -19,14 +19,15 @@
 #include <math.h> // for tanh. may change if we find a faster sigmoid
 #include <immintrin.h>
 #include <fstream>
+#include <sstream>
 
 #include "consts.h"
 #include "alignocator.h"
 
-class NN91_Basic 
+class NN91_Basic
 {
 public:
-    NN91_Basic(std::ifstream &ifs) 
+    NN91_Basic(std::ifstream &ifs)
     {
         std::string line;
         while(getline(ifs,line)) {
@@ -38,7 +39,7 @@ public:
                 is >> label;
 
                 switch(label.c_str()[0]) {
-                    case 'n': 
+                    case 'n':
                         {
                             networkSize_.clear();
                             uint temp;
@@ -83,12 +84,12 @@ public:
     }
 
     /*
-    Network start values: 
+    Network start values:
         K = U(1.0, 3.0) == kingValue_
         w = U(-0.2, 0.2) == edges_[i] where i = 0, 1, ... ,n-1
         s = 0.05 == sigma_[i] where i = 0, 1, ... ,n-1
     */
-    NN91_Basic(const std::vector<int> &netSize) 
+    NN91_Basic(const std::vector<int> &netSize)
     {
     	setNeuralSizes(netSize);
 
@@ -133,7 +134,7 @@ public:
             sigma_[i] = sigma_[i] * std::exp(t * distribute(generator));
         }
     }
-    
+
 
     void evaluateNN(const std::string &theBoard, bool isRedTeam)
     {
@@ -145,15 +146,15 @@ public:
         float summedStorage[8] __attribute__ ((aligned (32)));
         float additionStorage[8] __attribute__ ((aligned (32))) {0,0,0,0,0,0,0,0};
 
-        for(uint i=1; i<networkSize_.size(); ++i) 
+        for(uint i=1; i<networkSize_.size(); ++i)
         {
-            for(uint j=0; j<networkSize_[i]; ++j) 
+            for(uint j=0; j<networkSize_[i]; ++j)
             {
                 __m256 addStorage = _mm256_load_ps(&additionStorage[0]);
 
-                for(uint k=0; k<networkSize_[i-1]; k+=8) 
+                for(uint k=0; k<networkSize_[i-1]; k+=8)
                 {
-                    
+
                     __m256 edgesSIMD = _mm256_load_ps(&edges_[edgeCount_]);
                     __m256 nodeSIMD = _mm256_load_ps(&nodes_[nodeCount_-j-networkSize_[i-1]+k]);
                     __m256 nodeWeights = _mm256_mul_ps(edgesSIMD, nodeSIMD);
@@ -162,10 +163,10 @@ public:
 
                     edgeCount_+=8;
                 }
-                
+
                 // Horizontal add of 8 elements
                 addStorage = _mm256_hadd_ps(addStorage, addStorage);
-                addStorage = _mm256_hadd_ps(addStorage, addStorage);                
+                addStorage = _mm256_hadd_ps(addStorage, addStorage);
                 _mm256_store_ps(&summedStorage[0], addStorage);
 
                 nodes_[nodeCount_] = tanh(summedStorage[3] + summedStorage[4]);
@@ -177,8 +178,8 @@ public:
     float getLastNode()
     {
         return nodes_[nodes_.size()-1];
-    } 
-    
+    }
+
     // More-so for testing. Actuall program shouldn't need to call this
     void printAll()
     {
@@ -232,9 +233,9 @@ private:
     // that square and if that square is yours.
     void stringToWeightedBoard(const std::string &theBoard)
     {
-        for(size_t i = 0; i < weightedStartBoard_.size(); ++i) 
+        for(size_t i = 0; i < weightedStartBoard_.size(); ++i)
         {
-            switch(theBoard[i]) 
+            switch(theBoard[i])
             {
                 case 'R':
                     weightedStartBoard_[i] = redTeam_ ? kingValue_ : -kingValue_;
@@ -254,7 +255,7 @@ private:
             }
         }
     }
-    
+
     // Converts the weightedBoard to the first 91 Nodes of the Network.
     // Each node looks at a different square. All 3x3, 4x4, 5x5... 8x8. (91 total)
     void setFirstWeights()
@@ -273,7 +274,7 @@ private:
             nodes_[i] = tanh(nodes_[i]);
         }
         edgeCount_ += 2; // become aligned for SIMD. Not actually used anywhere
-        
+
         // Set last 5 nodes_ to 0 for aligned SIMD
         for(uint i=91; i<96; ++i)
         {
@@ -297,7 +298,7 @@ private:
 
         // set up nodes_
         int totalNodes = 0;
-        for(uint i=0; i<networkSize_.size(); ++i) 
+        for(uint i=0; i<networkSize_.size(); ++i)
         {
             totalNodes += networkSize_[i];
         }
@@ -371,7 +372,7 @@ private:
             for(int j=0; j<networkSize_[i]; ++j)
             {
                 float currNode_ = 0;
-                for(int k=0; k<networkSize_[i-1]; ++k) 
+                for(int k=0; k<networkSize_[i-1]; ++k)
                 {
                     // Node - j - size(k) + k = previus set of nodes_... hopefully
                     currNode_ += nodes_[nodeCount_-j-networkSize_[i-1]+k] * edges_[edgeCount_];
