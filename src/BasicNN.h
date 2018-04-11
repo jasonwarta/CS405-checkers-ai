@@ -25,6 +25,7 @@
 
 #include "consts.h"
 #include "alignocator.h"
+#include "BoardEval.h"
 
 
 class BasicNN 
@@ -164,6 +165,11 @@ public:
                     currNode += nodes_[NodesUsed_-j-networkSize_[i-1]+k] * edges_[EdgesUsed_];
                     EdgesUsed_++;
                 }
+                if(i == networkSize_.size()-1)
+                {
+                    currNode+= weightedBoardEval(theBoard, kingValue_, redTeam_) * edges_[EdgesUsed_];
+                    EdgesUsed_++;
+                }
 
                 nodes_[NodesUsed_] = tanh(currNode);
                 NodesUsed_++;
@@ -263,7 +269,7 @@ private:
         }
         nodes_.resize(totalNodes, 0.0f);
 
-        int totalEdges = 0;
+        int totalEdges = layerSizes[layerSizes.size()-1]; // Start at one for the piece count weight
         for(int i=0; i<layerSizes.size()-1; ++i)
         {
             totalEdges += layerSizes[i] * layerSizes[i+1];

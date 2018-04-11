@@ -100,5 +100,3 @@ Red team lost the game
 {"move":"038","board":"___r__rrr_______rr_r______br____","expansions":"0000000603","alpha":"000001","beta":"000207","time":"00.004316s"}
 {"move":"039","board":"___r__rrr_______rr_r__b____r____","expansions":"0000000012","alpha":"000000","beta":"000001","time":"00.000102s"}
 Black team lost the game
-
-

@@ -8,7 +8,7 @@
 #define ALIGNOCATOR_PRINT_TEST 0
 
 
-#include "BasicNN.h"
+#include "../src/BasicNN.h"
 #include "NN91_Basic.h"
 
 #include <vector>
@@ -18,6 +18,20 @@
 int main() 
 {
 
+
+	std::vector<int> size {3,10,1};
+	BasicNN smallNet(size);
+
+	BasicNN childNet = smallNet;
+	childNet.evolve();
+
+	std::cout << "PARENT NET:" << std::endl;
+	smallNet.printAll();
+	std::cout << std::endl << std::endl << "CHILD NET:" << std::endl;
+	childNet.printAll();
+
+
+/*
     // config options:
 	std::vector<int> bondie24Size {32, 40, 10, 1};
     std::vector<int> networkSizeBasic {32, 40, 16, 1};
@@ -182,7 +196,7 @@ int main()
     std::cout << "Begin: " << firstTest.begin() << " end: " << firstTest.end() << std::endl;
 #endif
 
-
+*/
     return 0;
 }
 

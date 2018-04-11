@@ -30,14 +30,12 @@ int basicBoardEval(std::string &currBoard, bool redTeamTurn)
 
 	if(currTeamCheckers == 0)
 	{
-		return -1;
+		return -10000;
 	}
 	else if(otherTeamCheckers == 0)
 	{
-		return 1;
+		return 10000;
 	}
-
-	// tanh((float)currTeamCheckers - (float)otherTeamCheckers)
 	return currTeamCheckers - otherTeamCheckers;
 }
 
@@ -45,15 +43,13 @@ float weightedBoardEval(std::string &currBoard, float kingVal, bool redTeamTurn)
 	// std::cout << "weighted board eval" << std::endl;
 	PieceMap board(currBoard);
 
-	int currTeamCheckers = redTeamTurn ? board.weightedRedPieces(kingVal) : board.weightedBlackPieces(kingVal);
-	int otherTeamCheckers = redTeamTurn ? board.weightedBlackPieces(kingVal) : board.weightedRedPieces(kingVal);
+	float currTeamCheckers = redTeamTurn ? board.weightedRedPieces(kingVal) : board.weightedBlackPieces(kingVal);
+	float otherTeamCheckers = redTeamTurn ? board.weightedBlackPieces(kingVal) : board.weightedRedPieces(kingVal);
 
 	if(currTeamCheckers == 0)
-		return -1;
+		return -10000.0f;
 	else if (otherTeamCheckers == 0)
-		return 1;
-
-	// std::cout << "c:" << currTeamCheckers << "\to:" << otherTeamCheckers << std::endl;
+		return 10000.0f;
 
 	return currTeamCheckers - otherTeamCheckers;
 }

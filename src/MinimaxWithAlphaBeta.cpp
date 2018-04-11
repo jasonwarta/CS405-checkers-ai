@@ -2,7 +2,11 @@
 
 #include "MinimaxWithAlphaBeta.h"
 
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, NeuralNet *net, bool usingPieceCount) : MinimaxWithAlphaBeta(redPlayer, clock, net, usingPieceCount) 
+#ifdef CUDA
+	#include <cuda_minmaxFunctions.h>
+#endif //CUDA
+
+MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, NeuralNet *net, bool usingPieceCount) : MinimaxWithAlphaBeta(redPlayer, clock, net, usingPieceCount)
 {
 	init(theBoard, depth, redPlayer);
 }
@@ -93,7 +97,7 @@ float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard,
 		std::vector<std::string> possBoards = std::move(tempBoard.getAllRandoMoves());
 
 		boardExpansions_ += possBoards.size();
-	
+
 		float worstVal = 10000;
 
 		if(possBoards.size() == 0)

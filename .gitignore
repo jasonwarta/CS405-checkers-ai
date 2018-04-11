@@ -3,3 +3,4 @@ node_modules/*
 **/a.out
 NN**/
 testing/build/*
+compileMe

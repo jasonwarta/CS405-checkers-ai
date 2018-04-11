@@ -43,7 +43,7 @@ clean:
 
 MKDIR_P ?= mkdir -p
 
-run: 
+run:
 	./build/main
 
 up: all run
@@ -57,5 +57,3 @@ load:
 
 test:
 	./build/main -test $(NET)
-
-play:
