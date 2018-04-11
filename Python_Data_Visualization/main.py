@@ -8,15 +8,12 @@ countFiles = 1;
 files = []
 
 # Open files in directory
-for list_files in listdir('../NN_185gens/gen_185/games'):
-    files[countFiles] = list_files
-    countFiles = countFiles + 1
+#for list_files in listdir('../NN_185gens/gen_185/games'):
 
 file = sys.argv[1]
 output = check_output("grep { " + file + " | sed -e 's/$/,/'",shell=True)
-# json_data = (open('00v01').read())
 
-jsonToPython = json.loads(b'[' + output + b'{"string":"foo"}' + b']')
+jsonToPython = json.loads((b'[' + output + b'{"string":"foo"}' + b']').decode('utf-8'))
 json_size = len(jsonToPython)
 
 for i in range(1,json_size-1):
