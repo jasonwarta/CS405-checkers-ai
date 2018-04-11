@@ -23,6 +23,7 @@
 
 #include "consts.h"
 #include "alignocator.h"
+#include "BoardEval.h"
 
 class NN91_Basic
 {
@@ -136,7 +137,7 @@ public:
     }
 
 
-    void evaluateNN(const std::string &theBoard, bool isRedTeam)
+    void evaluateNN(std::string &theBoard, bool isRedTeam)
     {
         redTeam_ = isRedTeam;
 
@@ -168,6 +169,11 @@ public:
                 addStorage = _mm256_hadd_ps(addStorage, addStorage);
                 addStorage = _mm256_hadd_ps(addStorage, addStorage);
                 _mm256_store_ps(&summedStorage[0], addStorage);
+
+                if(i == networkSize_.size()-1)
+                {
+                    summedStorage[3]+= weightedBoardEval(theBoard, kingValue_, redTeam_) * edges_[edgeCount_];
+                }
 
                 nodes_[nodeCount_] = tanh(summedStorage[3] + summedStorage[4]);
                 nodeCount_++;
@@ -310,6 +316,7 @@ private:
         {
             totalEdges += networkSize_[i] * networkSize_[i+1];
         }
+        totalEdges++; // for the edge used with board eval
         edges_.resize(totalEdges);
 
         // set up other vectors
