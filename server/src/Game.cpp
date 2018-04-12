@@ -7,6 +7,7 @@ char Game::run(std::string theBoard) {
 	bool redTeamTurn = true;
 	bool stalemate1 = false, stalemate2 = false;
 
+	(*os_) << "[" << std::endl;
 	// main loop, only exit when done
 	while (true && turnCounter < 200) {
 		(*os_) << "{\"move\":\"" << std::setfill('0') << std::setw(3) << turnCounter << "\",\"board\":\"" << theBoard << "\",";
@@ -32,20 +33,23 @@ char Game::run(std::string theBoard) {
 		}
 
 		auto duration = std::chrono::duration<double>(std::chrono::system_clock::now() - *clock_).count();
-		(*os_) << "\"time\":\"" << std::setw(9) << std::setfill('0') << std::fixed << std::setprecision(6) << duration << "s\"}" << std::endl;
+		(*os_) << "\"time\":\"" << std::setw(9) << std::setfill('0') << std::fixed << std::setprecision(6) << duration << "s\"}," << std::endl;
 
 		PieceMap pm(theBoard);
 
 		if ( theBoard.size() < 32) {
+			(*os_) << "]" << std::endl;
 			return redTeamTurn ? 'B' : 'R';
 			(*os_) << (redTeamTurn ? "Red team" : "Black team") << " lost the game" << std::endl;
 			break;
 		} 
 		else if ( !pm.redPieces() ) {
+			(*os_) << "]" << std::endl;
 			(*os_) << "Red team lost the game" << std::endl;
 			return 'B';
 		}
 		else if ( !pm.blackPieces() ) {
+			(*os_) << "]" << std::endl;
 			(*os_) << "Black team lost the game" << std::endl;
 			return 'R';
 		}
@@ -67,6 +71,7 @@ char Game::run(std::string theBoard) {
 			// 	moveTracker_ = {};
 			// }
 			if (stalemate1) {
+				(*os_) << "]" << std::endl;
 				return 'D';
 			}
 			else {
@@ -81,6 +86,7 @@ char Game::run(std::string theBoard) {
 			moveTracker_.pop();
 
 	}
+	(*os_) << "]" << std::endl;
 	(*os_) << "Draw" << std::endl;
 	return 'D';
 }
