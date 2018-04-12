@@ -90,7 +90,7 @@ public:
         w = U(-0.2, 0.2) == edges_[i] where i = 0, 1, ... ,n-1
         s = 0.05 == sigma_[i] where i = 0, 1, ... ,n-1
     */
-    NN91_Basic(const std::vector<int> &netSize)
+    NN91_Basic(const std::vector<uint> &netSize)
     {
     	setNeuralSizes(netSize);
 
@@ -290,7 +290,7 @@ private:
 
     // one call to set all vectors to the right size
     // prevents lots of push_backs
-    void setNeuralSizes(const std::vector<int> &nodeSizes)
+    void setNeuralSizes(const std::vector<uint> &nodeSizes)
    	{
 
         // Set up network size: [91, nodeSizes*8, 1]
@@ -303,7 +303,7 @@ private:
         networkSize_[networkSize_.size()-1] = 1;
 
         // set up nodes_
-        int totalNodes = 0;
+        uint totalNodes = 0;
         for(uint i=0; i<networkSize_.size(); ++i)
         {
             totalNodes += networkSize_[i];
@@ -311,7 +311,7 @@ private:
         nodes_.resize(totalNodes, 0.0f);
 
         // set up edges_
-        int totalEdges = 856; // 854 Edges from first set of nodes_ to the input vector + 2 for SIMD alignment
+        uint totalEdges = 856; // 854 Edges from first set of nodes_ to the input vector + 2 for SIMD alignment
         for(uint i=0; i<networkSize_.size()-1; ++i)
         {
             totalEdges += networkSize_[i] * networkSize_[i+1];
@@ -339,13 +339,13 @@ private:
     std::vector<float, alignocator<float, 32>> nodes_;
     std::vector<float, alignocator<float, 32>> edges_;
     std::vector<float, alignocator<float, 32>> sigma_;
-    std::vector<int> networkSize_;
+    std::vector<uint> networkSize_;
     std::vector<float> weightedStartBoard_;
 
     float kingValue_;
     bool redTeam_;
-    int edgeCount_;
-    int nodeCount_;
+    uint edgeCount_;
+    uint nodeCount_;
 };
 
 

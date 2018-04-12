@@ -48,6 +48,6 @@ std::string playGame(Player *p1, Player *p2, std::string startBoard, Score *scor
 
 void play(std::mutex &mtx, std::queue<std::unique_ptr<Match>> &matches);
 
-int getRandomIndex(int index, std::mt19937 &rand, std::uniform_int_distribution<> &randIndex, std::vector<std::shared_ptr<NetTracker>> &nets);
+uint getRandomIndex(uint index, std::mt19937 &rand, std::uniform_int_distribution<uint> &randIndex, std::vector<std::shared_ptr<NetTracker>> &nets);
 
 #endif

@@ -41,17 +41,17 @@ private:
 
 private:
 	std::string bestBoard_;
-	bool redPlayerTurn_;
-	uint64_t breakBeta_;
-	uint64_t breakAlpha_;
-	uint64_t boardExpansions_;
 
+	bool redPlayerTurn_;
+	std::shared_ptr<Clock> clock_;
+	uint64_t breakAlpha_;
+	uint64_t breakBeta_;
+	uint64_t boardExpansions_;
+	NeuralNet *net_;
 	bool usingPieceCount_;
 
 	std::ostream *os_;
 
-	NeuralNet *net_;
-	std::shared_ptr<Clock> clock_;
 };
 
 #endif

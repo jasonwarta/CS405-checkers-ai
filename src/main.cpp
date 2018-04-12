@@ -110,7 +110,7 @@ int main(int argc, char const *argv[]) {
 
 	std::random_device r;
 	std::mt19937 rand(r());
-	std::uniform_int_distribution<> randIndex(0,POPULATION_SIZE-1);
+	std::uniform_int_distribution<uint> randIndex(0,POPULATION_SIZE-1);
 
 	uint64_t genCounter = 0;
 
@@ -144,7 +144,7 @@ int main(int argc, char const *argv[]) {
 				if (nets[i]->opponents.size() >= MAX_MATCHES)
 					break;
 
-				int opponentIdx = getRandomIndex(i, rand, randIndex, nets);
+				uint opponentIdx = getRandomIndex(i, rand, randIndex, nets);
 
 				nets[i]->opponents.push_back(opponentIdx);
 				nets[opponentIdx]->opponents.push_back(i);
@@ -161,17 +161,17 @@ int main(int argc, char const *argv[]) {
 		for(size_t i = 0; i < nets.size(); ++i) {
 			std::cout << std::setfill('0') << std::setw(2) << i << ": ";
 			for(size_t j = 0; j < nets[i]->opponents.size(); ++j)
-				std::cout << std::setfill('0') << std::setw(2) << (int)nets[i]->opponents[j] << " ";
+				std::cout << std::setfill('0') << std::setw(2) << int(nets[i]->opponents[j]) << " ";
 			std::cout << std::endl;
 		}
 
 		std::vector<std::thread> threads;
-		for (int i = 0; i < NUM_THREADS; ++i)
+		for (uint i = 0; i < NUM_THREADS; ++i)
 		{
 			threads.push_back( std::thread(play, std::ref(mtx), std::ref(matchesQueue)) );
 		}
 		
-		for (int i = 0; i < threads.size(); ++i)
+		for (uint i = 0; i < threads.size(); ++i)
 		{
 			threads[i].join();
 		}
@@ -185,7 +185,7 @@ int main(int argc, char const *argv[]) {
 		ss.str("");
 
 		std::sort(nets.begin(), nets.end(), [](std::shared_ptr<NetTracker> a, std::shared_ptr<NetTracker> b) {
-			return ((float)a->score/a->opponents.size()) > ((float)b->score/b->opponents.size());
+			return (float(float(a->score)/a->opponents.size()) > float(float(b->score)/b->opponents.size()));
 		});
 
 		for(size_t i = 0; i < nets.size(); ++i)

@@ -52,15 +52,10 @@ private:
 	// change to float when we hook up NN
 	int minMaxTreeRecurse(std::string &theBoard, int depth, bool maximizingPlayer, int currentBest)
 	{
-		// std::cout << depth << std::endl;
-
 		if(depth == 0) // maybe other checks here later?...
 		{
-			// net_->printData();
 			net_->evaluateNN(theBoard);
-			// std::cout << net_->getLastNode() << " " << theBoard << std::endl;
 			return net_->getLastNode();
-			// return basicBoardEval(theBoard, redPlayerTurn_);
 		}
 
 		if(maximizingPlayer)

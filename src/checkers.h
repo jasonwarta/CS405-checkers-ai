@@ -57,9 +57,9 @@ public:
 private:
 	std::string turnBoardToString();
 
-	void JumpingRecursion(int i, int j, bool currTeamDirection); // currTeamDirection gets passed going right way
+	void JumpingRecursion(uint i, uint j, bool currTeamDirection); // currTeamDirection gets passed going right way
 
-	void moveJumpManager(int &i, int &j, bool goingRightWay);
+	void moveJumpManager(uint &i, uint &j, bool goingRightWay);
 
 	void updatePossibleMoves();
 

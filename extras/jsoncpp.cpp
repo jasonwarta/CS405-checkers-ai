@@ -68,10 +68,9 @@ license you like.
 // End of content of file: LICENSE
 // //////////////////////////////////////////////////////////////////////
 
-
-
-
-
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch-default"
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
 
 #include "json/json.h"
 
@@ -5433,6 +5432,8 @@ JSONCPP_OSTREAM& operator<<(JSONCPP_OSTREAM& sout, Value const& root) {
 }
 
 } // namespace Json
+
+#pragma GCC diagnostic pop
 
 // //////////////////////////////////////////////////////////////////////
 // End of content of file: src/lib_json/json_writer.cpp

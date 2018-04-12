@@ -46,8 +46,8 @@ public:
                     case 'n': 
                         {
                             networkSize_.clear();
-                            int temp;
-                            int totalTemp = 0;
+                            uint temp;
+                            uint totalTemp = 0;
                             while(is >>temp) {
                                 networkSize_.push_back(temp);
                                 totalTemp += temp;
@@ -91,7 +91,7 @@ public:
         w = U(-0.2, 0.2) == edges_[i] where i = 0, 1, ... ,n-1
         s = 0.05 == sigma_[i] where i = 0, 1, ... ,n-1
     */
-    BasicNN(const std::vector<int> &netSize)
+    BasicNN(const std::vector<uint> &netSize)
     {
         setNeuralSizes(netSize);
 
@@ -105,7 +105,7 @@ public:
 
         // set up each weight
         std::uniform_real_distribution<> startWeightVal(-0.2,0.2);
-        for(int i=0; i<edges_.size(); ++i)
+        for(uint i=0; i<edges_.size(); ++i)
         {
             edges_[i] = startWeightVal(random);
         }
@@ -133,7 +133,7 @@ public:
 
         float t = 1/sqrt(2*sqrt(nodes_.size()));
         std::normal_distribution<float> distribute(0.0, 1.0);
-        for(int i=0; i<edges_.size(); ++i)
+        for(uint i=0; i<edges_.size(); ++i)
         {
             edges_[i] = edges_[i] + sigma_[i]*distribute(generator);
             sigma_[i] = sigma_[i] * std::exp(t * distribute(generator));
@@ -153,14 +153,14 @@ public:
         setFirstWeights(theBoard);
         EdgesUsed_ = 0;
         NodesUsed_ = networkSize_[0]; // should be 32
-        for(int i=1; i<networkSize_.size(); ++i) 
+        for(uint i=1; i<networkSize_.size(); ++i) 
         {
-            for(int j=0; j<networkSize_[i]; ++ j) 
+            for(uint j=0; j<networkSize_[i]; ++ j) 
             {
                 // tried declaring float inside method and as class
                 // both timings were about the same
                 float currNode = 0;
-                for(int k=0; k<networkSize_[i-1]; ++k) 
+                for(uint k=0; k<networkSize_[i-1]; ++k) 
                 {
                     currNode += nodes_[NodesUsed_-j-networkSize_[i-1]+k] * edges_[EdgesUsed_];
                     EdgesUsed_++;
@@ -184,10 +184,10 @@ public:
     void printAll()
     {
         std::cout << std::endl << "------------------NODES----------------" << std::endl;
-        int nodeCount_ = 0;
-        for(int i=0; i<networkSize_.size(); ++i)
+        uint nodeCount_ = 0;
+        for(uint i=0; i<networkSize_.size(); ++i)
         {
-            for(int j=0; j<networkSize_[i]; ++j)
+            for(uint j=0; j<networkSize_[i]; ++j)
             {
                 std::cout << nodes_[nodeCount_] << " ";
                 nodeCount_++;
@@ -196,14 +196,14 @@ public:
         }
 
         std::cout << std::endl << "------------------EDGES----------------" << std::endl;
-        for(int i=0; i<edges_.size(); ++i)
+        for(uint i=0; i<edges_.size(); ++i)
         {
             std::cout << edges_[i] << " ";
         }
         std::cout << std::endl << std::endl;
 
         std::cout << std::endl << "------------------SIGMA----------------" << std::endl;
-        for(int i=0; i<sigma_.size(); ++i)
+        for(uint i=0; i<sigma_.size(); ++i)
         {
             std::cout << sigma_[i] << " ";
         }
@@ -258,19 +258,19 @@ private:
     }
     
     // Does resizes on network creation to avoid lots of push_backs later
-    void setNeuralSizes(const std::vector<int> &layerSizes)
+    void setNeuralSizes(const std::vector<uint> &layerSizes)
    	{
         networkSize_ = layerSizes;
 
-        int totalNodes = 0;
-        for(int i=0; i<layerSizes.size(); ++i) 
+        uint totalNodes = 0;
+        for(uint i=0; i<layerSizes.size(); ++i) 
         {
             totalNodes += layerSizes[i];
         }
         nodes_.resize(totalNodes, 0.0f);
 
-        int totalEdges = layerSizes[layerSizes.size()-1]; // Start at one for the piece count weight
-        for(int i=0; i<layerSizes.size()-1; ++i)
+        uint totalEdges = layerSizes[layerSizes.size()-1]; // Start at one for the piece count weight
+        for(uint i=0; i<layerSizes.size()-1; ++i)
         {
             totalEdges += layerSizes[i] * layerSizes[i+1];
         }
@@ -281,12 +281,12 @@ private:
     std::vector<float, alignocator<float, 32>> nodes_;
     std::vector<float, alignocator<float, 32>> edges_;
     std::vector<float> sigma_;
-    std::vector<int> networkSize_;
+    std::vector<uint> networkSize_;
 
     float kingValue_;
     bool redTeam_;
-    int EdgesUsed_;
-    int NodesUsed_;
+    uint EdgesUsed_;
+    uint NodesUsed_;
     
 };
 

@@ -15,7 +15,7 @@ typedef Json::Value json_t;
 \param json			JSON object to convert.
 \return				String representation of JSON object.
 */
-std::string JSON_serialize(const json_t& json);
+// std::string JSON_serialize(const json_t& json);
 
 /**Converts a std::string represented JSON object into a json_t (throws on bad JSON string).
 \param stringified	String representation of JSON object.

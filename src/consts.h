@@ -15,7 +15,7 @@ const int8_t MIN_MATCHES = 5;
 // should be about 2x MIN_MATCHES
 const int8_t MAX_MATCHES = 10;
 
-const std::vector<int> NET_SIZE {32, 40, 10, 1};
+const std::vector<uint> NET_SIZE {32, 40, 10, 1};
 
 extern const std::string START_BOARD_STRING;
 
@@ -155,7 +155,7 @@ const std::vector<std::vector<int>> BLACK_JUMP_BOARD {
 	{21, 23},	//30
 	{22, -1} };
 
-const std::vector<std::vector<int>> NN91_NODE_LOCATIONS {
+const std::vector<std::vector<uint>> NN91_NODE_LOCATIONS {
 	{0, 4, 5, 8},		//0, 3x3 tiles start
 	{0, 1, 5, 8, 9},
 	{1, 5, 6, 9},

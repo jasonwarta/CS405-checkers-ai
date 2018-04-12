@@ -6,6 +6,11 @@
 	#include <cuda_minmaxFunctions.h>
 #endif //CUDA
 
+double inner = 0;
+double leafs = 0;
+int count = 0;
+double total = 0;
+
 MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, NeuralNet *net, bool usingPieceCount) : MinimaxWithAlphaBeta(redPlayer, clock, net, usingPieceCount)
 {
 	init(theBoard, depth, redPlayer);
@@ -13,6 +18,13 @@ MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, boo
 
 std::string MinimaxWithAlphaBeta::getBestBoard(std::ostream *os) {
 	printABStats(os);
+	std::cout << inner << " " << leafs << " " << double(leafs / (inner + leafs)) <<  std::endl;
+	count++;
+	total += (leafs / (inner + leafs));
+	std::cout << total / count << std::endl;
+	inner = 0;
+	leafs = 0;
+	printABStats(&std::cout);
 	return bestBoard_;
 }
 
@@ -54,6 +66,7 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth, bool redPlayer
 float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard, int depth, float alpha, float beta, bool maximizingPlayer) {
 
 	if(depth == 0) {
+		leafs++;
 		if(!usingPieceCount_) {
 			net_->evaluateNN(theBoard, redPlayerTurn_);
 			return net_->getLastNode();
@@ -74,6 +87,8 @@ float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard,
 	if (maximizingPlayer) {
 		CheckerBoard tempBoard(theBoard, redPlayerTurn_);
 		std::vector<std::string> possBoards = std::move(tempBoard.getAllRandoMoves());
+		inner += possBoards.size();
+
 
 		boardExpansions_ += possBoards.size();
 
@@ -95,6 +110,7 @@ float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard,
 	else {
 		CheckerBoard tempBoard(theBoard, !redPlayerTurn_);
 		std::vector<std::string> possBoards = std::move(tempBoard.getAllRandoMoves());
+		inner += possBoards.size();
 
 		boardExpansions_ += possBoards.size();
 

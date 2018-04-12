@@ -37,10 +37,10 @@ public:
 private:
 	Player * red_;
 	Player * black_;
-	std::ostream *os_;
-
-	std::queue<std::string> moveTracker_;
 	std::shared_ptr<Clock> clock_;
+
+	std::ostream *os_;
+	std::queue<std::string> moveTracker_;
 };
 
 #endif

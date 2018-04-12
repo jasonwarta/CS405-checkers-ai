@@ -62,7 +62,7 @@
 
 
 		checkers_.resize(32);
-		for(int i=0; i<startBoard.size(); ++i)
+		for(uint i=0; i<startBoard.size(); ++i)
 		{
 			// later, break at space first for speedup?
 			if(startBoard.at(i) == 'r')
@@ -108,7 +108,7 @@
 	    }
 	    else
 	    {
-	        std::uniform_int_distribution<> movePicked(0, (possibleMoves_.size()-1));
+	        std::uniform_int_distribution<uint> movePicked(0, (possibleMoves_.size()-1));
 
 	        return possibleMoves_[movePicked(rando)];
 	    }
@@ -121,7 +121,7 @@
 
 	bool CheckerBoard::isValidBoard(std::string &newBoard)
 	{
-		for(int i=0; i<possibleMoves_.size(); ++i)
+		for(uint i=0; i<possibleMoves_.size(); ++i)
 		{
 			if(possibleMoves_[i] == newBoard)
 			{
@@ -135,7 +135,7 @@
 	std::string CheckerBoard::turnBoardToString()
 	{
 		std::string returnMe = "";
-		for(int i=0; i<checkers_.size(); i++)
+		for(uint i=0; i<checkers_.size(); i++)
 		{
 			if(checkers_[i] == nullptr)
 			{
@@ -168,10 +168,12 @@
 		return returnMe;
 	}
 
-	void CheckerBoard::JumpingRecursion(int i, int j, bool currTeamDirection) // currTeamDirection gets passed going right way
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wsign-conversion"
+	void CheckerBoard::JumpingRecursion(uint i, uint j, bool currTeamDirection) // currTeamDirection gets passed going right way
 	{
 		std::unique_ptr<TheChecker> pieceJumped;
-		int k;
+		uint k;
 		bool jumpNeverFound = true;
 
 		if(currTeamDirection == true)
@@ -179,6 +181,7 @@
 			pieceJumped = std::move(checkers_[currTeamMoveBoard_[i][j]]);
 			checkers_[currTeamJumpBoard_[i][j]] = std::move(checkers_[i]);
 			k = currTeamJumpBoard_[i][j];
+			
 		}
 		else // currTeamDirection == false
 		{
@@ -187,7 +190,7 @@
 			k = oppTeamJumpBoard_[i][j];
 		}
 
-		for(int l=0; l<2; ++l)
+		for(uint l=0; l<2; ++l)
 		{
 			// if "Can move that way" && "Theres a checker that way" && "That checker is not yours" && "The space to jump it is empty"
 			if(currTeamMoveBoard_[k][l] != -1 && checkers_[currTeamMoveBoard_[k][l]] != nullptr && checkers_[currTeamMoveBoard_[k][l]]->isTeamRed() != redTeamTurn_ && currTeamJumpBoard_[k][l] != -1 && checkers_[currTeamJumpBoard_[k][l]] == nullptr)
@@ -244,10 +247,13 @@
 			checkers_[oppTeamMoveBoard_[i][j]] = std::move(pieceJumped);
 		}
 	}
+	#pragma GCC diagnostic pop
 
 	// You can also not include the teamMoveBoard and teamJumpBoard, and just say if goingRightWay == true, use currTeamBoard, else use oppTeamBoard.
 	//
-	void CheckerBoard::moveJumpManager(int &i, int &j, bool goingRightWay)
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wsign-conversion"
+	void CheckerBoard::moveJumpManager(uint &i, uint &j, bool goingRightWay)
 	{
 
 		// Use the correct boards:
@@ -313,10 +319,11 @@
 			}
 		}
 	}
+	#pragma GCC diagnostic pop
 
 	void CheckerBoard::updatePossibleMoves()
 	{
-		for(int i=0; i<checkers_.size(); ++i)
+		for(uint i=0; i<checkers_.size(); ++i)
 		{
 			// If no checker on that square, or wrong teams checker, do nothing....
 			if(checkers_[i] == nullptr || checkers_[i]->isTeamRed() != redTeamTurn_)
@@ -326,7 +333,7 @@
 
 			//for loop because 0 deals with left, and 1 deals with right
 			//check both sides independently
-			for(int j=0; j<2; j++)
+			for(uint j=0; j<2; j++)
 			{
 
 				moveJumpManager(i, j, true);
