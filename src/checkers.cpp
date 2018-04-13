@@ -47,17 +47,17 @@
 
 		if(redTeamTurn_)
 		{
-			currTeamMoveBoard_ = RED_MOVE_BOARD;
-			currTeamJumpBoard_ = RED_JUMP_BOARD;
-			oppTeamMoveBoard_ = BLACK_MOVE_BOARD;
-			oppTeamJumpBoard_ = BLACK_JUMP_BOARD;
+			currTeamMoveBoard_ = RED_MOVE_PTR;
+			currTeamJumpBoard_ = RED_JUMP_PTR;
+			oppTeamMoveBoard_ = BLACK_MOVE_PTR;
+			oppTeamJumpBoard_ = BLACK_JUMP_PTR;
 		}
 		else
 		{
-			currTeamMoveBoard_ = BLACK_MOVE_BOARD;
-			currTeamJumpBoard_ = BLACK_JUMP_BOARD;
-			oppTeamMoveBoard_ = RED_MOVE_BOARD;
-			oppTeamJumpBoard_ = RED_JUMP_BOARD;
+			currTeamMoveBoard_ = BLACK_MOVE_PTR;
+			currTeamJumpBoard_ = BLACK_JUMP_PTR;
+			oppTeamMoveBoard_ = RED_MOVE_PTR;
+			oppTeamJumpBoard_ = RED_JUMP_PTR;
 		}
 
 
@@ -178,22 +178,22 @@
 
 		if(currTeamDirection == true)
 		{
-			pieceJumped = std::move(checkers_[currTeamMoveBoard_[i][j]]);
-			checkers_[currTeamJumpBoard_[i][j]] = std::move(checkers_[i]);
-			k = currTeamJumpBoard_[i][j];
+			pieceJumped = std::move(checkers_[(*currTeamMoveBoard_)[i][j]]);
+			checkers_[(*currTeamJumpBoard_)[i][j]] = std::move(checkers_[i]);
+			k = (*currTeamJumpBoard_)[i][j];
 			
 		}
 		else // currTeamDirection == false
 		{
-			pieceJumped = std::move(checkers_[oppTeamMoveBoard_[i][j]]);
-			checkers_[oppTeamJumpBoard_[i][j]] = std::move(checkers_[i]);
-			k = oppTeamJumpBoard_[i][j];
+			pieceJumped = std::move(checkers_[(*oppTeamMoveBoard_)[i][j]]);
+			checkers_[(*oppTeamJumpBoard_)[i][j]] = std::move(checkers_[i]);
+			k = (*oppTeamJumpBoard_)[i][j];
 		}
 
 		for(uint l=0; l<2; ++l)
 		{
 			// if "Can move that way" && "Theres a checker that way" && "That checker is not yours" && "The space to jump it is empty"
-			if(currTeamMoveBoard_[k][l] != -1 && checkers_[currTeamMoveBoard_[k][l]] != nullptr && checkers_[currTeamMoveBoard_[k][l]]->isTeamRed() != redTeamTurn_ && currTeamJumpBoard_[k][l] != -1 && checkers_[currTeamJumpBoard_[k][l]] == nullptr)
+			if((*currTeamMoveBoard_)[k][l] != -1 && checkers_[(*currTeamMoveBoard_)[k][l]] != nullptr && checkers_[(*currTeamMoveBoard_)[k][l]]->isTeamRed() != redTeamTurn_ && (*currTeamJumpBoard_)[k][l] != -1 && checkers_[(*currTeamJumpBoard_)[k][l]] == nullptr)
 			{
 				jumpNeverFound = false;
 				JumpingRecursion(k, l, true);
@@ -201,7 +201,7 @@
 			// if king, check other direction too
 			if(checkers_[k]->isKing())
 			{
-				if(oppTeamMoveBoard_[k][l] != -1 && checkers_[oppTeamMoveBoard_[k][l]] != nullptr && checkers_[oppTeamMoveBoard_[k][l]]->isTeamRed() != redTeamTurn_ && oppTeamJumpBoard_[k][l] != -1 && checkers_[oppTeamJumpBoard_[k][l]] == nullptr)
+				if((*oppTeamMoveBoard_)[k][l] != -1 && checkers_[(*oppTeamMoveBoard_)[k][l]] != nullptr && checkers_[(*oppTeamMoveBoard_)[k][l]]->isTeamRed() != redTeamTurn_ && (*oppTeamJumpBoard_)[k][l] != -1 && checkers_[(*oppTeamJumpBoard_)[k][l]] == nullptr)
 				{
 					jumpNeverFound = false;
 					JumpingRecursion(k, l, false);
@@ -217,19 +217,19 @@
 
 			if(currTeamDirection)
 			{
-				isAlreadyKing = checkers_[currTeamJumpBoard_[i][j]]->isKing();
-				if(!isAlreadyKing && ((redTeamTurn_ && currTeamJumpBoard_[i][j]>27) || (!redTeamTurn_ && currTeamJumpBoard_[i][j]<4)))
+				isAlreadyKing = checkers_[(*currTeamJumpBoard_)[i][j]]->isKing();
+				if(!isAlreadyKing && ((redTeamTurn_ && (*currTeamJumpBoard_)[i][j]>27) || (!redTeamTurn_ && (*currTeamJumpBoard_)[i][j]<4)))
 				{
-					checkers_[currTeamJumpBoard_[i][j]]->setKing(true);
+					checkers_[(*currTeamJumpBoard_)[i][j]]->setKing(true);
 
 				}
 			}
 
 			possibleMoves_.push_back(turnBoardToString());
 
-			if(currTeamDirection && !isAlreadyKing && ((redTeamTurn_ && currTeamJumpBoard_[i][j]>27) || (!redTeamTurn_ && currTeamJumpBoard_[i][j]<4)))
+			if(currTeamDirection && !isAlreadyKing && ((redTeamTurn_ && (*currTeamJumpBoard_)[i][j]>27) || (!redTeamTurn_ && (*currTeamJumpBoard_)[i][j]<4)))
 			{
-				checkers_[currTeamJumpBoard_[i][j]]->setKing(false);
+				checkers_[(*currTeamJumpBoard_)[i][j]]->setKing(false);
 
 			}
 		}
@@ -238,13 +238,13 @@
 		// undo the beginning for previous recurse call
 		if(currTeamDirection == true)
 		{
-			checkers_[i] = std::move(checkers_[currTeamJumpBoard_[i][j]]);
-			checkers_[currTeamMoveBoard_[i][j]] = std::move(pieceJumped);
+			checkers_[i] = std::move(checkers_[(*currTeamJumpBoard_)[i][j]]);
+			checkers_[(*currTeamMoveBoard_)[i][j]] = std::move(pieceJumped);
 		}
 		else
 		{
-			checkers_[i] = std::move(checkers_[oppTeamJumpBoard_[i][j]]);
-			checkers_[oppTeamMoveBoard_[i][j]] = std::move(pieceJumped);
+			checkers_[i] = std::move(checkers_[(*oppTeamJumpBoard_)[i][j]]);
+			checkers_[(*oppTeamMoveBoard_)[i][j]] = std::move(pieceJumped);
 		}
 	}
 	#pragma GCC diagnostic pop
@@ -262,13 +262,13 @@
 
 		if(goingRightWay == true)
 		{
-			teamMoveBoard = currTeamMoveBoard_;
-			teamJumpBoard = currTeamJumpBoard_;
+			teamMoveBoard = (*currTeamMoveBoard_);
+			teamJumpBoard = (*currTeamJumpBoard_);
 		}
 		else // A king using the other board:
 		{
-			teamMoveBoard = oppTeamMoveBoard_;
-			teamJumpBoard = oppTeamJumpBoard_;
+			teamMoveBoard = (*oppTeamMoveBoard_);
+			teamJumpBoard = (*oppTeamJumpBoard_);
 		}
 
 		// if you can't even move that direction, don't check for other options

@@ -1,8 +1,10 @@
 #ifndef CONSTS_H_INCLUDED
 #define CONSTS_H_INCLUDED
 
+
 #include <vector>
 #include <string>
+#include <memory>
 
 const int8_t LOSS_VAL = -1;
 const int8_t DRAW_VAL = 0;
@@ -17,7 +19,17 @@ const int8_t MAX_MATCHES = 10;
 
 const std::vector<uint> NET_SIZE {32, 40, 10, 1};
 
+
+
+typedef const std::vector<std::vector<int>> MoveTable;
 extern const std::string START_BOARD_STRING;
+
+extern std::shared_ptr<MoveTable> RED_MOVE_PTR;
+extern std::shared_ptr<MoveTable> RED_JUMP_PTR;
+extern std::shared_ptr<MoveTable> BLACK_MOVE_PTR;
+extern std::shared_ptr<MoveTable> BLACK_JUMP_PTR;
+
+
 
 const std::vector<std::vector<int>> RED_MOVE_BOARD { 
 	{4, 5},		//0
@@ -254,6 +266,8 @@ const std::vector<std::vector<uint>> NN91_NODE_LOCATIONS {
 	{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31} // 8x8, all
 	// 91 total
 };
+
+
 
 
 #endif

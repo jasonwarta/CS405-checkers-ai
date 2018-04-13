@@ -2,6 +2,7 @@
 #define DEFS_H_INCLUDED
 
 #include <chrono>
+#include <vector>
 
 #include "NN91_Basic.h"
 #include "BasicNN.h"
@@ -10,5 +11,7 @@
 typedef BasicNN NeuralNet;
 
 typedef std::chrono::time_point<std::chrono::system_clock> Clock;
+
+
 
 #endif

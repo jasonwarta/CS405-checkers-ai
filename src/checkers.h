@@ -19,9 +19,9 @@
 #include <string>
 #include <random>
 
+
 #include "consts.h"
-
-
+#include "defs.h"
 
 
 class TheChecker
@@ -75,12 +75,10 @@ private:
 	// should look for moves or not
 	bool firstJumpFound_;
 
-	// May think of a better way of putting these here later... too tired. It works.
-	std::vector<std::vector<int>> currTeamMoveBoard_;
-	std::vector<std::vector<int>> oppTeamMoveBoard_;
-	std::vector<std::vector<int>> currTeamJumpBoard_;
-	std::vector<std::vector<int>> oppTeamJumpBoard_;
-
+	std::shared_ptr<MoveTable> currTeamMoveBoard_;
+	std::shared_ptr<MoveTable> oppTeamMoveBoard_;
+	std::shared_ptr<MoveTable> currTeamJumpBoard_;
+	std::shared_ptr<MoveTable> oppTeamJumpBoard_;
 };
 
 std::string getRandomStartBoard();

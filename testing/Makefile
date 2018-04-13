@@ -8,7 +8,7 @@ endif
 TARGET_EXEC ?= main
 
 BUILD_DIR ?= ./build/build
-SRC_DIRS ?= ./src ../src
+SRC_DIRS ?= ./src ../src ../extras
 
 CC := g++
 SRCS := $(shell find $(SRC_DIRS) ! -path *main.cpp -name *.cpp -or -name *.c -or -name *.s)
