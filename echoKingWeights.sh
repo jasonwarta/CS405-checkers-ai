@@ -2,8 +2,18 @@
 
 NN_DIR="NN"
 POP_SIZE=`grep POPULATION_SIZE src/consts.h|sed 's/.*= \?\([0-9]*\);/\1/'`
+LS_CMD="ls $NN_DIR"
 
-for f in `ls "$NN_DIR"|tail`;do 
+for i in "$@"; do
+    case $i in
+        -b|--brief)
+        LS_CMD="ls \"$NN_DIR\" | tail"
+        shift # past argument=value
+        ;;
+    esac
+done
+
+for f in $(echo "$LS_CMD"|bash);do 
 	echo "`sed 's/gen_/\nGeneration: /'<<<$f`"
 	SUM=0.0
 	for NET in `ls "$NN_DIR"/$f/nets`;do
