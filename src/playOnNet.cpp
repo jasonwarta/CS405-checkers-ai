@@ -97,7 +97,7 @@ void NetworkGame::playGame()
         }
 
         std::shared_ptr<Clock> clock = std::make_shared<Clock>(std::chrono::system_clock::now());
-        std::string move = MinimaxWithAlphaBeta(theBoard,8,redTeam_,clock,net_,false).getBestBoard(&std::cout);
+        std::string move = MinimaxWithAlphaBeta(theBoard,10,redTeam_,clock,net_,false).getBestBoard(&std::cout);
         // std::string move = CheckerBoard(theBoard, redTeam_).getRandoMove();
         std::cout << "sending move: " << move << std::endl;
 
