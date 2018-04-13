@@ -15,8 +15,6 @@
 #include "defs.h"
 #include "BoardEval.h"
 
-// typedef std::chrono::time_point<std::chrono::system_clock> Clock;
-
 class MinimaxWithAlphaBeta {
 public:
 	MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, NeuralNet *net, bool usingPieceCount);
@@ -51,7 +49,6 @@ private:
 	bool usingPieceCount_;
 
 	std::ostream *os_;
-
 };
 
 #endif

@@ -5,3 +5,4 @@ NN**/
 testing/build/*
 compileMe
 .vscode/settings.json
+server/build

@@ -10,6 +10,7 @@
 #include "../../src/MatchHandling.h"
 #include "../../src/BasicNN.h"
 #include "../../src/NN91_Basic.h"
+#include "../../src/MinimaxWithAlphaBeta.h"
 
 //error in doubles
 const double ERROR = 0.0000001;
@@ -92,14 +93,15 @@ TEST_CASE("MatchHandling")
 
 TEST_CASE("TIMING")
 {
-	uint numTiming = 100000;
 	bool redPlayerTurn = true;
 	std::string theBoard = START_BOARD_STRING;
+	int depth = 8;
 
 	SECTION("Checkers constructor timing")
 	{
+		uint numTiming = 1000000;
 		auto CheckersConstructorStart = std::chrono::system_clock::now();
-	    for(uint i=0; i<numTiming; ++i)
+		for(uint i=0; i<numTiming; ++i)
 	    {
 	    	CheckerBoard(theBoard, redPlayerTurn);
 	    }
@@ -108,6 +110,25 @@ TEST_CASE("TIMING")
 
 		std::chrono::duration<double> elapsed_Checkers_constructor = CheckersConstructorEnd - CheckersConstructorStart;
 	    std::cout << "Checkers constructor timing: " << elapsed_Checkers_constructor.count() << "s total, or " << elapsed_Checkers_constructor.count() /numTiming << "s/run" << " for " << numTiming << " runs" << std::endl;
+	}
+
+	SECTION("Minimax Alpha-Beta timing")
+	{
+		uint numTiming = 200;
+		std::shared_ptr<Clock> clock = std::make_shared<Clock>(std::chrono::system_clock::now());
+		NeuralNet net(NET_SIZE);
+
+		auto minimaxABTimerStart = std::chrono::system_clock::now();
+		for(uint i = 0; i < numTiming; ++i)
+		{
+			*clock = std::chrono::system_clock::now();
+			MinimaxWithAlphaBeta(theBoard, depth, redPlayerTurn, clock, &net, false);
+		}
+		auto minimaxABTimerEnd = std::chrono::system_clock::now();
+
+		std::chrono::duration<double> elapsedMinimaxABTimer = minimaxABTimerEnd - minimaxABTimerStart;
+		std::cout << "Minimax Alpha-Beta constructor timing: " << elapsedMinimaxABTimer.count() << "s total, or " << elapsedMinimaxABTimer.count() / numTiming << "s/run"
+				  << " for " << numTiming << " runs" << std::endl;
 	}
 
 
