@@ -64,27 +64,50 @@
 		checkers_.resize(32);
 		for(uint i=0; i<startBoard.size(); ++i)
 		{
-			// later, break at space first for speedup?
-			if(startBoard.at(i) == 'r')
-			{
-				checkers_[i] = std::make_unique<TheChecker>(TheChecker(true, false));
+			switch(startBoard.at(i)) {
+				case '_':
+					checkers_[i] = nullptr;
+					break;
+				case 'r':
+					checkers_[i] = std::make_unique<TheChecker>(TheChecker(true, false));
+					break;
+				case 'b':
+					checkers_[i] = std::make_unique<TheChecker>(TheChecker(false, false));
+					break;
+				case 'R':
+					checkers_[i] = std::make_unique<TheChecker>(TheChecker(true, true));
+					break;
+				case 'B':
+					checkers_[i] = std::make_unique<TheChecker>(TheChecker(false, true));
+					break;
+				default:
+					std::cout << "unreachable state" << std::endl;
+					break;
 			}
-			else if(startBoard.at(i) == 'R')
-			{
-				checkers_[i] = std::make_unique<TheChecker>(TheChecker(true, true));
-			}
-			else if(startBoard.at(i) == 'b')
-			{
-				checkers_[i] = std::make_unique<TheChecker>(TheChecker(false, false));
-			}
-			else if(startBoard.at(i) == 'B')
-			{
-				checkers_[i] = std::make_unique<TheChecker>(TheChecker(false, true));
-			}
-			else if(startBoard.at(i) == '_')// nothing there
-			{
-				checkers_[i] = nullptr; //NULL or *NULL? test later....
-			}
+			// if(startBoard.at(i) == 'r')
+			// {
+			// 	checkers_[i] = std::make_unique<TheChecker>(TheChecker(true, false));
+			// }
+			// else if(startBoard.at(i) == 'R')
+			// {
+			// 	checkers_[i] = std::make_unique<TheChecker>(TheChecker(true, true));
+			// }
+			// else if(startBoard.at(i) == 'b')
+			// {
+			// 	checkers_[i] = std::make_unique<TheChecker>(TheChecker(false, false));
+			// }
+			// else if(startBoard.at(i) == 'B')
+			// {
+			// 	checkers_[i] = std::make_unique<TheChecker>(TheChecker(false, true));
+			// }
+			// else if(startBoard.at(i) == '_')// nothing there
+			// {
+			// 	checkers_[i] = nullptr; //NULL or *NULL? test later....
+			// }
+			// else
+			// {
+			// 	std::cout << "unreachable state" << std::endl;
+			// }
 
 		}
 		// Start figuring out what can go where...
@@ -257,55 +280,55 @@
 	{
 
 		// Use the correct boards:
-		std::vector<std::vector<int>> teamMoveBoard;
-		std::vector<std::vector<int>> teamJumpBoard;
+		std::shared_ptr<MoveTable> teamMoveBoard;
+		std::shared_ptr<MoveTable> teamJumpBoard;
 
 		if(goingRightWay == true)
 		{
-			teamMoveBoard = (*currTeamMoveBoard_);
-			teamJumpBoard = (*currTeamJumpBoard_);
+			teamMoveBoard = currTeamMoveBoard_;
+			teamJumpBoard = currTeamJumpBoard_;
 		}
 		else // A king using the other board:
 		{
-			teamMoveBoard = (*oppTeamMoveBoard_);
-			teamJumpBoard = (*oppTeamJumpBoard_);
+			teamMoveBoard = oppTeamMoveBoard_;
+			teamJumpBoard = oppTeamJumpBoard_;
 		}
 
 		// if you can't even move that direction, don't check for other options
-		if(teamMoveBoard[i][j] == -1)
+		if((*teamMoveBoard)[i][j] == -1)
 		{
 			return;
 		}
-		if(checkers_[teamMoveBoard[i][j]] == nullptr)
+		if(checkers_[(*teamMoveBoard)[i][j]] == nullptr)
 		{
 			if(firstJumpFound_ == false)
 			{
 				//move the checker to the new spot
-				checkers_[teamMoveBoard[i][j]] = std::move(checkers_[i]);
+				checkers_[(*teamMoveBoard)[i][j]] = std::move(checkers_[i]);
 
 				//If already a king, dont change it. If not, change it and change it back
-				bool isAlreadyKing = checkers_[teamMoveBoard[i][j]]->isKing();
-				if(!isAlreadyKing && ((redTeamTurn_ && teamMoveBoard[i][j]>27) || (!redTeamTurn_ && teamMoveBoard[i][j]<4)))
+				bool isAlreadyKing = checkers_[(*teamMoveBoard)[i][j]]->isKing();
+				if(!isAlreadyKing && ((redTeamTurn_ && (*teamMoveBoard)[i][j]>27) || (!redTeamTurn_ && (*teamMoveBoard)[i][j]<4)))
 				{
-					checkers_[teamMoveBoard[i][j]]->setKing(true);
+					checkers_[(*teamMoveBoard)[i][j]]->setKing(true);
 				}
 
 				possibleMoves_.push_back(turnBoardToString());
 
-				if(!isAlreadyKing && ((redTeamTurn_ && teamMoveBoard[i][j]>27) || (!redTeamTurn_ && teamMoveBoard[i][j]<4)))
+				if(!isAlreadyKing && ((redTeamTurn_ && (*teamMoveBoard)[i][j]>27) || (!redTeamTurn_ && (*teamMoveBoard)[i][j]<4)))
 				{
-					checkers_[teamMoveBoard[i][j]]->setKing(false);
+					checkers_[(*teamMoveBoard)[i][j]]->setKing(false);
 				}
 
 				//put the checker back
-				checkers_[i] = std::move(checkers_[teamMoveBoard[i][j]]);
+				checkers_[i] = std::move(checkers_[(*teamMoveBoard)[i][j]]);
 
 			}
 		}
-		else if(checkers_[teamMoveBoard[i][j]]->isTeamRed() != redTeamTurn_)
+		else if(checkers_[(*teamMoveBoard)[i][j]]->isTeamRed() != redTeamTurn_)
 		{
 			// if it wont jump off the board, and the spot it can jump to is empty
-			if(teamJumpBoard[i][j] != -1 && checkers_[teamJumpBoard[i][j]] == nullptr)
+			if((*teamJumpBoard)[i][j] != -1 && checkers_[(*teamJumpBoard)[i][j]] == nullptr)
 			{
 				// Jump found
 				if(firstJumpFound_ == false)

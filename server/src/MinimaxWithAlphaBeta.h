@@ -51,7 +51,6 @@ private:
 	bool usingPieceCount_;
 
 	std::ostream *os_;
-
 };
 
 #endif
