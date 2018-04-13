@@ -14,6 +14,7 @@
 #include "json.hpp"
 #include "defs.h"
 #include "checkers.h"
+#include "MinimaxWithAlphaBeta.h"
 
 std::string getStdoutFromCommand(std::string cmd);
 typedef std::pair<std::string,std::string> Status;
