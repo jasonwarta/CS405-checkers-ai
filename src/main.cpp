@@ -146,11 +146,14 @@ int main(int argc, char const *argv[]) {
 			availableMatches[i] = i;
 		}
 
+		bool validMatchExists = true;
 		while(true){
 			if(availableMatches.size() == 0)
+			{
+				validMatchExists = false;
 				break;
-
-			else if (!thereExistsAValidMatch(availableMatches, nets))
+			}
+			else if (!validMatchExists)
 			{
 				size_t num1 = matchesQueue.front()->lhs->self;
 				size_t num2 = matchesQueue.front()->rhs->self;
@@ -184,7 +187,7 @@ int main(int argc, char const *argv[]) {
 				if (std::find(availableMatches.begin(), availableMatches.end(), num2) == availableMatches.end())
 					availableMatches.push_back(num2);
 
-				// std::cout << "this state" << std::endl;
+				validMatchExists = thereExistsAValidMatch(availableMatches, nets);			
 			}
 
 			else
@@ -213,6 +216,8 @@ int main(int argc, char const *argv[]) {
 
 				if (matchTracker[p2idx] == 0)
 					availableMatches.erase(std::find(availableMatches.begin(), availableMatches.end(), p2idx));
+
+				validMatchExists = thereExistsAValidMatch(availableMatches, nets);
 			}
 		}
 

@@ -140,8 +140,7 @@ public:
         }
     }
 
-    // Slow way:
-    void evaluateNN(std::string &theBoard, bool isRedTeam)
+    float evaluateNN(std::string &theBoard, bool isRedTeam)
     {
         if(theBoard.size() != networkSize_[0])
         {
@@ -175,12 +174,9 @@ public:
                 NodesUsed_++;
             }
         }
+        return nodes_[nodes_.size()-1];
     }
 
-    float getLastNode()
-    {
-        return nodes_[nodes_.size()-1];
-    } 
     void printAll()
     {
         std::cout << std::endl << "------------------NODES----------------" << std::endl;

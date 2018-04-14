@@ -136,14 +136,12 @@ public:
         }
     }
 
-
-    void evaluateNN(std::string &theBoard, bool isRedTeam)
+    float evaluateNN(std::string &theBoard, bool isRedTeam)
     {
         redTeam_ = isRedTeam;
-
         stringToWeightedBoard(theBoard);
-
         setFirstWeights();
+
         float summedStorage[8] __attribute__ ((aligned (32)));
         float additionStorage[8] __attribute__ ((aligned (32))) {0,0,0,0,0,0,0,0};
 
@@ -155,9 +153,9 @@ public:
 
                 for(uint k=0; k<networkSize_[i-1]; k+=8)
                 {
-
-                    __m256 edgesSIMD = _mm256_load_ps(&edges_[edgeCount_]);
-                    __m256 nodeSIMD = _mm256_load_ps(&nodes_[nodeCount_-j-networkSize_[i-1]+k]);
+// UNALIGNED: FIX LATER:::::S
+                    __m256 edgesSIMD = _mm256_loadu_ps(&edges_[edgeCount_]);
+                    __m256 nodeSIMD = _mm256_loadu_ps(&nodes_[nodeCount_-j-networkSize_[i-1]+k]);
                     __m256 nodeWeights = _mm256_mul_ps(edgesSIMD, nodeSIMD);
 
                     addStorage = _mm256_add_ps(addStorage, nodeWeights);
@@ -169,22 +167,43 @@ public:
                 addStorage = _mm256_hadd_ps(addStorage, addStorage);
                 addStorage = _mm256_hadd_ps(addStorage, addStorage);
                 _mm256_store_ps(&summedStorage[0], addStorage);
-
+/*
                 if(i == networkSize_.size()-1)
                 {
                     summedStorage[3]+= weightedBoardEval(theBoard, kingValue_, redTeam_) * edges_[edgeCount_];
                 }
-
+*/
                 nodes_[nodeCount_] = tanh(summedStorage[3] + summedStorage[4]);
                 nodeCount_++;
             }
         }
-    }
-
-    float getLastNode()
-    {
         return nodes_[nodes_.size()-1];
     }
+    float SLOWevaluateNN(std::string &theBoard, bool isRedTeam)
+    {
+        redTeam_ = isRedTeam;
+        stringToWeightedBoard(theBoard);
+        setFirstWeights();
+        // NodeCount = 96 && edgecount = 854
+        for(int i=1; i<networkSize_.size(); ++i)
+        {
+            for(int j=0; j<networkSize_[i]; ++j)
+            {
+                float currNode_ = 0;
+                for(int k=0; k<networkSize_[i-1]; ++k) 
+                {
+                    // Node - j - size(k) + k = previus set of nodes_... hopefully
+                    currNode_ += nodes_[nodeCount_-j-networkSize_[i-1]+k] * edges_[edgeCount_];
+                    edgeCount_++;
+                }
+
+                nodes_[nodeCount_] = tanh(currNode_);
+                nodeCount_++;
+            }
+        }
+        return nodes_[nodes_.size()-1];
+    }
+
 
     // More-so for testing. Actuall program shouldn't need to call this
     void printAll()
@@ -200,7 +219,7 @@ public:
             }
             std::cout << std::endl;
         }
-
+/*
         std::cout << std::endl << "------------------EDGES----------------" << std::endl;
         for(uint i=0; i<854; ++i)
         {
@@ -212,6 +231,7 @@ public:
             std::cout << edges_[i] << " ";
         }
         std::cout << std::endl;
+*/
     }
 
     void printData(std::ostream *os = &std::cout) {
@@ -237,12 +257,20 @@ private:
 
     // populates weightedStartBoard based on if there is a checker on
     // that square and if that square is yours.
-    void stringToWeightedBoard(const std::string &theBoard)
+    void stringToWeightedBoard(std::string &theBoard)
     {
-        for(size_t i = 0; i < weightedStartBoard_.size(); ++i)
+        if(theBoard.size() != 32)
         {
-            switch(theBoard[i])
+            std::cout << "NN91: string Passed != 32. Resizing string to 32" << std::endl;
+            theBoard.resize(weightedStartBoard_.size(), '_');
+        }
+        for(size_t i = 0; i < 32; ++i)
+        {
+            switch(theBoard.at(i))
             {
+                case '_':
+                    weightedStartBoard_[i] = 0.0f;
+                    break;
                 case 'R':
                     weightedStartBoard_[i] = redTeam_ ? kingValue_ : -kingValue_;
                     break;
@@ -256,6 +284,7 @@ private:
                     weightedStartBoard_[i] = redTeam_ ? -1.0f : 1.0f;
                     break;
                 default:
+                    std::cout << "NN91: passed not-valid char for checker at: " << i << std::endl;
                     weightedStartBoard_[i] = 0.0f;
                     break;
             }
@@ -279,7 +308,10 @@ private:
             }
             nodes_[i] = tanh(nodes_[i]);
         }
-        edgeCount_ += 2; // become aligned for SIMD. Not actually used anywhere
+        edges_[edgeCount_] = 0;
+        edgeCount_++;
+        edges_[edgeCount_] = 0;
+        edgeCount_++;
 
         // Set last 5 nodes_ to 0 for aligned SIMD
         for(uint i=91; i<96; ++i)
@@ -322,6 +354,7 @@ private:
         // set up other vectors
         weightedStartBoard_.resize(32);
         sigma_.resize(edges_.size(), 0.05f);
+        networkSize_[0]=91;
    	}
 
     // Mainly for testing

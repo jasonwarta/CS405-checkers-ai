@@ -53,8 +53,7 @@ float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard,
 
 	if(depth == 0) {
 		if(!usingPieceCount_) {
-			net_->evaluateNN(theBoard, redPlayerTurn_);
-			return net_->getLastNode();
+			return net_->evaluateNN(theBoard, redPlayerTurn_);
 		} else {
 			return basicBoardEval(theBoard, redPlayerTurn_);
 		}
@@ -63,8 +62,7 @@ float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard,
 	if (std::chrono::duration<double>(std::chrono::system_clock::now() - timer_).count() >= 14.0)
 	{
 		if(!usingPieceCount_) {
-			net_->evaluateNN(theBoard, redPlayerTurn_);
-			return net_->getLastNode();
+			return net_->evaluateNN(theBoard, redPlayerTurn_);
 		} else {
 			return basicBoardEval(theBoard, redPlayerTurn_);
 		}

@@ -4,6 +4,7 @@
 #include <random>
 #include <algorithm>
 #include <mutex>
+#include <cmath> //abs
 
 #include "../../src/defs.h"
 #include "../../src/consts.h"
@@ -17,8 +18,13 @@ const double ERROR = 0.0000001;
 
 TEST_CASE("MatchHandling")
 {
+	bool redPlayerTurn = true;
+	std::string theBoard = START_BOARD_STRING;
+	int depth = 8;
+
 	SECTION("Testing Score Struct", "[MatchHandling]")
 	{
+		/*
 	    Score score;
 
 	    score = {0, 0, 0};
@@ -47,10 +53,12 @@ TEST_CASE("MatchHandling")
 	    score = {0, 0, 0};
 	    score.assignScore('B', false);
 	    REQUIRE(Score({1, 0, 0}) == score);
+	    */
 	}
 
 	SECTION("Testing NetTracker struct","[MatchHandling]")
 	{
+		/*
 	    NeuralNet nn(NET_SIZE);
 	    std::mutex mtx;
 	    NetTracker nt;
@@ -88,6 +96,35 @@ TEST_CASE("MatchHandling")
 	    nt = {&mtx, &nn, 0};
 	    nt.assignScore(&score, false);
 	    REQUIRE(NetTracker({&mtx, &nn, 1 * WIN_VAL}) == nt);
+	    */
+	}
+	SECTION("NN91_Basic correctness tests")
+	{
+		/*
+		std::vector<uint> size{5,4};
+		NN91_Basic Net0(size);
+		//std::cout << "TEST: " << Net0.evaluateNN(theBoard, redPlayerTurn) << " " << Net0.SLOWevaluateNN(theBoard, redPlayerTurn) << " " <<Net0.evaluateNN(theBoard, redPlayerTurn) - Net0.SLOWevaluateNN(theBoard, redPlayerTurn)<< std::endl;
+		Net0.SLOWevaluateNN(theBoard, redPlayerTurn);
+		Net0.printAll();
+		Net0.evaluateNN(theBoard, redPlayerTurn);
+		Net0.printAll();
+
+		INFO("Two different eval's called on same Class. Should be same. (one is faster than the other)");
+		REQUIRE(fabs(Net0.evaluateNN(theBoard, redPlayerTurn) - Net0.SLOWevaluateNN(theBoard, redPlayerTurn)) < ERROR);
+
+		NN91_Basic Net1(size);
+		// make sure that two different NN's don't do the same eval
+		REQUIRE_FALSE(fabs(Net0.evaluateNN(theBoard, redPlayerTurn) - Net1.evaluateNN(theBoard, redPlayerTurn)) < ERROR);
+
+		// make sure evolving changes the NN, and that evolving the same NN twice gives two different NN's
+		NN91_Basic Net0copy0 = Net0;
+		NN91_Basic Net0copy1 = Net0;
+		Net0copy0.evolve();
+		Net0copy1.evolve();
+
+		REQUIRE(! (fabs(Net0.evaluateNN(theBoard, redPlayerTurn) - Net0copy0.evaluateNN(theBoard, redPlayerTurn)) < ERROR) );
+		REQUIRE(! (fabs(Net0copy0.evaluateNN(theBoard, redPlayerTurn) - Net0copy1.evaluateNN(theBoard, redPlayerTurn)) < ERROR) );
+		*/
 	}
 }
 
@@ -99,7 +136,7 @@ TEST_CASE("TIMING")
 
 	SECTION("Checkers constructor timing")
 	{
-		uint numTiming = 1000000;
+		uint numTiming = 100000;
 		auto CheckersConstructorStart = std::chrono::system_clock::now();
 		for(uint i=0; i<numTiming; ++i)
 	    {
@@ -114,6 +151,7 @@ TEST_CASE("TIMING")
 
 	SECTION("Minimax Alpha-Beta timing")
 	{
+		/*
 		uint numTiming = 200;
 		std::shared_ptr<Clock> clock = std::make_shared<Clock>(std::chrono::system_clock::now());
 		NeuralNet net(NET_SIZE);
@@ -129,6 +167,7 @@ TEST_CASE("TIMING")
 		std::chrono::duration<double> elapsedMinimaxABTimer = minimaxABTimerEnd - minimaxABTimerStart;
 		std::cout << "Minimax Alpha-Beta constructor timing: " << elapsedMinimaxABTimer.count() << "s total, or " << elapsedMinimaxABTimer.count() / numTiming << "s/run"
 				  << " for " << numTiming << " runs" << std::endl;
+		*/
 	}
 
 
