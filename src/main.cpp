@@ -51,7 +51,8 @@ int main(int argc, char const *argv[]) {
 			std::ifstream ifs;
 			for(auto& f: fs::directory_iterator(argv[2])) {
 				ifs.open(f.path());
-				nets.push_back(std::make_shared<NetTracker>(NetTracker {new std::mutex, new NeuralNet(ifs)}));
+				uint8_t netIndex = 0;
+				nets.push_back(std::make_shared<NetTracker>(NetTracker{new std::mutex, new NeuralNet(ifs), netIndex++}));
 				ifs.close();
 			}
 		}
@@ -105,13 +106,13 @@ int main(int argc, char const *argv[]) {
 		}	
 	} else {
 		for(size_t i = 0; i < POPULATION_SIZE; ++i)
-			nets.push_back(std::make_shared<NetTracker>(NetTracker {new std::mutex, new NeuralNet(NET_SIZE)}));
+			nets.push_back(std::make_shared<NetTracker>(NetTracker {new std::mutex, new NeuralNet(NET_SIZE), i}));
 	}
 
 	std::random_device r;
 	std::mt19937 rand(r());
 	std::uniform_int_distribution<uint> randIndex(0,POPULATION_SIZE-1);
-
+	
 	uint64_t genCounter = 0;
 
 	while(true) {
@@ -139,25 +140,84 @@ int main(int argc, char const *argv[]) {
 
 		std::string startBoard = getRandomStartBoard();
 
-		for(size_t i = 0; i < nets.size(); ++i) {
-			for(size_t j = 0; j < MIN_MATCHES; ++j) {
-				if (nets[i]->opponents.size() >= MAX_MATCHES)
-					break;
+		std::vector<size_t> matchTracker(POPULATION_SIZE, MATCHES);
+		std::vector<size_t> availableMatches(POPULATION_SIZE);
+		
+		for(uint i = 0; i < POPULATION_SIZE; ++i) {
+			availableMatches[i] = i;
+		}
 
-				uint opponentIdx = getRandomIndex(i, rand, randIndex, nets);
+		while(true){
+			if(availableMatches.size() == 0)
+				break;
 
-				nets[i]->opponents.push_back(opponentIdx);
-				nets[opponentIdx]->opponents.push_back(i);
+			else if (!thereExistsAValidMatch(availableMatches, nets))
+			{
+				size_t num1 = matchesQueue.front()->lhs->self;
+				size_t num2 = matchesQueue.front()->rhs->self;
+
+				// std::cout << num1 << " " << num2 << std::endl;
+
+				matchesQueue.front()->lhs->opponents.erase( 
+					std::find(
+						matchesQueue.front()->lhs->opponents.begin(),
+						matchesQueue.front()->lhs->opponents.end(),
+						num2
+					)
+				);
+
+				matchesQueue.front()->rhs->opponents.erase( 
+					std::find(
+						matchesQueue.front()->rhs->opponents.begin(),
+						matchesQueue.front()->rhs->opponents.end(),
+						num1
+					)
+				);
+
+				matchesQueue.pop();
+
+				matchTracker[num1]++;
+				matchTracker[num2]++;
+
+				if(std::find(availableMatches.begin(),availableMatches.end(),num1) == availableMatches.end())
+					availableMatches.push_back(num1);
+
+				if (std::find(availableMatches.begin(), availableMatches.end(), num2) == availableMatches.end())
+					availableMatches.push_back(num2);
+
+				// std::cout << "this state" << std::endl;
+			}
+
+			else
+			{
+				std::swap(availableMatches.at(RandUint(0, availableMatches.size() - 1)(rand)), availableMatches.back());
+				uint p1idx = availableMatches.back();
+				uint p2idx = availableMatches.at(RandUint(0, availableMatches.size() - 2)(rand));
+
+				if(std::find(nets[p1idx]->opponents.begin(),nets[p1idx]->opponents.end(), p2idx) != nets[p1idx]->opponents.end())
+					continue;
 
 				ss.str("");
-				ss << path << "/games/" << std::setfill('0') << std::setw(2) << i << "v" <<std::setfill('0') << std::setw(2) << opponentIdx;
-				
-				matchesQueue.push(std::make_unique<Match>(Match {nets[i], nets[opponentIdx], startBoard, ss.str()}));
+				ss << path << "/games/" << std::setfill('0') << std::setw(2) << p1idx << "v" << std::setfill('0') << std::setw(2) << p2idx;
+
+				matchesQueue.push(std::make_unique<Match>(Match{nets[p1idx], nets[p2idx], startBoard, ss.str()}));
 				ss.str("");
+
+				matchTracker[p1idx]--;
+				matchTracker[p2idx]--;
+
+				nets[p1idx]->opponents.push_back(p2idx);
+				nets[p2idx]->opponents.push_back(p1idx);
+
+				if (matchTracker[p1idx] == 0)
+					availableMatches.erase(std::find(availableMatches.begin(),availableMatches.end(), p1idx));
+
+				if (matchTracker[p2idx] == 0)
+					availableMatches.erase(std::find(availableMatches.begin(), availableMatches.end(), p2idx));
 			}
 		}
 
-		std::cout << matchesQueue.size() << std::endl;
+		std::cout << "Total Matches: " << matchesQueue.size() << std::endl;
 		for(size_t i = 0; i < nets.size(); ++i) {
 			std::cout << std::setfill('0') << std::setw(2) << i << ": ";
 			for(size_t j = 0; j < nets[i]->opponents.size(); ++j)
@@ -185,7 +245,7 @@ int main(int argc, char const *argv[]) {
 		ss.str("");
 
 		std::sort(nets.begin(), nets.end(), [](std::shared_ptr<NetTracker> a, std::shared_ptr<NetTracker> b) {
-			return (float(float(a->score)/a->opponents.size()) > float(float(b->score)/b->opponents.size()));
+			return a->score > b->score;
 		});
 
 		for(size_t i = 0; i < nets.size(); ++i)

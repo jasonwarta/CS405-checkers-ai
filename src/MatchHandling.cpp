@@ -126,13 +126,15 @@ void play(std::mutex &mtx, std::queue<std::unique_ptr<Match>> &matches)
     }
 }
 
-uint getRandomIndex(uint index, std::mt19937 &rand, std::uniform_int_distribution<uint> &randIndex, std::vector<std::shared_ptr<NetTracker>> &nets)
+bool thereExistsAValidMatch(std::vector<size_t> &availableMatches, std::vector<std::shared_ptr<NetTracker>> &nets)
 {
-    uint i = randIndex(rand);
-    while (index == i ||
-           std::find(
-               nets[index]->opponents.begin(),
-               nets[index]->opponents.end(), i) != nets[index]->opponents.end())
-        i = randIndex(rand);
-    return i;
+    for (size_t i = 0; i < availableMatches.size(); i++)
+    {
+        for (size_t j = i+1; j < availableMatches.size(); j++)
+        {
+            if (std::find(nets[availableMatches[i]]->opponents.begin(), nets[availableMatches[i]]->opponents.end(), availableMatches[j]) == nets[availableMatches[i]]->opponents.end())
+                return true;
+        }
+    }
+    return false;
 }

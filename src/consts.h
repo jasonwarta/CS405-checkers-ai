@@ -13,9 +13,7 @@ const int8_t WIN_VAL = 2;
 const int8_t NUM_THREADS = 3;
 const int POPULATION_SIZE = 30;
 
-const int8_t MIN_MATCHES = 5;
-// should be about 2x MIN_MATCHES
-const int8_t MAX_MATCHES = 10;
+const int8_t MATCHES = 5;
 
 const std::vector<uint> NET_SIZE {32, 40, 10, 1};
 

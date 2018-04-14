@@ -26,6 +26,8 @@ struct Score {
 struct NetTracker {
 	std::mutex * mtx;
 	NeuralNet* net;
+	size_t self;
+	
 	int64_t score = 0;
 	std::vector<uint8_t> opponents = {};
 
@@ -48,6 +50,6 @@ std::string playGame(Player *p1, Player *p2, std::string startBoard, Score *scor
 
 void play(std::mutex &mtx, std::queue<std::unique_ptr<Match>> &matches);
 
-uint getRandomIndex(uint index, std::mt19937 &rand, std::uniform_int_distribution<uint> &randIndex, std::vector<std::shared_ptr<NetTracker>> &nets);
+bool thereExistsAValidMatch(std::vector<size_t> &availableMatches, std::vector<std::shared_ptr<NetTracker>> &nets);
 
 #endif

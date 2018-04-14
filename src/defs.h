@@ -12,6 +12,6 @@ typedef BasicNN NeuralNet;
 
 typedef std::chrono::time_point<std::chrono::system_clock> Clock;
 
-
+typedef std::uniform_int_distribution<uint> RandUint;
 
 #endif
