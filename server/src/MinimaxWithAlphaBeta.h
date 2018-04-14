@@ -17,15 +17,14 @@
 
 class MinimaxWithAlphaBeta {
 public:
-	MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, NeuralNet *net, bool usingPieceCount);
+	MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, NeuralNet *net, bool usingPieceCount);
 
 	std::string getBestBoard(std::ostream *os = &std::cout);
 	void printABStats(std::ostream *os = &std::cout);
 
 private:
-	MinimaxWithAlphaBeta(bool redPlayer, std::shared_ptr<Clock> clock, NeuralNet *net, bool usingPieceCount) : 
+	MinimaxWithAlphaBeta(bool redPlayer, NeuralNet *net, bool usingPieceCount) : 
 		redPlayerTurn_(redPlayer),
-		clock_(clock),
 		breakAlpha_(0),
 		breakBeta_(0),
 		boardExpansions_(0),
@@ -41,13 +40,13 @@ private:
 	std::string bestBoard_;
 
 	bool redPlayerTurn_;
-	std::shared_ptr<Clock> clock_;
 	uint64_t breakAlpha_;
 	uint64_t breakBeta_;
 	uint64_t boardExpansions_;
 	NeuralNet *net_;
 	bool usingPieceCount_;
 
+	Clock timer_;
 	std::ostream *os_;
 };
 

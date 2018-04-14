@@ -24,11 +24,11 @@ struct Score {
 };
 
 struct NetTracker {
-	std::mutex * mtx;
 	NeuralNet* net;
 	size_t self;
-	
+
 	int64_t score = 0;
+	std::mutex * mtx_ = new std::mutex;
 	std::vector<uint8_t> opponents = {};
 
 	void assignScore(Score * gameScore, bool p1);

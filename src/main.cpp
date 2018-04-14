@@ -40,7 +40,6 @@ int main(int argc, char const *argv[]) {
 	std::mutex mtx;
 	std::ofstream ofs;
 	std::stringstream ss;
-	std::shared_ptr<Clock> clock = std::make_shared<Clock>(std::chrono::system_clock::now());
 	
 	std::vector<std::shared_ptr<NetTracker>> nets;
 
@@ -52,7 +51,7 @@ int main(int argc, char const *argv[]) {
 			for(auto& f: fs::directory_iterator(argv[2])) {
 				ifs.open(f.path());
 				uint8_t netIndex = 0;
-				nets.push_back(std::make_shared<NetTracker>(NetTracker{new std::mutex, new NeuralNet(ifs), netIndex++}));
+				nets.push_back(std::make_shared<NetTracker>(NetTracker{new NeuralNet(ifs), netIndex++}));
 				ifs.close();
 			}
 		}
@@ -66,8 +65,8 @@ int main(int argc, char const *argv[]) {
 
 			net->printData();
 
-			Player p1(true, clock, net);
-			Player p2(false, clock, nullptr, true);
+			Player p1(true, net);
+			Player p2(false, nullptr, true);
 
 			testRun(&p1, &p2);
 
@@ -106,7 +105,7 @@ int main(int argc, char const *argv[]) {
 		}	
 	} else {
 		for(size_t i = 0; i < POPULATION_SIZE; ++i)
-			nets.push_back(std::make_shared<NetTracker>(NetTracker {new std::mutex, new NeuralNet(NET_SIZE), i}));
+			nets.push_back(std::make_shared<NetTracker>(NetTracker {new NeuralNet(NET_SIZE), i}));
 	}
 
 	std::random_device r;

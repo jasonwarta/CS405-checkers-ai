@@ -6,7 +6,7 @@
 	#include <cuda_minmaxFunctions.h>
 #endif //CUDA
 
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, std::shared_ptr<Clock> clock, NeuralNet *net, bool usingPieceCount) : MinimaxWithAlphaBeta(redPlayer, clock, net, usingPieceCount)
+MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, NeuralNet *net, bool usingPieceCount) : MinimaxWithAlphaBeta(redPlayer, net, usingPieceCount)
 {
 	init(theBoard, depth, redPlayer);
 }
@@ -28,7 +28,7 @@ void MinimaxWithAlphaBeta::printABStats(std::ostream *os) {
 
 void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth, bool redPlayer) {
 	std::vector<std::string> possBoards = std::move(CheckerBoard(theBoard, redPlayer).getAllRandoMoves());
-
+	timer_ = std::chrono::system_clock::now();
 	if(possBoards.size() == 0) {
 		bestBoard_ = "";
 		return;
@@ -60,7 +60,8 @@ float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard,
 		}
 	}
 
-	if ( std::chrono::duration<double>(std::chrono::system_clock::now() - *clock_).count() >= 14.0) {
+	if (std::chrono::duration<double>(std::chrono::system_clock::now() - timer_).count() >= 14.0)
+	{
 		if(!usingPieceCount_) {
 			net_->evaluateNN(theBoard, redPlayerTurn_);
 			return net_->getLastNode();

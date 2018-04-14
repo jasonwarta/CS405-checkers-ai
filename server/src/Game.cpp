@@ -9,30 +9,21 @@ char Game::run(std::string theBoard) {
 
 	(*os_) << "[" << std::endl;
 	// main loop, only exit when done
-	while (true && turnCounter < 200) {
+	while (turnCounter < TOTAL_MOVES)
+	{
 		(*os_) << "{\"move\":\"" << std::setfill('0') << std::setw(3) << turnCounter << "\",\"board\":\"" << theBoard << "\",";
 
-		*clock_ = std::chrono::system_clock::now();
+		Clock clock = std::chrono::system_clock::now();
 
 		if( redTeamTurn ) {
-			// if (stalemate1 && stalemate2)
-			// 	theBoard = red_->getMove(theBoard, os_, 10);
-			if (stalemate1) 
-				theBoard = red_->getMove(theBoard, os_, 10);
-			else 
-				theBoard = red_->getMove(theBoard, os_, 8);
+			theBoard = red_->getMove(theBoard, os_, 10);
 		}
 
 		else {
-			// if (stalemate1 && stalemate2)
-			// 	theBoard = black_->getMove(theBoard, os_, 10);
-			if (stalemate1)
-				theBoard = black_->getMove(theBoard, os_, 10);
-			else
-				theBoard = black_->getMove(theBoard, os_, 8);
+			theBoard = black_->getMove(theBoard, os_, 10);
 		}
 
-		auto duration = std::chrono::duration<double>(std::chrono::system_clock::now() - *clock_).count();
+		auto duration = std::chrono::duration<double>(std::chrono::system_clock::now() - clock).count();
 		(*os_) << "\"time\":\"" << std::setw(9) << std::setfill('0') << std::fixed << std::setprecision(6) << duration << "s\"}," << std::endl;
 
 		PieceMap pm(theBoard);
@@ -59,17 +50,6 @@ char Game::run(std::string theBoard) {
 
 		if (!moveTracker_.empty() && theBoard.compare(moveTracker_.front()) == 0)
 		{
-			// if (stalemate1 && stalemate2) {
-			// 	return 'D';
-			// }
-			// else if (stalemate1 && !stalemate2) {
-			// 	stalemate2 = true;
-			// 	moveTracker_ = {};
-			// }
-			// else if (!stalemate1 && !stalemate2) {
-			// 	stalemate1 = true;
-			// 	moveTracker_ = {};
-			// }
 			if (stalemate1) {
 				(*os_) << "]" << std::endl;
 				return 'D';

@@ -38,15 +38,14 @@ bool Score::operator==(const Score & other) const {
 void NetTracker::assignScore(Score *gameScore, bool p1)
 {
     // gameScore->print();
-    std::lock_guard<std::mutex> guard(*(this->mtx));
+    std::lock_guard<std::mutex> guard(*mtx_);
     if (p1)
         score += (gameScore->p1 * WIN_VAL) + (gameScore->p2 * LOSS_VAL) + (gameScore->draw * DRAW_VAL);
     else
         score += (gameScore->p2 * WIN_VAL) + (gameScore->p1 * LOSS_VAL) + (gameScore->draw * DRAW_VAL);
 }
 bool NetTracker::operator == (const NetTracker & other) const {
-    return  this->mtx == other.mtx &&
-            this->net == other.net &&
+    return  this->net == other.net &&
             this->score == other.score &&
             this->opponents == other.opponents;
 }
@@ -54,8 +53,7 @@ bool NetTracker::operator == (const NetTracker & other) const {
 std::string playGame(Player *p1, Player *p2, std::string startBoard, Score *score, bool toggle, std::ostream *os)
 {
     std::stringstream ss;
-    std::shared_ptr<Clock> clock = std::make_shared<Clock>(std::chrono::system_clock::now());
-    Game game(p1, p2, clock, os);
+    Game game(p1, p2, os);
     score->assignScore(game.run(startBoard), toggle, &ss);
     return ss.str();
 }
@@ -63,7 +61,6 @@ std::string playGame(Player *p1, Player *p2, std::string startBoard, Score *scor
 void Match::playMatch()
 {
     std::ofstream ofs;
-    std::shared_ptr<Clock> clock = std::make_shared<Clock>(std::chrono::system_clock::now());
 
     std::stringstream ss;
     ofs.open(fname, std::ofstream::out);
@@ -74,8 +71,8 @@ void Match::playMatch()
 
     Score score = {0, 0, 0};
 
-    Player p1(true, clock, &lhs_net);
-    Player p2(false, clock, &rhs_net);
+    Player p1(true, &lhs_net);
+    Player p2(false, &rhs_net);
 
     ss << playGame(&p1, &p2, startBoard, &score, true, &ofs);
     ss << playGame(&p2, &p1, startBoard, &score, false, &ofs);
@@ -83,7 +80,7 @@ void Match::playMatch()
     ofs << "\n\n";
     if (score.p1 == score.p2)
     {
-        Game game3(&p1, &p2, clock, &ofs);
+        Game game3(&p1, &p2, &ofs);
         score.assignScore(game3.run(), true, &ss);
         ofs << "\n\n";
     }
@@ -105,7 +102,6 @@ void Match::operator=(Match & match)
 
 void play(std::mutex &mtx, std::queue<std::unique_ptr<Match>> &matches)
 {
-    // (*matches.front()).playMatch();
     while (matches.size() > 0)
     {
         mtx.lock();

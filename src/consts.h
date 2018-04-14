@@ -15,6 +15,8 @@ const int POPULATION_SIZE = 30;
 
 const int8_t MATCHES = 5;
 
+const int8_t TOTAL_MOVES = 100;
+
 const std::vector<uint> NET_SIZE {32, 40, 10, 1};
 
 
