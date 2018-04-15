@@ -111,14 +111,14 @@ TEST_CASE("MatchHandling")
 		for(uint depth=2; depth<=8; depth+=2)
 		{
 			INFO("MinimaxTree and AlphaBeta return same move at varied depths: " + std::to_string(depth));
-			REQUIRE(MinimaxTree(theBoard, depth, redTeam).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam).getBestBoard());
+			REQUIRE(MinimaxTree(theBoard, depth, redTeam).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam).getBestBoard(nullptr));
 		}
 
 		// using NN
 		for(uint depth=2; depth<=8; depth+=2)
 		{
 			INFO("MinimaxTree and AlphaBeta return same move at varied depths: " + std::to_string(depth));
-			REQUIRE(MinimaxTree(theBoard, depth, redTeam, &nn).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam, &nn).getBestBoard());
+			REQUIRE(MinimaxTree(theBoard, depth, redTeam, &nn).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam, &nn).getBestBoard(nullptr));
 		}
 	}
 

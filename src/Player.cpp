@@ -2,7 +2,7 @@
 
 #include "Player.h"
 
-std::string Player::getMove(std::string &theBoard, std::ostream *os, int depth) {
+std::string Player::getMove(std::string &theBoard, std::ostream *os, uint depth) {
 	if(usingIterativeDeepening)
 	{
  		Clock theClock = std::chrono::system_clock::now();

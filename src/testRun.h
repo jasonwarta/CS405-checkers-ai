@@ -16,7 +16,7 @@
 #include "consts.h"
 #include "defs.h"
 
-char gameLoop(Player *red, Player *black, int blackTeamDepth, std::string theBoard);
+char gameLoop(Player *red, Player *black, uint blackTeamDepth, std::string theBoard);
 void testRun(Player *red, Player *black);
 
 #endif

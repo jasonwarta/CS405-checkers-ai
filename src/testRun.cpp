@@ -1,6 +1,6 @@
 #include "testRun.h"
 
-char gameLoop(Player *red, Player *black, int blackTeamDepth, std::string theBoard) {
+char gameLoop(Player *red, Player *black, uint blackTeamDepth, std::string theBoard) {
     std::shared_ptr<Clock> clock = std::make_shared<Clock>(std::chrono::system_clock::now());
 
     size_t turnCounter = 0;

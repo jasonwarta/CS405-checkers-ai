@@ -7,23 +7,24 @@
 #endif //CUDA
 
 
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, NeuralNet *net, Clock *theClock) : MinimaxWithAlphaBeta(redPlayer, net, false)
+MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net, Clock *theClock) : MinimaxWithAlphaBeta(redPlayer, net, false)
 {
 	init(theBoard, depth, redPlayer, theClock);
 }
 
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, NeuralNet *net) : MinimaxWithAlphaBeta(redPlayer, net, false)
+MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net) : MinimaxWithAlphaBeta(redPlayer, net, false)
 {
 	init(theBoard, depth, redPlayer);
 }
 
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer) : MinimaxWithAlphaBeta(redPlayer, nullptr, true)
+MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer) : MinimaxWithAlphaBeta(redPlayer, nullptr, true)
 {
 	init(theBoard, depth, redPlayer);
 }
 
 std::string MinimaxWithAlphaBeta::getBestBoard(std::ostream *os) {
-	printABStats(os);
+	if(os != nullptr)
+		printABStats(os);
 	return bestBoard_;
 }
 
@@ -41,18 +42,16 @@ void MinimaxWithAlphaBeta::printABStats(std::ostream *os) {
 	(*os) << "\",";
 }
 
-void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth, bool redPlayer, Clock *TheClock) {
+void MinimaxWithAlphaBeta::init(std::string &theBoard, uint depth, bool redPlayer, Clock *TheClock) {
 
 	std::vector<std::string> possBoards = std::move(CheckerBoard(theBoard, redPlayer).getAllRandoMoves());
 	if(TheClock == nullptr)
 	{
 		timer_ = std::chrono::system_clock::now();
-		usingIterativeDeepening_ = false;
 	}
 	else
 	{
 		timer_ = *TheClock;
-		usingIterativeDeepening_ = true;
 	}
 
 	if(possBoards.size() == 0) {
@@ -75,11 +74,12 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth, bool redPlayer
 	}
 }
 
-float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard, int depth, float alpha, float beta, bool maximizingPlayer) {
+float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard, uint depth, float alpha, float beta, bool maximizingPlayer) {
 
 	if(depth == 0) 
 	{
-		bestVector_.push_back(theBoard);
+		
+		// bestVector_.push_back(theBoard);
 		if(!usingPieceCount_) {
 			return net_->evaluateNN(theBoard, redPlayerTurn_);
 		} else {

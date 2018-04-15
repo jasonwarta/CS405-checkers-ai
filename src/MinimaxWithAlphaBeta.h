@@ -18,9 +18,9 @@
 
 class MinimaxWithAlphaBeta {
 public:
-    MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, NeuralNet *net, Clock *theClock);
-    MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, NeuralNet *net);
-    MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer);
+    MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net, Clock *theClock);
+    MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net);
+    MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer);
 
     std::string getBestBoard(std::ostream *os = &std::cout);
     std::vector<std::string> getBestVector();
@@ -36,9 +36,9 @@ private:
 		usingPieceCount_(usingPieceCount)
 	{};
 
-	void init(std::string &theBoard, int depth, bool redPlayer, Clock *TheClock = nullptr);
+	void init(std::string &theBoard, uint depth, bool redPlayer, Clock *TheClock = nullptr);
 
-	float minimaxWithAlphaBetaRecursive(std::string &theBoard, int depth, float alpha, float beta, bool maximizingPlayer);
+	float minimaxWithAlphaBetaRecursive(std::string &theBoard, uint depth, float alpha, float beta, bool maximizingPlayer);
 
 private:
 	std::string bestBoard_;
