@@ -17,10 +17,11 @@
 
 class MinimaxWithAlphaBeta {
 public:
-	MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, NeuralNet *net, bool usingPieceCount);
+  MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, NeuralNet *net);
+  MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer);
 
-	std::string getBestBoard(std::ostream *os = &std::cout);
-	void printABStats(std::ostream *os = &std::cout);
+  std::string getBestBoard(std::ostream *os = &std::cout);
+  void printABStats(std::ostream *os = &std::cout);
 
 private:
 	MinimaxWithAlphaBeta(bool redPlayer, NeuralNet *net, bool usingPieceCount) : 

@@ -6,7 +6,12 @@
 	#include <cuda_minmaxFunctions.h>
 #endif //CUDA
 
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, NeuralNet *net, bool usingPieceCount) : MinimaxWithAlphaBeta(redPlayer, net, usingPieceCount)
+MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, NeuralNet *net) : MinimaxWithAlphaBeta(redPlayer, net, false)
+{
+	init(theBoard, depth, redPlayer);
+}
+
+MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer) : MinimaxWithAlphaBeta(redPlayer, nullptr, true)
 {
 	init(theBoard, depth, redPlayer);
 }
@@ -37,11 +42,11 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth, bool redPlayer
 	float alpha = -10000.0;
 	float beta = 10000.0;
 
-	float bestVal = minimaxWithAlphaBetaRecursive(possBoards[0], depth-1, alpha, beta, true);
+	float bestVal = minimaxWithAlphaBetaRecursive(possBoards[0], depth-1, alpha, beta, false);
 	bestBoard_ = possBoards[0];
 
 	for(auto it = possBoards.begin()+1; it != possBoards.end(); ++it) {
-		float val = minimaxWithAlphaBetaRecursive(*it, depth-1, alpha, beta, true);
+		float val = minimaxWithAlphaBetaRecursive(*it, depth-1, alpha, beta, false);
 		if ( val > bestVal ) {
 			bestVal = val;
 			bestBoard_ = *it;
@@ -52,6 +57,7 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth, bool redPlayer
 float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard, int depth, float alpha, float beta, bool maximizingPlayer) {
 
 	if(depth == 0) {
+
 		if(!usingPieceCount_) {
 			return net_->evaluateNN(theBoard, redPlayerTurn_);
 		} else {

@@ -35,6 +35,8 @@ $(BUILD_DIR)/%.cpp.o: %.cpp
 
 all: $(BUILD_DIR)/$(TARGET_EXEC)
 
+build: $(BUILD_DIR)/$(TARGET_EXEC)
+
 .PHONY: clean
 
 clean:
@@ -49,7 +51,7 @@ run:
 
 up: all run
 
-prod: clean up
+prod: clean build run
 
 dev: up
 

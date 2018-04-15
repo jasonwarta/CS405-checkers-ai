@@ -148,6 +148,11 @@ int main(int argc, char const *argv[]) {
 
 		bool validMatchExists = true;
 		while(true){
+
+			for (auto &i : availableMatches)
+				std::cout << i << " ";
+			std::cout << std::endl;
+			
 			if(availableMatches.size() == 0)
 			{
 				validMatchExists = false;
@@ -261,9 +266,11 @@ int main(int argc, char const *argv[]) {
 		for(size_t i = (POPULATION_SIZE/2); i < POPULATION_SIZE; ++i)
 			nets[i]->net->evolve();
 		
-		for(auto &nt : nets) {
-			nt->score = 0;
-			nt->opponents.clear();
+		for(uint i = 0; i < nets.size(); ++i)
+		{
+			nets[i]->score = 0;
+			nets[i]->opponents.clear();
+			nets[i]->self = i;
 		}
 
 		genCounter++;

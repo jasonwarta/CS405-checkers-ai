@@ -185,12 +185,12 @@ public:
         stringToWeightedBoard(theBoard);
         setFirstWeights();
         // NodeCount = 96 && edgecount = 854
-        for(int i=1; i<networkSize_.size(); ++i)
+        for(uint i=1; i<networkSize_.size(); ++i)
         {
-            for(int j=0; j<networkSize_[i]; ++j)
+            for(uint j=0; j<networkSize_[i]; ++j)
             {
                 float currNode_ = 0;
-                for(int k=0; k<networkSize_[i-1]; ++k) 
+                for(uint k=0; k<networkSize_[i-1]; ++k) 
                 {
                     // Node - j - size(k) + k = previus set of nodes_... hopefully
                     currNode_ += nodes_[nodeCount_-j-networkSize_[i-1]+k] * edges_[edgeCount_];

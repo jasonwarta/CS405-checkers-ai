@@ -12,6 +12,7 @@
 #include "../../src/BasicNN.h"
 #include "../../src/NN91_Basic.h"
 #include "../../src/MinimaxWithAlphaBeta.h"
+#include "../../src/MinimaxTree.h"
 
 //error in doubles
 const double ERROR = 0.0000001;
@@ -24,7 +25,7 @@ TEST_CASE("MatchHandling")
 
 	SECTION("Testing Score Struct", "[MatchHandling]")
 	{
-		/*
+		
 	    Score score;
 
 	    score = {0, 0, 0};
@@ -53,51 +54,86 @@ TEST_CASE("MatchHandling")
 	    score = {0, 0, 0};
 	    score.assignScore('B', false);
 	    REQUIRE(Score({1, 0, 0}) == score);
-	    */
+	   
 	}
 
 	SECTION("Testing NetTracker struct","[MatchHandling]")
 	{
-		/*
+		
 	    NeuralNet nn(NET_SIZE);
 	    std::mutex mtx;
 	    NetTracker nt;
 	    Score score;
 
-	    nt = {&mtx, &nn, 0};
+	    nt = {&nn, 0};
 	    REQUIRE(nt == nt);
 
 	    score = {0, 0, 1};
-	    nt = {&mtx, &nn, 0};
+	    nt = {&nn, 0};
 	    nt.assignScore(&score, true);
-	    REQUIRE(NetTracker({&mtx, &nn, 1 * DRAW_VAL}) == nt);
+	    REQUIRE(NetTracker({&nn, 0, 1 * DRAW_VAL}) == nt);
 
 	    score = {0, 0, 1};
-	    nt = {&mtx, &nn, 0};
+	    nt = {&nn, 0};
 	    nt.assignScore(&score, false);
-	    REQUIRE(NetTracker({&mtx, &nn, 1 * DRAW_VAL}) == nt);
+	    REQUIRE(NetTracker({&nn, 0, 1 * DRAW_VAL}) == nt);
 
 	    score = {1, 0, 0};
-	    nt = {&mtx, &nn, 0};
+	    nt = {&nn, 0};
 	    nt.assignScore(&score, true);
-	    REQUIRE(NetTracker({&mtx, &nn, 1 * WIN_VAL}) == nt);
+	    REQUIRE(NetTracker({&nn, 0, 1 * WIN_VAL}) == nt);
 
 	    score = {1, 0, 0};
-	    nt = {&mtx, &nn, 0};
+	    nt = {&nn, 0};
 	    nt.assignScore(&score, false);
-	    REQUIRE(NetTracker({&mtx, &nn, 1 * LOSS_VAL}) == nt);
+	    REQUIRE(NetTracker({&nn, 0, 1 * LOSS_VAL}) == nt);
 
 	    score = {0, 1, 0};
-	    nt = {&mtx, &nn, 0};
+	    nt = {&nn, 0};
 	    nt.assignScore(&score, true);
-	    REQUIRE(NetTracker({&mtx, &nn, 1 * LOSS_VAL}) == nt);
+	    REQUIRE(NetTracker({&nn, 0, 1 * LOSS_VAL}) == nt);
 
 	    score = {0, 1, 0};
-	    nt = {&mtx, &nn, 0};
+	    nt = {&nn, 0};
 	    nt.assignScore(&score, false);
-	    REQUIRE(NetTracker({&mtx, &nn, 1 * WIN_VAL}) == nt);
-	    */
+	    REQUIRE(NetTracker({&nn, 0, 1 * WIN_VAL}) == nt);
+	   
 	}
+
+	SECTION("Minimax equivalence testing")
+	{
+		NeuralNet nn(NET_SIZE);
+		bool redTeam = true;
+		std::string theBoard = START_BOARD_STRING;
+		int depth;
+
+		// using piece count
+		depth = 2;
+		REQUIRE(MinimaxTree(theBoard, depth, redTeam).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam).getBestBoard());
+
+		depth = 4;
+		REQUIRE(MinimaxTree(theBoard, depth, redTeam).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam).getBestBoard());
+
+		depth = 6;
+		REQUIRE(MinimaxTree(theBoard, depth, redTeam).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam).getBestBoard());
+
+		depth = 8;
+		REQUIRE(MinimaxTree(theBoard, depth, redTeam).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam).getBestBoard());
+
+		// using NN
+		depth = 2;
+		REQUIRE(MinimaxTree(theBoard, depth, redTeam, &nn).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam, &nn).getBestBoard());
+
+		depth = 4;
+		REQUIRE(MinimaxTree(theBoard, depth, redTeam, &nn).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam, &nn).getBestBoard());
+
+		depth = 6;
+		REQUIRE(MinimaxTree(theBoard, depth, redTeam, &nn).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam, &nn).getBestBoard());
+
+		depth = 8;
+		REQUIRE(MinimaxTree(theBoard, depth, redTeam, &nn).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam, &nn).getBestBoard());
+	}
+
 	SECTION("BasicNN correctness tests")
 	{
 		

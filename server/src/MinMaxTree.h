@@ -6,13 +6,13 @@
 #include "checkers.h"
 #include "BoardEval.h"
 
-#include "BasicNN.h"
+#include "defs.h"
 
 class MinMaxTree
 {
 public:
 
-	MinMaxTree(std::string &theBoard, int depth, bool redPlayer, BasicNN *net)
+	MinMaxTree(std::string &theBoard, int depth, bool redPlayer, NeuralNet *net)
 	{
 		redPlayerTurn_ = redPlayer;
 		net_ = net;
@@ -50,12 +50,11 @@ public:
 private:
 	// int because basicBoardEval just returns an int
 	// change to float when we hook up NN
-	int minMaxTreeRecurse(std::string &theBoard, int depth, bool maximizingPlayer, int currentBest)
+	float minMaxTreeRecurse(std::string &theBoard, int depth, bool maximizingPlayer, int currentBest)
 	{
 		if(depth == 0) // maybe other checks here later?...
 		{
-			net_->evaluateNN(theBoard);
-			return net_->getLastNode();
+			return net_->evaluateNN(theBoard, redPlayerTurn_);
 		}
 
 		if(maximizingPlayer)
@@ -70,7 +69,7 @@ private:
 				return -10000;
 			}
 
-			int bestValue = minMaxTreeRecurse(possBoards[0], depth-1, false, -10000);
+			float bestValue = minMaxTreeRecurse(possBoards[0], depth-1, false, -10000);
 
 			for(auto it = possBoards.begin()+1; it != possBoards.end(); ++it) {
 				bestValue = std::max(bestValue, minMaxTreeRecurse(*it,depth-1,false,bestValue));
@@ -89,7 +88,7 @@ private:
 				return 10000;
 			}
 
-			int worstValue = minMaxTreeRecurse(possBoards[0], depth-1, true, 10000);
+			float worstValue = minMaxTreeRecurse(possBoards[0], depth-1, true, 10000);
 
 			for(auto it = possBoards.begin()+1; it != possBoards.end(); ++it) {
 				worstValue = std::min(worstValue, minMaxTreeRecurse(*it,depth-1,true,worstValue));

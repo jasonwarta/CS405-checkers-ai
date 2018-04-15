@@ -96,7 +96,7 @@ void NetworkGame::playGame()
             break;
         }
 
-        std::string move = MinimaxWithAlphaBeta(theBoard,10,redTeam_,net_,false).getBestBoard(&std::cout);
+        std::string move = MinimaxWithAlphaBeta(theBoard,10,redTeam_,net_).getBestBoard(&std::cout);
         std::cout << "sending move: " << move << std::endl;
 
         std::string result = sendMove(move);
@@ -114,7 +114,7 @@ void NetworkGame::playGame()
         while(boardStatus.first != myStatusString) {
             std::cout << boardStatus.first << " " << boardStatus.second << std::endl;
             if(boardStatus.first == "red_won" || boardStatus.first == "black_won")
-                break;
+                return;
             
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             boardStatus = getLastMove();

@@ -16,11 +16,11 @@ char Game::run(std::string theBoard) {
 		Clock clock = std::chrono::system_clock::now();
 
 		if( redTeamTurn ) {
-			theBoard = red_->getMove(theBoard, os_, 10);
+			theBoard = red_->getMove(theBoard, os_, 8);
 		}
 
 		else {
-			theBoard = black_->getMove(theBoard, os_, 10);
+			theBoard = black_->getMove(theBoard, os_, 8);
 		}
 
 		auto duration = std::chrono::duration<double>(std::chrono::system_clock::now() - clock).count();
