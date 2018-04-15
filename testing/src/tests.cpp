@@ -203,7 +203,6 @@ TEST_CASE("TIMING")
 {
 	bool redPlayerTurn = true;
 	std::string theBoard = START_BOARD_STRING;
-	int depth = 8;
 
 	SECTION("Checkers constructor timing")
 	{
@@ -267,23 +266,25 @@ TEST_CASE("TIMING")
 	}
 	SECTION("Minimax Alpha-Beta timing")
 	{
-		/*
-		uint numTiming = 200;
+		uint numTiming = 10000;
 		std::shared_ptr<Clock> clock = std::make_shared<Clock>(std::chrono::system_clock::now());
 		NeuralNet net(NET_SIZE);
 
-		auto minimaxABTimerStart = std::chrono::system_clock::now();
-		for(uint i = 0; i < numTiming; ++i)
-		{
-			*clock = std::chrono::system_clock::now();
-			MinimaxWithAlphaBeta(theBoard, depth, redPlayerTurn, clock, &net, false);
-		}
-		auto minimaxABTimerEnd = std::chrono::system_clock::now();
+		for(uint depth = 4; depth <= 10; depth+=2) {
+			auto minimaxABTimerStart = std::chrono::system_clock::now();
+			for(uint i = 0; i < numTiming; ++i)
+			{
+				MinimaxWithAlphaBeta(theBoard, depth, redPlayerTurn, &net);
+			}
+			auto minimaxABTimerEnd = std::chrono::system_clock::now();
 
-		std::chrono::duration<double> elapsedMinimaxABTimer = minimaxABTimerEnd - minimaxABTimerStart;
-		std::cout << "Minimax Alpha-Beta constructor timing: " << elapsedMinimaxABTimer.count() << "s total, or " << elapsedMinimaxABTimer.count() / numTiming << "s/run"
-				  << " for " << numTiming << " runs" << std::endl;
-		*/
+			std::chrono::duration<double> elapsedMinimaxABTimer = minimaxABTimerEnd - minimaxABTimerStart;
+			std::cout << "Minimax Alpha-Beta constructor timing, depth " << depth << ": " << elapsedMinimaxABTimer.count() << "s total, or " << elapsedMinimaxABTimer.count() / numTiming << "s/run"
+					<< " for " << numTiming << " runs" << std::endl;
+
+			numTiming /= 10;
+		}
+		
 	}
 
 
