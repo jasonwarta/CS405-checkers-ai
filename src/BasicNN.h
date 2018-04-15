@@ -144,7 +144,7 @@ public:
     {
         if(theBoard.size() != networkSize_[0])
         {
-            std::cout << "Warning: string passed to Network does not match input layer size. resizing string." << std::endl;
+            std::cout << "Warning: string passed to Network does not match input layer size. resizing string. " << theBoard << " size: " << theBoard.size() << std::endl;
             theBoard.resize(networkSize_[0], '_');
         }
         redTeam_ = isRedTeam;
@@ -230,6 +230,7 @@ private:
     // based on whose team you're on
     void setFirstWeights(const std::string &theBoard)
     {
+        std::fill(nodes_.begin(), nodes_.end(), 0.0f);
         for(size_t i = 0; i < theBoard.size(); ++i) 
         {
             switch(theBoard[i]) 
@@ -263,7 +264,7 @@ private:
         {
             totalNodes += layerSizes[i];
         }
-        nodes_.resize(totalNodes, 0.0f);
+        nodes_.resize(totalNodes);
 
         uint totalEdges = layerSizes[layerSizes.size()-1]; // Start at one for the piece count weight
         for(uint i=0; i<layerSizes.size()-1; ++i)

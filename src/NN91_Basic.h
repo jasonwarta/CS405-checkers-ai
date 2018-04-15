@@ -153,9 +153,9 @@ public:
 
                 for(uint k=0; k<networkSize_[i-1]; k+=8)
                 {
-// UNALIGNED: FIX LATER:::::S
-                    __m256 edgesSIMD = _mm256_loadu_ps(&edges_[edgeCount_]);
-                    __m256 nodeSIMD = _mm256_loadu_ps(&nodes_[nodeCount_-j-networkSize_[i-1]+k]);
+
+                    __m256 edgesSIMD = _mm256_load_ps(&edges_[edgeCount_]);
+                    __m256 nodeSIMD = _mm256_load_ps(&nodes_[nodeCount_-j-networkSize_[i-1]+k]);
                     __m256 nodeWeights = _mm256_mul_ps(edgesSIMD, nodeSIMD);
 
                     addStorage = _mm256_add_ps(addStorage, nodeWeights);
@@ -298,7 +298,7 @@ private:
         // Only actually use 91. Last 5 to make AVX happy
         nodeCount_ = 96;
         edgeCount_ = 0;
-
+        std::fill(nodes_.begin(), nodes_.end(), 0.0f);
         for(uint i=0; i<NN91_NODE_LOCATIONS.size(); ++i)
         {
             for(uint j=0; j<NN91_NODE_LOCATIONS[i].size(); ++j)
@@ -308,11 +308,12 @@ private:
             }
             nodes_[i] = tanh(nodes_[i]);
         }
-        edges_[edgeCount_] = 0;
-        edgeCount_++;
-        edges_[edgeCount_] = 0;
-        edgeCount_++;
 
+        for(uint i=854; i<856; ++i)
+        {
+            edges_[i] = 0;
+            edgeCount_++;
+        }
         // Set last 5 nodes_ to 0 for aligned SIMD
         for(uint i=91; i<96; ++i)
         {
@@ -340,7 +341,7 @@ private:
         {
             totalNodes += networkSize_[i];
         }
-        nodes_.resize(totalNodes, 0.0f);
+        nodes_.resize(totalNodes);
 
         // set up edges_
         uint totalEdges = 856; // 854 Edges from first set of nodes_ to the input vector + 2 for SIMD alignment
@@ -354,7 +355,6 @@ private:
         // set up other vectors
         weightedStartBoard_.resize(32);
         sigma_.resize(edges_.size(), 0.05f);
-        networkSize_[0]=91;
    	}
 
     // Mainly for testing

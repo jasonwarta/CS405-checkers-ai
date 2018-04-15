@@ -98,33 +98,68 @@ TEST_CASE("MatchHandling")
 	    REQUIRE(NetTracker({&mtx, &nn, 1 * WIN_VAL}) == nt);
 	    */
 	}
+	SECTION("BasicNN correctness tests")
+	{
+		
+		std::vector<uint> size{32, 40, 10, 1};
+		BasicNN Net0(size);
+		BasicNN Net1(size);
+
+
+		INFO("Two different eval's called on same Class. Should be same. (used to not reset)");
+		REQUIRE(fabs(Net0.evaluateNN(theBoard, redPlayerTurn) - Net0.evaluateNN(theBoard, redPlayerTurn)) < ERROR);
+
+		INFO("Same board and NN, different teams")
+		REQUIRE_FALSE(fabs(Net0.evaluateNN(theBoard, redPlayerTurn) - Net0.evaluateNN(theBoard, !redPlayerTurn)) < ERROR);
+
+		INFO("Two different NN's won't have the same network");
+		REQUIRE_FALSE(fabs(Net0.evaluateNN(theBoard, redPlayerTurn) - Net1.evaluateNN(theBoard, redPlayerTurn)) < ERROR);
+
+		// make sure evolving changes the NN, and that evolving the same NN twice gives two different NN's
+		BasicNN Net0copy0 = Net0;
+		BasicNN Net0copy1 = Net0;
+
+		INFO("Copy constructor works");
+		REQUIRE(fabs(Net0copy0.evaluateNN(theBoard, redPlayerTurn) - Net0copy1.evaluateNN(theBoard, redPlayerTurn)) < ERROR);
+
+		Net0copy0.evolve();
+		Net0copy1.evolve();
+		INFO("evolving changes the NN");
+		REQUIRE_FALSE(fabs(Net0.evaluateNN(theBoard, redPlayerTurn) - Net0copy0.evaluateNN(theBoard, redPlayerTurn)) < ERROR);
+		REQUIRE_FALSE(fabs(Net0.evaluateNN(theBoard, redPlayerTurn) - Net0copy1.evaluateNN(theBoard, redPlayerTurn)) < ERROR);
+		REQUIRE_FALSE(fabs(Net0copy0.evaluateNN(theBoard, redPlayerTurn) - Net0copy1.evaluateNN(theBoard, redPlayerTurn)) < ERROR);
+		
+	}
 	SECTION("NN91_Basic correctness tests")
 	{
-		/*
-		std::vector<uint> size{5,4};
+		
+		std::vector<uint> size{5,4,3};
 		NN91_Basic Net0(size);
-		//std::cout << "TEST: " << Net0.evaluateNN(theBoard, redPlayerTurn) << " " << Net0.SLOWevaluateNN(theBoard, redPlayerTurn) << " " <<Net0.evaluateNN(theBoard, redPlayerTurn) - Net0.SLOWevaluateNN(theBoard, redPlayerTurn)<< std::endl;
-		Net0.SLOWevaluateNN(theBoard, redPlayerTurn);
-		Net0.printAll();
-		Net0.evaluateNN(theBoard, redPlayerTurn);
-		Net0.printAll();
+		NN91_Basic Net1(size);
+
 
 		INFO("Two different eval's called on same Class. Should be same. (one is faster than the other)");
 		REQUIRE(fabs(Net0.evaluateNN(theBoard, redPlayerTurn) - Net0.SLOWevaluateNN(theBoard, redPlayerTurn)) < ERROR);
 
-		NN91_Basic Net1(size);
-		// make sure that two different NN's don't do the same eval
+		INFO("Same board and NN, different teams")
+		REQUIRE_FALSE(fabs(Net0.evaluateNN(theBoard, redPlayerTurn) - Net0.evaluateNN(theBoard, !redPlayerTurn)) < ERROR);
+
+		INFO("Two different NN's won't have the same network");
 		REQUIRE_FALSE(fabs(Net0.evaluateNN(theBoard, redPlayerTurn) - Net1.evaluateNN(theBoard, redPlayerTurn)) < ERROR);
 
 		// make sure evolving changes the NN, and that evolving the same NN twice gives two different NN's
 		NN91_Basic Net0copy0 = Net0;
 		NN91_Basic Net0copy1 = Net0;
+
+		INFO("Copy constructor works");
+		REQUIRE(fabs(Net0copy0.evaluateNN(theBoard, redPlayerTurn) - Net0copy1.evaluateNN(theBoard, redPlayerTurn)) < ERROR);
+
 		Net0copy0.evolve();
 		Net0copy1.evolve();
-
-		REQUIRE(! (fabs(Net0.evaluateNN(theBoard, redPlayerTurn) - Net0copy0.evaluateNN(theBoard, redPlayerTurn)) < ERROR) );
-		REQUIRE(! (fabs(Net0copy0.evaluateNN(theBoard, redPlayerTurn) - Net0copy1.evaluateNN(theBoard, redPlayerTurn)) < ERROR) );
-		*/
+		INFO("evolving changes the NN");
+		REQUIRE_FALSE(fabs(Net0.evaluateNN(theBoard, redPlayerTurn) - Net0copy0.evaluateNN(theBoard, redPlayerTurn)) < ERROR);
+		REQUIRE_FALSE(fabs(Net0.evaluateNN(theBoard, redPlayerTurn) - Net0copy1.evaluateNN(theBoard, redPlayerTurn)) < ERROR);
+		REQUIRE_FALSE(fabs(Net0copy0.evaluateNN(theBoard, redPlayerTurn) - Net0copy1.evaluateNN(theBoard, redPlayerTurn)) < ERROR);
 	}
 }
 
@@ -148,7 +183,52 @@ TEST_CASE("TIMING")
 		std::chrono::duration<double> elapsed_Checkers_constructor = CheckersConstructorEnd - CheckersConstructorStart;
 	    std::cout << "Checkers constructor timing: " << elapsed_Checkers_constructor.count() << "s total, or " << elapsed_Checkers_constructor.count() /numTiming << "s/run" << " for " << numTiming << " runs" << std::endl;
 	}
+	SECTION("BasicNN evaluation timing")
+	{
+		uint numTiming = 500000;
+		std::vector<uint> size{32,40,10,1};
+		BasicNN Net0(size);
+		float startVal = Net0.evaluateNN(theBoard, redPlayerTurn);
+		float trash = 0;
 
+		auto BasicNNStart = std::chrono::system_clock::now();
+		for(uint i=0; i<numTiming; ++i)
+		{
+			trash += Net0.evaluateNN(theBoard, redPlayerTurn);
+		}
+		auto BasicNNEnd = std::chrono::system_clock::now();
+
+		float endVal = Net0.evaluateNN(theBoard, redPlayerTurn);
+
+		INFO("If different, evaluateNN somehow modfies the edges.");
+		REQUIRE(fabs(endVal - startVal) < ERROR);
+
+		std::chrono::duration<double> elapsedBasicNNTimer = BasicNNEnd - BasicNNStart;
+	    std::cout << "BasicNN timing: " << elapsedBasicNNTimer.count() << "s total, or " << elapsedBasicNNTimer.count() /numTiming << "s/run" << " for " << numTiming << " runs" << " trash: " << trash << std::endl;
+	}
+	SECTION("NN91 evaluation timing")
+	{
+		uint numTiming = 500000;
+		std::vector<uint> size{15,8,2};
+		NN91_Basic Net0(size);
+		float startVal = Net0.evaluateNN(theBoard, redPlayerTurn);
+		float trash = 0;
+
+		auto NN91Start = std::chrono::system_clock::now();
+		for(uint i=0; i<numTiming; ++i)
+		{
+			trash += Net0.evaluateNN(theBoard, redPlayerTurn);
+		}
+		auto NN91End = std::chrono::system_clock::now();
+
+		float endVal = Net0.evaluateNN(theBoard, redPlayerTurn);
+
+		INFO("If different, evaluateNN somehow modfies the edges.");
+		REQUIRE(fabs(endVal - startVal) < ERROR);
+
+		std::chrono::duration<double> elapsedNN91Timer = NN91End - NN91Start;
+	    std::cout << "NN91 timing: " << elapsedNN91Timer.count() << "s total, or " << elapsedNN91Timer.count() /numTiming << "s/run" << " for " << numTiming << " runs" << " trash: " << trash << std::endl;
+	}
 	SECTION("Minimax Alpha-Beta timing")
 	{
 		/*
