@@ -1,4 +1,4 @@
-#include "./playOnNet.h"
+#include "./NetworkGame.h"
 
 std::string getStdoutFromCommand(std::string cmd) {
     std::string data;

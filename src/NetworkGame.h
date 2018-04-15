@@ -1,5 +1,5 @@
-#ifndef PLAY_ON_NET_INCLUDED
-#define PLAY_ON_NET_INCLUDED
+#ifndef NETWORK_GAME_INCLUDED
+#define NETWORK_GAME_INCLUDED
 
 #include <iostream>
 #include <sstream>
