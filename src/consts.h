@@ -6,6 +6,9 @@
 #include <string>
 #include <memory>
 
+const bool usingIterativeDeepening = false;
+const uint START_DEPTH = 6;
+
 const int8_t LOSS_VAL = -1;
 const int8_t DRAW_VAL = 0;
 const int8_t WIN_VAL = 2;

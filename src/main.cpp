@@ -23,7 +23,7 @@
 #include "MatchHandling.h"
 #include "testRun.h"
 #include "json.hpp"
-#include "playOnNet.h"
+#include "NetworkGame.h"
 
 namespace fs = std::experimental::filesystem;
 

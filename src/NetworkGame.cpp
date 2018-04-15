@@ -96,7 +96,7 @@ void NetworkGame::playGame()
             break;
         }
 
-        std::string move = MinimaxWithAlphaBeta(theBoard,10,redTeam_,net_).getBestBoard(&std::cout);
+        std::string move = MinimaxWithAlphaBeta(theBoard,START_DEPTH,redTeam_,net_).getBestBoard(&std::cout);
         std::cout << "sending move: " << move << std::endl;
 
         std::string result = sendMove(move);

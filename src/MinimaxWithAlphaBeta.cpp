@@ -6,6 +6,12 @@
 	#include <cuda_minmaxFunctions.h>
 #endif //CUDA
 
+
+MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, NeuralNet *net, Clock *theClock) : MinimaxWithAlphaBeta(redPlayer, net, false)
+{
+	init(theBoard, depth, redPlayer, theClock);
+}
+
 MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, NeuralNet *net) : MinimaxWithAlphaBeta(redPlayer, net, false)
 {
 	init(theBoard, depth, redPlayer);
@@ -21,6 +27,10 @@ std::string MinimaxWithAlphaBeta::getBestBoard(std::ostream *os) {
 	return bestBoard_;
 }
 
+std::vector<std::string> MinimaxWithAlphaBeta::getBestVector(){
+	return bestVector_;
+}
+
 void MinimaxWithAlphaBeta::printABStats(std::ostream *os) {
 	(*os) << "\"expansions\":\"";
 	(*os) << std::setfill('0') << std::setw(10) << boardExpansions_;
@@ -31,9 +41,20 @@ void MinimaxWithAlphaBeta::printABStats(std::ostream *os) {
 	(*os) << "\",";
 }
 
-void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth, bool redPlayer) {
+void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth, bool redPlayer, Clock *TheClock) {
+
 	std::vector<std::string> possBoards = std::move(CheckerBoard(theBoard, redPlayer).getAllRandoMoves());
-	timer_ = std::chrono::system_clock::now();
+	if(TheClock == nullptr)
+	{
+		timer_ = std::chrono::system_clock::now();
+		usingIterativeDeepening_ = false;
+	}
+	else
+	{
+		timer_ = *TheClock;
+		usingIterativeDeepening_ = true;
+	}
+
 	if(possBoards.size() == 0) {
 		bestBoard_ = "";
 		return;
@@ -56,8 +77,9 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, int depth, bool redPlayer
 
 float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard, int depth, float alpha, float beta, bool maximizingPlayer) {
 
-	if(depth == 0) {
-
+	if(depth == 0) 
+	{
+		bestVector_.push_back(theBoard);
 		if(!usingPieceCount_) {
 			return net_->evaluateNN(theBoard, redPlayerTurn_);
 		} else {

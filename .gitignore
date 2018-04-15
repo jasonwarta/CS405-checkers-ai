@@ -1,6 +1,7 @@
 build/*
 node_modules/*
 **/a.out
+**/compileMe
 NN**/
 testing/build/*
 compileMe

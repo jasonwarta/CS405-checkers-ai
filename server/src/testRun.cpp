@@ -76,15 +76,8 @@ void testRun(Player *red, Player *black) {
 	bool redTeamTurn = true;
 	bool stalemate1 = false, stalemate2 = false;
 
-    int blackTeamDepth = 2;
-    gameLoop(red, black, blackTeamDepth, startBoard);
-
-    blackTeamDepth = 4;
-    gameLoop(red, black, blackTeamDepth, startBoard);
-
-    blackTeamDepth = 6;
-    gameLoop(red, black, blackTeamDepth, startBoard);
-
-    blackTeamDepth = 8;
-    gameLoop(red, black, blackTeamDepth, startBoard);
+	for(uint i=2; i<=8; i+=2)
+	{
+		gameLoop(red, black, i, startBoard);
+	}
 }

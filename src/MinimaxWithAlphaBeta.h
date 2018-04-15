@@ -10,6 +10,7 @@
 #include <sstream>
 #include <memory>
 #include <iomanip>
+#include <vector>
 
 #include "checkers.h"
 #include "defs.h"
@@ -17,11 +18,13 @@
 
 class MinimaxWithAlphaBeta {
 public:
-  MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, NeuralNet *net);
-  MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer);
+    MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, NeuralNet *net, Clock *theClock);
+    MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer, NeuralNet *net);
+    MinimaxWithAlphaBeta(std::string &theBoard, int depth, bool redPlayer);
 
-  std::string getBestBoard(std::ostream *os = &std::cout);
-  void printABStats(std::ostream *os = &std::cout);
+    std::string getBestBoard(std::ostream *os = &std::cout);
+    std::vector<std::string> getBestVector();
+    void printABStats(std::ostream *os = &std::cout);
 
 private:
 	MinimaxWithAlphaBeta(bool redPlayer, NeuralNet *net, bool usingPieceCount) : 
@@ -33,7 +36,7 @@ private:
 		usingPieceCount_(usingPieceCount)
 	{};
 
-	void init(std::string &theBoard, int depth, bool redPlayer);
+	void init(std::string &theBoard, int depth, bool redPlayer, Clock *TheClock = nullptr);
 
 	float minimaxWithAlphaBetaRecursive(std::string &theBoard, int depth, float alpha, float beta, bool maximizingPlayer);
 
@@ -46,9 +49,10 @@ private:
 	uint64_t boardExpansions_;
 	NeuralNet *net_;
 	bool usingPieceCount_;
-
+	bool usingIterativeDeepening_;
 	Clock timer_;
 	std::ostream *os_;
+	std::vector<std::string> bestVector_;
 };
 
 #endif

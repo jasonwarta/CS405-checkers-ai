@@ -108,30 +108,18 @@ TEST_CASE("MatchHandling")
 		int depth;
 
 		// using piece count
-		depth = 2;
-		REQUIRE(MinimaxTree(theBoard, depth, redTeam).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam).getBestBoard());
-
-		depth = 4;
-		REQUIRE(MinimaxTree(theBoard, depth, redTeam).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam).getBestBoard());
-
-		depth = 6;
-		REQUIRE(MinimaxTree(theBoard, depth, redTeam).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam).getBestBoard());
-
-		depth = 8;
-		REQUIRE(MinimaxTree(theBoard, depth, redTeam).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam).getBestBoard());
+		for(uint depth=2; depth<=8; depth+=2)
+		{
+			INFO("MinimaxTree and AlphaBeta return same move at varied depths: " + std::to_string(depth));
+			REQUIRE(MinimaxTree(theBoard, depth, redTeam).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam).getBestBoard());
+		}
 
 		// using NN
-		depth = 2;
-		REQUIRE(MinimaxTree(theBoard, depth, redTeam, &nn).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam, &nn).getBestBoard());
-
-		depth = 4;
-		REQUIRE(MinimaxTree(theBoard, depth, redTeam, &nn).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam, &nn).getBestBoard());
-
-		depth = 6;
-		REQUIRE(MinimaxTree(theBoard, depth, redTeam, &nn).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam, &nn).getBestBoard());
-
-		depth = 8;
-		REQUIRE(MinimaxTree(theBoard, depth, redTeam, &nn).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam, &nn).getBestBoard());
+		for(uint depth=2; depth<=8; depth+=2)
+		{
+			INFO("MinimaxTree and AlphaBeta return same move at varied depths: " + std::to_string(depth));
+			REQUIRE(MinimaxTree(theBoard, depth, redTeam, &nn).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam, &nn).getBestBoard());
+		}
 	}
 
 	SECTION("BasicNN correctness tests")
