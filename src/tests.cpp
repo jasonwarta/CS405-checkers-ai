@@ -16,6 +16,7 @@
 
 //error in doubles
 const double ERROR = 0.0000001;
+const bool DO_TIMING = false;
 
 TEST_CASE("MatchHandling")
 {
@@ -189,6 +190,10 @@ TEST_CASE("MatchHandling")
 
 TEST_CASE("TIMING")
 {
+	if(!DO_TIMING)
+	{
+		return;
+	}
 	bool redPlayerTurn = true;
 	std::string theBoard = START_BOARD_STRING;
 

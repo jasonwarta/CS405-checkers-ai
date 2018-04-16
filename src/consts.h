@@ -6,7 +6,7 @@
 #include <string>
 #include <memory>
 
-const bool usingIterativeDeepening = false;
+const bool USING_ITERATIVE_DEEPENING = false;
 const uint START_DEPTH = 6;
 
 const int8_t LOSS_VAL = -1;

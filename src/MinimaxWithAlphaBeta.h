@@ -11,6 +11,7 @@
 #include <memory>
 #include <iomanip>
 #include <vector>
+#include <utility>
 
 #include "checkers.h"
 #include "defs.h"
@@ -18,12 +19,10 @@
 
 class MinimaxWithAlphaBeta {
 public:
-    MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net, Clock *theClock);
     MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net);
     MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer);
 
     std::string getBestBoard(std::ostream *os = &std::cout);
-    std::vector<std::string> getBestVector();
     void printABStats(std::ostream *os = &std::cout);
 
 private:
@@ -36,7 +35,7 @@ private:
 		usingPieceCount_(usingPieceCount)
 	{};
 
-	void init(std::string &theBoard, uint depth, bool redPlayer, Clock *TheClock = nullptr);
+	void init(std::string &theBoard, uint depth, bool redPlayer);
 
 	float minimaxWithAlphaBetaRecursive(std::string &theBoard, uint depth, float alpha, float beta, bool maximizingPlayer);
 
