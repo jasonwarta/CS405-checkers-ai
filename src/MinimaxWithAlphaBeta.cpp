@@ -17,6 +17,16 @@ MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bo
 	init(theBoard, depth, redPlayer);
 }
 
+MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, bool usingIDS) : MinimaxWithAlphaBeta(redPlayer, nullptr, false, usingIDS)
+{
+	init(theBoard, depth, redPlayer);
+}
+
+MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net, bool usingIDS) : MinimaxWithAlphaBeta(redPlayer, net, false, usingIDS)
+{
+	init(theBoard, depth, redPlayer);
+}
+
 std::string MinimaxWithAlphaBeta::getBestBoard(std::ostream *os) {
 	if(os != nullptr)
 		printABStats(os);
@@ -42,22 +52,60 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, uint depth, bool redPlaye
 		bestBoard_ = "";
 		return;
 	}
-
-	float alpha = -10000.0;
-	float beta = 10000.0;
-	if(USING_ITERATIVE_DEEPENING)
+	if (usingIterativeDeepening_)
 	{
-		std::vector<std::pair<float, std::string>> boardScores(possBoards.size());
-
-		float currVal = minimaxWithAlphaBetaRecursive(possBoards[0], depth-1, alpha, beta, false);
-		boardScores[0](std::make_pair(currVal, possBoards[0]));
-		for(int i=1; i<possBoards.size(); ++i)
+		std::vector<std::pair<float,std::string>> boardScores(possBoards.size());
+		for(uint i=0; i<boardScores.size(); ++i)
 		{
+			boardScores[i] = std::make_pair(-10000.0f, possBoards[i]);
+		}
+		for (auto &item : boardScores)
+		{
+			std::cout << item.first << " " << item.second << std::endl;
+		}
+		while(true)
+		{
+			float alpha = -10000.0;
+			float beta = 10000.0;
+			for(uint i=0; i<boardScores.size(); ++i)
+			{
+				boardScores[i].first = minimaxWithAlphaBetaRecursive(boardScores[i].second, depth - 1, alpha, beta, false);
+				// std::cout << "valid state: " << bool(boardScores[i].second.compare(possBoards[i])==0) << std::endl;
+			}
 
+			std::sort(boardScores.begin(), boardScores.end(), [](auto &a, auto &b) {
+				// std::cout << a.first << " " << a.second << std::endl;
+				// std::cout << b.first << " " << b.second << std::endl;
+				// std::cout << std::endl;
+				return a.first > b.first;
+			});
+
+			if(!TESTING)
+				if( std::chrono::duration<double>(std::chrono::system_clock::now() - timer_).count() >= 14.0)
+				{
+					std::cout << "hit \"unreachable\" state" << std::endl;
+					return;
+				}
+
+			bestBoard_ = boardScores[0].second;
+			
+			if (TESTING && depth == 12)
+			{
+				for(auto &item : boardScores)
+				{
+					std::cout << item.first << " " << item.second << std::endl;
+				}
+				std::cout << "depth" << depth << std::endl;
+				return;
+			}
+
+			depth += 2;
 		}
 	}
 	else
 	{
+		float alpha = -10000.0;
+		float beta = 10000.0;
 		float bestVal = minimaxWithAlphaBetaRecursive(possBoards[0], depth-1, alpha, beta, false);
 		bestBoard_ = possBoards[0];
 
@@ -84,7 +132,7 @@ float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard,
 		}
 	}
 
-	if (std::chrono::duration<double>(std::chrono::system_clock::now() - timer_).count() >= 14.0)
+	if (std::chrono::duration<double>(std::chrono::system_clock::now() - timer_).count() >= 14.0 && !TESTING)
 	{
 		if(!usingPieceCount_) {
 			return net_->evaluateNN(theBoard, redPlayerTurn_);

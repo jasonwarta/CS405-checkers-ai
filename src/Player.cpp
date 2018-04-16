@@ -3,12 +3,13 @@
 #include "Player.h"
 
 std::string Player::getMove(std::string &theBoard, std::ostream *os, uint depth) {
-	if(usingIterativeDeepening)
+	if (USING_ITERATIVE_DEEPENING)
 	{
- 		Clock theClock = std::chrono::system_clock::now();
- 		MinimaxWithAlphaBeta bestTestingEver(theBoard,depth,redTeam_,net_, &theClock);
-		std::cout << "TESTING: " << bestTestingEver.getBestVector().size() << std::endl;
-		return bestTestingEver.getBestBoard(os);
+		return "";
+ 		// Clock theClock = std::chrono::system_clock::now();
+ 		// MinimaxWithAlphaBeta bestTestingEver(theBoard,depth,redTeam_,net_);
+		// std::cout << "TESTING: " << bestTestingEver.getBestVector().size() << std::endl;
+		// return bestTestingEver.getBestBoard(os);
 	}
 	else
 	{

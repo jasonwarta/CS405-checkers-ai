@@ -20,19 +20,22 @@
 class MinimaxWithAlphaBeta {
 public:
     MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net);
-    MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer);
+	MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer);
+	MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, bool usingIDS);
+	MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net, bool usingIDS);
 
-    std::string getBestBoard(std::ostream *os = &std::cout);
+	std::string getBestBoard(std::ostream *os = &std::cout);
     void printABStats(std::ostream *os = &std::cout);
 
 private:
-	MinimaxWithAlphaBeta(bool redPlayer, NeuralNet *net, bool usingPieceCount) : 
+	MinimaxWithAlphaBeta(bool redPlayer, NeuralNet *net, bool usingPieceCount, bool usingIDS = USING_ITERATIVE_DEEPENING) : 
 		redPlayerTurn_(redPlayer),
 		breakAlpha_(0),
 		breakBeta_(0),
 		boardExpansions_(0),
 		net_(net),
-		usingPieceCount_(usingPieceCount)
+		usingPieceCount_(usingPieceCount),
+		usingIterativeDeepening_(usingIDS)
 	{};
 
 	void init(std::string &theBoard, uint depth, bool redPlayer);

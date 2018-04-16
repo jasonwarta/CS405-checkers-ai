@@ -9,6 +9,7 @@
 
 #include "MinimaxWithAlphaBeta.h"
 #include "defs.h"
+#include "consts.h"
 
 class Player
 {

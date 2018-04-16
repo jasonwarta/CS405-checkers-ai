@@ -99,9 +99,9 @@ public:
         std::mt19937 random(rd());
 
         // Choose a random king value
-        std::uniform_real_distribution<> theKingVal(1.0, 3.0);
-        kingValue_ = theKingVal(random);
-
+        // std::uniform_real_distribution<> theKingVal(1.0, 3.0);
+        // kingValue_ = theKingVal(random);
+        kingValue_ = 1.4f;
         // set up each weight
         std::uniform_real_distribution<> startWeightVal(-0.2,0.2);
         for(uint i=0; i<edges_.size(); ++i)

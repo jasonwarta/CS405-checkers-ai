@@ -7,7 +7,9 @@
 #include <memory>
 
 const bool USING_ITERATIVE_DEEPENING = false;
-const uint START_DEPTH = 6;
+const bool TESTING = true; // used for IDS
+
+const uint START_DEPTH = 8;
 
 const int8_t LOSS_VAL = -1;
 const int8_t DRAW_VAL = 0;
@@ -20,9 +22,10 @@ const int8_t MATCHES = 5;
 
 const int8_t TOTAL_MOVES = 100;
 
+// blondie24
 const std::vector<uint> NET_SIZE {32, 40, 10, 1};
 
-
+// const std::vector<uint> NET_SIZE {6,5,4,3};
 
 typedef const std::vector<std::vector<int>> MoveTable;
 extern const std::string START_BOARD_STRING;
