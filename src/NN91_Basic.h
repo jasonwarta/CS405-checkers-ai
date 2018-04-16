@@ -167,12 +167,12 @@ public:
                 addStorage = _mm256_hadd_ps(addStorage, addStorage);
                 addStorage = _mm256_hadd_ps(addStorage, addStorage);
                 _mm256_store_ps(&summedStorage[0], addStorage);
-/*
+
                 if(i == networkSize_.size()-1)
                 {
                     summedStorage[3]+= weightedBoardEval(theBoard, kingValue_, redTeam_) * edges_[edgeCount_];
                 }
-*/
+
                 nodes_[nodeCount_] = tanh(summedStorage[3] + summedStorage[4]);
                 nodeCount_++;
             }
@@ -189,15 +189,20 @@ public:
         {
             for(uint j=0; j<networkSize_[i]; ++j)
             {
-                float currNode_ = 0;
+                float currNode = 0;
                 for(uint k=0; k<networkSize_[i-1]; ++k) 
                 {
                     // Node - j - size(k) + k = previus set of nodes_... hopefully
-                    currNode_ += nodes_[nodeCount_-j-networkSize_[i-1]+k] * edges_[edgeCount_];
+                    currNode += nodes_[nodeCount_-j-networkSize_[i-1]+k] * edges_[edgeCount_];
+                    edgeCount_++;
+                }
+                if(i == networkSize_.size()-1)
+                {
+                    currNode += weightedBoardEval(theBoard, kingValue_, isRedTeam) * edges_[edgeCount_];
                     edgeCount_++;
                 }
 
-                nodes_[nodeCount_] = tanh(currNode_);
+                nodes_[nodeCount_] = tanh(currNode);
                 nodeCount_++;
             }
         }
