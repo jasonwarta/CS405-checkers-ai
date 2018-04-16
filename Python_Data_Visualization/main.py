@@ -6,21 +6,23 @@ from os import listdir
 import json
 import sys
 
+# def checkJsonInput(jsonData,json_size):
+#     for index in range(1,json_size-1):
+#         if(jsonData[index]["move"] == "00"):
+
+
 def openSingleFile(file):
     output = check_output("grep { " + file + " | sed -e 's/$/,/'",shell=True)
 
     jsonToPython = json.loads((b'[' + output + b'{"string":"foo"}' + b']').decode('utf-8'))
     json_size = len(jsonToPython)
+    #checkJsonInput(jsonToPython,json_size)
+
     gameCheck = False
 
-    for index in range(1,json_size-1):
-        if(jsonToPython[index]["move"] == "00"):
-            gameCheck = True
-        else:
-            print(jsonToPython[index]["move"] + " " + jsonToPython[index]["time"])
-            plt.plot(jsonToPython[index]["move"],jsonToPython[index]["time"],'ro')
+    for index in range(0,json_size-1):
+        plt.plot(jsonToPython[index]["move"],jsonToPython[index]["time"],'ro')
 
-averageTimeToEvolve = [][]
 def openMultipleFiles():
     for cur_file in data_files:
         output = check_output("grep { " + "../NN_185gens/gen_185/games/" + cur_file + " | sed -e 's/$/,/'",shell=True)
