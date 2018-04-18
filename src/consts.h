@@ -6,6 +6,8 @@
 #include <string>
 #include <memory>
 
+typedef unsigned int uint;
+
 const bool USING_ITERATIVE_DEEPENING = false;
 const bool TESTING = true; // used for IDS
 
@@ -37,7 +39,7 @@ extern std::shared_ptr<MoveTable> BLACK_JUMP_PTR;
 
 
 
-const std::vector<std::vector<int>> RED_MOVE_BOARD { 
+const std::vector<std::vector<int>> RED_MOVE_BOARD {
 	{4, 5},		//0
 	{5, 6},
 	{6, 7},
@@ -71,7 +73,7 @@ const std::vector<std::vector<int>> RED_MOVE_BOARD {
 	{-1, -1},	//30
 	{-1, -1} };
 
-const std::vector<std::vector<int>> RED_JUMP_BOARD { 
+const std::vector<std::vector<int>> RED_JUMP_BOARD {
 	{-1, 9},	//0
 	{8, 10},
 	{9, 11},
@@ -103,9 +105,9 @@ const std::vector<std::vector<int>> RED_JUMP_BOARD {
 	{-1, -1},
 	{-1, -1},
 	{-1, -1},	//30
-	{-1, -1} };	 
+	{-1, -1} };
 
-const std::vector<std::vector<int>> BLACK_MOVE_BOARD { 
+const std::vector<std::vector<int>> BLACK_MOVE_BOARD {
 	{-1, -1},	//0
 	{-1, -1},
 	{-1, -1},
@@ -139,7 +141,7 @@ const std::vector<std::vector<int>> BLACK_MOVE_BOARD {
 	{25, 26},	//30
 	{26, 27} };
 
-const std::vector<std::vector<int>> BLACK_JUMP_BOARD { 
+const std::vector<std::vector<int>> BLACK_JUMP_BOARD {
 	{-1, -1},	//0
 	{1, -1},
 	{-1, -1},

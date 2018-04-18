@@ -25,9 +25,10 @@ endif
 BUILD_DIR ?= build
 SRC_DIRS ?= src extras
 
-CC := g++
+override CC = g++-7
 
-SRCS := $(shell find $(SRC_DIRS) $(EXCLUDE) -name *.cpp -or -name *.c -or -name *.s)
+
+SRCS := $(shell find $(SRC_DIRS) $(EXCLUDE) -name '*.cpp' -or -name '*.c' -or -name '*.s')
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 
@@ -49,16 +50,16 @@ prod: CPPFLAGS += -O3
 
 $(BUILD_DIR)/%.cpp.o: %.cpp
 	$(MKDIR_P) $(dir $@)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LIBS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(CCFLAGS) $(LIBS) -c $< -o $@
 
 $(BUILD_DIR)/%.cpp.o: %.cpp
 	$(MKDIR_P) $(dir $@)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LIBS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(CCFLAGS) $(LIBS) -c $< -o $@
 
 
 $(MAIN_OBJ): $(MAIN_SRC)
 	$(MKDIR_P) $(dir $@)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LIBS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(CCFLAGS) $(LIBS) -c $< -o $@
 
 $(BUILD_DIR)/$(MAIN_EXEC): $(OBJS)
 	$(MAKE) $(MAIN_OBJ)
@@ -67,7 +68,7 @@ $(BUILD_DIR)/$(MAIN_EXEC): $(OBJS)
 
 $(TESTS_OBJ): $(TESTS_SRC)
 	$(MKDIR_P) $(dir $@)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LIBS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(CCFLAGS) $(LIBS) -c $< -o $@
 
 $(BUILD_DIR)/$(TESTS_EXEC): $(OBJS)
 	$(MAKE) $(TESTS_OBJ)
@@ -76,7 +77,7 @@ $(BUILD_DIR)/$(TESTS_EXEC): $(OBJS)
 
 $(SERVER_OBJ): $(SERVER_SRC)
 	$(MKDIR_P) $(dir $@)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LIBS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(CCFLAGS) $(LIBS) -c $< -o $@
 
 $(BUILD_DIR)/$(SERVER_EXEC): $(OBJS)
 	$(MAKE) $(SERVER_OBJ)
@@ -133,7 +134,7 @@ help:
 	@echo "    run-main"
 	@echo "    run-tests"
 	@echo "    run-server"
-	@echo 
+	@echo
 	@echo "Compile with -g and run"
 	@echo "    debug-main"
 	@echo "    debug-tests"
