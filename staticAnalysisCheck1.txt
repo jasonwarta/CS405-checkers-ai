@@ -1,0 +1,141 @@
+[BoardEval.h:12]: (style) Struct 'PieceMap' has a constructor with 1 argument that is not explicit.
+[NN91_Basic.h:31]: (warning) Member variable 'NN91_Basic::redTeam_' is not initialized in the constructor.
+[NN91_Basic.h:31]: (warning) Member variable 'NN91_Basic::edgeCount_' is not initialized in the constructor.
+[NN91_Basic.h:31]: (warning) Member variable 'NN91_Basic::nodeCount_' is not initialized in the constructor.
+[NN91_Basic.h:93]: (warning) Member variable 'NN91_Basic::redTeam_' is not initialized in the constructor.
+[NN91_Basic.h:93]: (warning) Member variable 'NN91_Basic::edgeCount_' is not initialized in the constructor.
+[NN91_Basic.h:93]: (warning) Member variable 'NN91_Basic::nodeCount_' is not initialized in the constructor.
+[BasicNN.h:34]: (warning) Member variable 'BasicNN::redTeam_' is not initialized in the constructor.
+[BasicNN.h:34]: (warning) Member variable 'BasicNN::EdgesUsed_' is not initialized in the constructor.
+[BasicNN.h:34]: (warning) Member variable 'BasicNN::NodesUsed_' is not initialized in the constructor.
+[BasicNN.h:94]: (warning) Member variable 'BasicNN::redTeam_' is not initialized in the constructor.
+[BasicNN.h:94]: (warning) Member variable 'BasicNN::EdgesUsed_' is not initialized in the constructor.
+[BasicNN.h:94]: (warning) Member variable 'BasicNN::NodesUsed_' is not initialized in the constructor.
+[NN91_Basic.h:366]: (style) Unused private function: 'NN91_Basic::randomWeights'
+[NN91_Basic.h:31]: (style) Class 'NN91_Basic' has a constructor with 1 argument that is not explicit.
+[NN91_Basic.h:93]: (style) Class 'NN91_Basic' has a constructor with 1 argument that is not explicit.
+[BasicNN.h:34]: (style) Class 'BasicNN' has a constructor with 1 argument that is not explicit.
+[BasicNN.h:94]: (style) Class 'BasicNN' has a constructor with 1 argument that is not explicit.
+[Game.cpp:34]: (style) Statements following return, break, continue, goto or throw will never be executed.
+[../extras/json/json.h:510]: (style) Class 'Exception' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:525]: (style) Class 'RuntimeError' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:536]: (style) Class 'LogicError' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:762]: (style) Class 'Value' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:763]: (style) Class 'Value' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:764]: (style) Class 'Value' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:766]: (style) Class 'Value' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:767]: (style) Class 'Value' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:769]: (style) Class 'Value' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:770]: (style) Class 'Value' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:787]: (style) Class 'Value' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:788]: (style) Class 'Value' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:792]: (style) Class 'Value' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:702]: (style) Class 'CZString' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:1124]: (style) Class 'PathArgument' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:1125]: (style) Class 'PathArgument' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:1126]: (style) Class 'PathArgument' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:1259]: (style) Class 'ValueConstIterator' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:1432]: (style) Class 'Reader' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:2097]: (style) Class 'StyledStreamWriter' has a constructor with 1 argument that is not explicit.
+[../extras/json/json.h:540]: (information) Skipping configuration 'JSONCPP_NORETURN' since the value of 'JSONCPP_NORETURN' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly.
+[../extras/json/json.h:542]: (information) Skipping configuration 'JSONCPP_NORETURN' since the value of 'JSONCPP_NORETURN' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly.
+[../extras/json/json.h:540]: (information) Skipping configuration 'JSONCPP_NORETURN;_MSC_VER' since the value of 'JSONCPP_NORETURN' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly.
+[../extras/json/json.h:542]: (information) Skipping configuration 'JSONCPP_NORETURN;_MSC_VER' since the value of 'JSONCPP_NORETURN' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly.
+[server.cpp:136] -> [server.cpp:137]: (style) Variable 'board' is reassigned a value before the old one has been used.
+[../extras/json/json.h:540]: (information) Skipping configuration 'JSONCPP_NORETURN;__GNUC__' since the value of 'JSONCPP_NORETURN' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly.
+[../extras/json/json.h:542]: (information) Skipping configuration 'JSONCPP_NORETURN;__GNUC__' since the value of 'JSONCPP_NORETURN' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly.
+[testRun.cpp:8]: (style) Variable 'stalemate2' is assigned a value that is never used.
+[testRun.cpp:75]: (style) Variable 'turnCounter' is assigned a value that is never used.
+[testRun.cpp:76]: (style) Variable 'redTeamTurn' is assigned a value that is never used.
+[testRun.cpp:77]: (style) Variable 'stalemate1' is assigned a value that is never used.
+[testRun.cpp:77]: (style) Variable 'stalemate2' is assigned a value that is never used.
+[MinimaxTree.cpp:3]: (warning) Member variable 'MinimaxTree::os_' is not initialized in the constructor.
+[MinimaxTree.cpp:9]: (warning) Member variable 'MinimaxTree::os_' is not initialized in the constructor.
+[Player.h:17]: (warning) Member variable 'Player::net_' is not initialized in the constructor.
+[Player.h:17]: (warning) Member variable 'Player::usingPieceCount_' is not initialized in the constructor.
+[Player.h:17]: (style) Class 'Player' has a constructor with 1 argument that is not explicit.
+[NetworkGame.cpp:7]: (style) The scope of the variable 'buffer' can be reduced.
+[catch.hpp:1109]: (style) struct member 'is_range::value' is never used.
+[catch.hpp:1537]: (style) struct member 'AssertionReaction::shouldDebugBreak' is never used.
+[catch.hpp:1538]: (style) struct member 'AssertionReaction::shouldThrow' is never used.
+[MatchHandling.h:46]: (style) 'Match::operator=' should return 'Match &'.
+[MatchHandling.h:39]: (warning) The struct 'Match' has 'operator=' but lack of 'copy constructor'.
+[MinimaxWithAlphaBeta.cpp:10]: (warning) Member variable 'MinimaxWithAlphaBeta::os_' is not initialized in the constructor.
+[MinimaxWithAlphaBeta.cpp:15]: (warning) Member variable 'MinimaxWithAlphaBeta::os_' is not initialized in the constructor.
+[MinimaxWithAlphaBeta.cpp:20]: (warning) Member variable 'MinimaxWithAlphaBeta::os_' is not initialized in the constructor.
+[MinimaxWithAlphaBeta.cpp:25]: (warning) Member variable 'MinimaxWithAlphaBeta::os_' is not initialized in the constructor.
+[server.cpp:43]: (performance) Function parameter 'messageType' should be passed by reference.
+[server.cpp:43]: (performance) Function parameter 'playerColor' should be passed by reference.
+[server.cpp:57]: (performance) Function parameter 'messageType' should be passed by reference.
+[server.cpp:57]: (performance) Function parameter 'playerColor' should be passed by reference.
+[server.cpp:67]: (performance) Function parameter 'messageType' should be passed by reference.
+[server.cpp:67]: (performance) Function parameter 'playerColor' should be passed by reference.
+[server.cpp:67]: (performance) Function parameter 'otherMoves' should be passed by reference.
+[server.cpp:77]: (performance) Function parameter 'messageType' should be passed by reference.
+[NetworkGame.h:25]: (performance) Function parameter 'address' should be passed by reference.
+[NetworkGame.h:25]: (performance) Function parameter 'gameName' should be passed by reference.
+[NetworkGame.cpp:47]: (performance) Function parameter 'move' should be passed by reference.
+[catch.hpp:411]: (style) Class 'StringRef' has a constructor with 1 argument that is not explicit.
+[catch.hpp:418]: (style) Class 'StringRef' has a constructor with 1 argument that is not explicit.
+[catch.hpp:488]: (style) Class 'TestInvokerAsMethod' has a constructor with 1 argument that is not explicit.
+[catch.hpp:1527]: (style) Class 'LazyExpression' has a constructor with 1 argument that is not explicit.
+[catch.hpp:1867]: (style) Class 'Section' has a constructor with 1 argument that is not explicit.
+[catch.hpp:1906]: (style) Class 'BenchmarkLooper' has a constructor with 1 argument that is not explicit.
+[catch.hpp:2037]: (style) Class 'ExceptionTranslatorRegistrar' has a constructor with 1 argument that is not explicit.
+[catch.hpp:2015]: (style) Class 'ExceptionTranslator' has a constructor with 1 argument that is not explicit.
+[catch.hpp:2320]: (style) Struct 'MatchNotOf' has a constructor with 1 argument that is not explicit.
+[catch.hpp:2474]: (style) Struct 'EqualsMatcher' has a constructor with 1 argument that is not explicit.
+[catch.hpp:2478]: (style) Struct 'ContainsMatcher' has a constructor with 1 argument that is not explicit.
+[catch.hpp:2482]: (style) Struct 'StartsWithMatcher' has a constructor with 1 argument that is not explicit.
+[catch.hpp:2486]: (style) Struct 'EndsWithMatcher' has a constructor with 1 argument that is not explicit.
+[catch.hpp:2548]: (style) Struct 'ContainsElementMatcher' has a constructor with 1 argument that is not explicit.
+[catch.hpp:2569]: (style) Struct 'ContainsMatcher' has a constructor with 1 argument that is not explicit.
+[catch.hpp:2599]: (style) Struct 'EqualsMatcher' has a constructor with 1 argument that is not explicit.
+[catch.hpp:2621]: (style) Struct 'UnorderedEqualsMatcher' has a constructor with 1 argument that is not explicit.
+[catch.hpp:377]: (warning) The class 'StringRef' has 'copy constructor' but lack of 'operator='.
+[../extras/json/json.h:790]: (style) Class 'Value' has a constructor with 1 argument that is not explicit.
+[catch.hpp] -> [catch.hpp]: (error) syntax error
+[tests.cpp:25]: (style) Variable 'depth' is assigned a value that is never used.
+[tests.cpp:65]: (style) Unused variable: mtx
+[catch.hpp:5594]: (style) struct member 'UnaryLambdaTraits::isValid' is never used.
+[catch.hpp:9653]: (warning) Member variable 'StringRef::m_start' is not initialized in the constructor.
+[catch.hpp:5908]: (warning) Member variable 'BoundValueRef::m_ref' is not initialized in the constructor.
+[catch.hpp:8258]: (style) The class 'TestRegistry' does not have a constructor.
+[catch.hpp:10064]: (warning) Member variable 'TestInvokerAsFunction::m_testAsFunction' is not initialized in the constructor.
+[catch.hpp:6081]: (style) Unused private function: 'ExeName::makeRef'
+[catch.hpp:3484]: (warning) 'operator=' should check for assignment to self to avoid problems with dynamic memory.
+[catch.hpp:6089]: (performance) Variable 'm_ref' is assigned in constructor body. Consider performing initialization in initialization list.
+[catch.hpp:6094]: (performance) Variable 'm_ref' is assigned in constructor body. Consider performing initialization in initialization list.
+[catch.hpp:3119]: (style) Class 'NamePattern' has a constructor with 1 argument that is not explicit.
+[catch.hpp:3128]: (style) Class 'TagPattern' has a constructor with 1 argument that is not explicit.
+[catch.hpp:3137]: (style) Class 'ExcludedPattern' has a constructor with 1 argument that is not explicit.
+[catch.hpp:3200]: (style) Class 'TestSpecParser' has a constructor with 1 argument that is not explicit.
+[catch.hpp:3367]: (style) Class 'Config' has a constructor with 1 argument that is not explicit.
+[catch.hpp:3473]: (style) Class 'Option' has a constructor with 1 argument that is not explicit.
+[catch.hpp:3569]: (style) Struct 'TestRunInfo' has a constructor with 1 argument that is not explicit.
+[catch.hpp:3639]: (style) Struct 'TestGroupStats' has a constructor with 1 argument that is not explicit.
+[catch.hpp:3758]: (style) Struct 'StreamingReporterBase' has a constructor with 1 argument that is not explicit.
+[catch.hpp:3872]: (style) Struct 'CumulativeReporterBase' has a constructor with 1 argument that is not explicit.
+[catch.hpp:3856]: (style) Struct 'BySectionInfo' has a constructor with 1 argument that is not explicit.
+[catch.hpp:3992]: (style) Struct 'TestEventListenerBase' has a constructor with 1 argument that is not explicit.
+[catch.hpp:4043]: (style) Struct 'Colour' has a constructor with 1 argument that is not explicit.
+[catch.hpp:4173]: (style) Struct 'ConsoleReporter' has a constructor with 1 argument that is not explicit.
+[catch.hpp:4273]: (style) Class 'XmlWriter' has a constructor with 1 argument that is not explicit.
+[catch.hpp:4254]: (style) Class 'ScopedElement' has a constructor with 1 argument that is not explicit.
+[catch.hpp:4326]: (style) Class 'JunitReporter' has a constructor with 1 argument that is not explicit.
+[catch.hpp:4374]: (style) Class 'XmlReporter' has a constructor with 1 argument that is not explicit.
+[catch.hpp:4521]: (style) Class 'TrackerHasName' has a constructor with 1 argument that is not explicit.
+[catch.hpp:5612]: (style) Class 'Args' has a constructor with 1 argument that is not explicit.
+[catch.hpp:5720]: (style) Class 'ResultBase' has a constructor with 1 argument that is not explicit.
+[catch.hpp:5737]: (style) Class 'ResultValueBase' has a constructor with 1 argument that is not explicit.
+[catch.hpp:6254]: (style) Struct 'Help' has a constructor with 1 argument that is not explicit.
+[catch.hpp:8280]: (style) Class 'TestInvokerAsFunction' has a constructor with 1 argument that is not explicit.
+[catch.hpp:9435]: (style) Class 'FileStream' has a constructor with 1 argument that is not explicit.
+[catch.hpp:5729]: (warning) The class 'ResultValueBase' has 'copy constructor' but lack of 'operator='.
+[catch.hpp:424]: (error) Mismatching allocation and deallocation: StringRef::m_data
+[catch.hpp:8091]: (performance) Function parameter 'regex' should be passed by reference.
+[catch.hpp:9902]: (performance) Function parameter 'tags' should be passed by reference.
+[catch.hpp:11826]: (performance) Function parameter 'columnInfos' should be passed by reference.
+[catch.hpp:12081]: (performance) Function parameter '_label' should be passed by reference.
+[tests.cpp] -> [tests.cpp]: (error) syntax error
+[catch.hpp:9272]: (error) Memory is allocated but not initialized: utf8Argv

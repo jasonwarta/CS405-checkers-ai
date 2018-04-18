@@ -1,6 +1,6 @@
 #include "threadUtils.h"
 
-void Communicator::setBoard(std::string board) {
+void Communicator::setBoard(std::string & board) {
 	std::lock_guard<std::mutex> guard(*(this->mtx));
 	this->currentBoard = board;
 }

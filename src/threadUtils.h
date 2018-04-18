@@ -1,5 +1,5 @@
 #ifndef THREAD_UTILS_INCLUDED
-#define THREAD_UTILS_INCLUDED 
+#define THREAD_UTILS_INCLUDED
 
 #include <string>
 #include <mutex>
@@ -11,7 +11,7 @@ struct Communicator {
 	std::string currentBoard;
 	std::mutex * mtx;
 
-	void setBoard(std::string board);
+	void setBoard(std::string & board);
 	std::string getBoard();
 };
 
