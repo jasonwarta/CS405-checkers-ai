@@ -26,8 +26,8 @@ NN91_Basic::NN91_Basic(std::ifstream &ifs)
 					totalTemp += temp;
 				}
 				nodes_.resize(totalTemp);
+				break;
 			}
-			break;
 
 			case 'e':
 			{
@@ -37,8 +37,8 @@ NN91_Basic::NN91_Basic(std::ifstream &ifs)
 				{
 					edges_.push_back(temp);
 				}
+				break;
 			}
-			break;
 
 			case 's':
 			{
@@ -48,11 +48,12 @@ NN91_Basic::NN91_Basic(std::ifstream &ifs)
 				{
 					sigma_.push_back(temp);
 				}
+				break;
 			}
-			break;
 
 			case 'k':
 				is >> kingValue_;
+				break;
 
 			default:
 				break;
@@ -108,7 +109,7 @@ void NN91_Basic::evolve()
 
 	float t = 1 / sqrt(2 * sqrt(nodes_.size()));
 	std::normal_distribution<float> distribute(0.0, 1.0);
-	for (uint i = 0; i < nodes_.size(); ++i)
+	for (uint i = 0; i < edges_.size(); ++i)
 	{
 		edges_[i] = edges_[i] + sigma_[i] * distribute(generator);
 		sigma_[i] = sigma_[i] * std::exp(t * distribute(generator));
