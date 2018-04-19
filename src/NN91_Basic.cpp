@@ -61,7 +61,6 @@ NN91_Basic::NN91_Basic(std::ifstream &ifs)
 		}
 	}
 	weightedStartBoard_.resize(32);
-	std::cout << "done loading board" << std::endl;
 }
 
 /*

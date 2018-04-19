@@ -260,6 +260,9 @@ int main(int argc, char const *argv[]) {
 		for(size_t i = 0; i < nets.size(); ++i)
 			std::cout << std::setfill('0') << std::setw(2) << i << ": " << nets[i]->score << std::endl;
 
+		if(nets.size() > POPULATION_SIZE)
+			nets.resize(POPULATION_SIZE);
+
 		for(size_t i = 0; i < (POPULATION_SIZE/2); ++i) 
 			(*nets[(POPULATION_SIZE/2)+i]->net) = (*nets[i]->net);
 		

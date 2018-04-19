@@ -12,6 +12,12 @@
 #include <iomanip>
 #include <vector>
 #include <utility>
+#include <memory>
+#include <mutex>
+#include <thread>
+#include <queue>
+#include <functional>
+#include <utility>
 
 #include "checkers.h"
 #include "defs.h"
@@ -20,7 +26,7 @@
 class MinimaxWithAlphaBeta {
 public:
   MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net);
-  MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net, uint threads);
+  MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net, uint numThreads, bool trash);
   MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer);
   MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, bool usingIDS);
   MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net, bool usingIDS);
@@ -40,10 +46,11 @@ private:
 	{};
 
 	void init(std::string &theBoard, uint depth, bool redPlayer);
-	void threadedInit(std::string &theBoard, uint depth, bool redPlayer, uint threads);
+	void threadedInit(std::string &theBoard, uint depth, bool redPlayer, uint numThreads);
 
-	float minimaxWithAlphaBetaRecursive(std::string &theBoard, uint depth, float alpha, float beta, bool maximizingPlayer);
-	float threadedMinimaxWithAlphaBetaRecursive(NeuralNet *net, std::string &theBoard, uint depth, float alpha, float beta, bool maximizingPlayer);
+	friend void threadManager(std::queue<std::string> & boards, std::mutex & mtx, MinimaxWithAlphaBeta *self, NeuralNet *net, std::vector<std::pair<float,std::string>> &results, uint depth);
+	friend float minimaxWithAlphaBetaRecursive(MinimaxWithAlphaBeta *self, std::string &theBoard, uint depth, float alpha, float beta, bool maximizingPlayer);
+	friend float threadedMinimaxWithAlphaBetaRecursive(MinimaxWithAlphaBeta *self, NeuralNet *net, std::string &theBoard, uint depth, float alpha, float beta, bool maximizingPlayer);
 
   private:
 	std::string bestBoard_;
@@ -59,5 +66,9 @@ private:
 	std::ostream *os_;
 	std::vector<std::string> bestVector_;
 };
+extern void threadManager(std::queue<std::string> & boards, std::mutex & mtx, MinimaxWithAlphaBeta *self, NeuralNet *net, std::vector<std::pair<float,std::string>> &results, uint depth);
+extern float minimaxWithAlphaBetaRecursive(MinimaxWithAlphaBeta *self, std::string &theBoard, uint depth, float alpha, float beta, bool maximizingPlayer);
+extern float threadedMinimaxWithAlphaBetaRecursive(MinimaxWithAlphaBeta *self, NeuralNet *net, std::string &theBoard, uint depth, float alpha, float beta, bool maximizingPlayer);
 
 #endif
+

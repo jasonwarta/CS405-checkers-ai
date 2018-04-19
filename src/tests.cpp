@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <mutex>
 #include <cmath> //abs
+#include <sstream>
 
 #include "defs.h"
 #include "consts.h"
@@ -105,30 +106,8 @@ TEST_CASE("MatchHandling")
 	{
 		NeuralNet nn(NET_SIZE);
 		bool redTeam = true;
-		std::string theBoard = START_BOARD_STRING;
-		uint depth;
-
-		// using piece count
-		for(depth=2; depth<=8; depth+=2)
-		{
-			INFO("MinimaxTree and AlphaBeta return same move at varied depths: " + std::to_string(depth));
-			REQUIRE(MinimaxTree(theBoard, depth, redTeam).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam).getBestBoard(nullptr));
-		}
-
-		// using NN
-		for(depth=2; depth<=8; depth+=2)
-		{
-			INFO("MinimaxTree and AlphaBeta return same move at varied depths: " + std::to_string(depth));
-			REQUIRE(MinimaxTree(theBoard, depth, redTeam, &nn).getBestBoard() == MinimaxWithAlphaBeta(theBoard, depth, redTeam, &nn).getBestBoard(nullptr));
-		}
-	}
-
-	SECTION("MinimaxAB compared to IDS")
-	{
-		NeuralNet nn(NET_SIZE);
-		bool redTeam = true;
-		
-		nn.printData();
+		// std::string theBoard = START_BOARD_STRING;
+		// uint depth;
 
 		std::vector<std::string> boards{
 			"rrBrr_r_______r_b__b____b__bbbb_",
@@ -139,19 +118,55 @@ TEST_CASE("MatchHandling")
 			"rrrrrrrr___br_b_____b__bb_bbbbbb"
 		};
 
-		for(std::string &board : boards)
+		for(std::string &s : boards)
 		{
-			std::string withoutIDS = MinimaxWithAlphaBeta(board, 12, redTeam, &nn).getBestBoard(nullptr);
-			std::cout << withoutIDS << std::endl;
-			std::string withIDS = MinimaxWithAlphaBeta(board, 6, redTeam, &nn, true).getBestBoard(nullptr);
+			for (uint i = 2; i <= 8; i += 2)
+			{
+				INFO("MinimaxTree and AlphaBeta return same move at varied depths: " + std::to_string(i));
+				REQUIRE(MinimaxTree(s, i, redTeam).getBestBoard() == MinimaxWithAlphaBeta(s, i, redTeam).getBestBoard());
+			}
 
-			INFO("MinimaxAB compared to IDS:\n" 
-				+ board + "\n\n"
-				+ withoutIDS + "\n"
-				+ withIDS);
-			REQUIRE((withoutIDS.compare(withIDS) == 0));
+			for (uint i = 2; i <= 8; i += 2)
+			{
+				INFO("MinimaxTree and AlphaBeta return same move at varied depths: " + std::to_string(i));
+				REQUIRE(MinimaxTree(s, i, redTeam, &nn).getBestBoard() == MinimaxWithAlphaBeta(s, i, redTeam, &nn).getBestBoard());
+			}
+
+			for (uint i = 2; i <= 8; i += 2)
+			{
+				INFO("MinimaxTree and MinimaxAlphaBeta with threading return the same move at varied depths: " + std::to_string(i));
+				REQUIRE(MinimaxTree(s,i,redTeam,&nn).getBestBoard() == MinimaxWithAlphaBeta(s,i,redTeam,&nn,2,true).getBestBoard());
+			}
 		}
 	}
+
+	// SECTION("MinimaxAB compared to IDS")
+	// {
+	// 	NeuralNet nn(NET_SIZE);
+	// 	bool redTeam = true;
+		
+	// 	std::vector<std::string> boards{
+	// 		"rrBrr_r_______r_b__b____b__bbbb_",
+	// 		"rr_rr_rrrr_b_____b__b__bb__bbbbb",
+	// 		"________B_r______b__b__bb__bbbbb",
+	// 		"__r___r__r_rbrr___brb_bb____b_bb",
+	// 		"_rrrrb_rrr_b________bb__b_bbbbbb",
+	// 		"rrrrrrrr___br_b_____b__bb_bbbbbb"
+	// 	};
+
+	// 	for(std::string &board : boards)
+	// 	{
+	// 		std::string withoutIDS = MinimaxWithAlphaBeta(board, 12, redTeam, &nn).getBestBoard(nullptr);
+	// 		std::cout << withoutIDS << std::endl;
+	// 		std::string withIDS = MinimaxWithAlphaBeta(board, 6, redTeam, &nn, true).getBestBoard(nullptr);
+
+	// 		INFO("MinimaxAB compared to IDS:\n" 
+	// 			+ board + "\n\n"
+	// 			+ withoutIDS + "\n"
+	// 			+ withIDS);
+	// 		REQUIRE((withoutIDS.compare(withIDS) == 0));
+	// 	}
+	// }
 
 	SECTION("BasicNN correctness tests")
 	{
@@ -222,7 +237,7 @@ TEST_CASE("TIMING")
 {
 	if(!DO_TIMING)
 	{
-		return;
+		// return;
 	}
 	bool redPlayerTurn = true;
 	std::string theBoard = START_BOARD_STRING;

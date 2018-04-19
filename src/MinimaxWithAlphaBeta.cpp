@@ -12,9 +12,9 @@ MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bo
 	init(theBoard, depth, redPlayer);
 }
 
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net, uint threads) : MinimaxWithAlphaBeta(redPlayer, net, false)
+MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net, uint numThreads, bool trash) : MinimaxWithAlphaBeta(redPlayer, net, false)
 {
-	threadedInit(theBoard, depth, redPlayer, threads);
+	threadedInit(theBoard, depth, redPlayer, numThreads);
 }
 
 MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer) : MinimaxWithAlphaBeta(redPlayer, nullptr, true)
@@ -74,7 +74,7 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, uint depth, bool redPlaye
 			float beta = 10000.0;
 			for(uint i=0; i<boardScores.size(); ++i)
 			{
-				boardScores[i].first = minimaxWithAlphaBetaRecursive(boardScores[i].second, depth - 1, alpha, beta, false);
+				boardScores[i].first = minimaxWithAlphaBetaRecursive(this, boardScores[i].second, depth - 1, alpha, beta, false);
 				// std::cout << "valid state: " << bool(boardScores[i].second.compare(possBoards[i])==0) << std::endl;
 			}
 
@@ -111,11 +111,12 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, uint depth, bool redPlaye
 	{
 		float alpha = -10000.0;
 		float beta = 10000.0;
-		float bestVal = minimaxWithAlphaBetaRecursive(possBoards[0], depth-1, alpha, beta, false);
+		float bestVal = minimaxWithAlphaBetaRecursive(this, possBoards[0], depth-1, alpha, beta, false);
 		bestBoard_ = possBoards[0];
 
 		for(auto it = possBoards.begin()+1; it != possBoards.end(); ++it) {
-			float val = minimaxWithAlphaBetaRecursive(*it, depth-1, alpha, beta, false);
+			// std::cout << alpha << " " << beta << std::endl;
+			float val = minimaxWithAlphaBetaRecursive(this, *it, depth-1, alpha, beta, false);
 			if ( val > bestVal ) {
 				bestVal = val;
 				bestBoard_ = *it;
@@ -124,7 +125,7 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, uint depth, bool redPlaye
 	}
 }
 
-void MinimaxWithAlphaBeta::threadedInit(std::string &theBoard, uint depth, bool redPlayer, uint threads)
+void MinimaxWithAlphaBeta::threadedInit(std::string &theBoard, uint depth, bool redPlayer, uint numThreads)
 {
 	std::vector<std::string> possBoards = std::move(CheckerBoard(theBoard, redPlayer).getAllRandoMoves());
 	timer_ = std::chrono::system_clock::now();
@@ -136,35 +137,110 @@ void MinimaxWithAlphaBeta::threadedInit(std::string &theBoard, uint depth, bool 
 
 	float alpha = -10000.0f;
 	float beta = 10000.0f;
-	float bestVal;
+
+	std::vector<std::thread> threads;
+	std::vector<std::pair<float,std::string>> results;
+	std::vector<NeuralNet> nets;
+
+	for(uint i = 0; i < possBoards.size(); ++i)
+	{
+		// results.push_back(std::make_pair(0.0f,possBoards[i]));
+		nets.push_back(*net_);
+	}
+
+	std::cout << "going into threads" << std::endl;
+	std::queue<std::string> boards;
+	for (uint i = 0; i < possBoards.size(); ++i)
+	{
+		boards.push(possBoards[i]);
+	}
+
+	std::mutex mtx;
+	for(uint i = 0; i < numThreads; ++i)
+	{
+		threads.push_back(std::thread(
+			threadManager,
+			std::ref(boards),
+			std::ref(mtx),
+			this,
+			net_,
+			std::ref(results),
+			depth));
+	}
+
+	for(std::thread &t : threads)
+		t.join();
+
+	std::sort(results.begin(), results.end(), [](auto &a, auto &b) {
+		// std::cout << a.first << " " << a.second << std::endl;
+		// std::cout << b.first << " " << b.second << std::endl;
+		// std::cout << std::endl;
+		return a.first > b.first;
+	});
+	// std::sort(results.begin(), results.end(), [](auto &a, auto &b) {
+	// 	a.first > b.first;
+	// });
+
+	for(auto &res : results)
+		std::cout << res.first << " " << res.second << std::endl;
+
+	bestBoard_ = results[0].second;
 }
 
-float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard, uint depth, float alpha, float beta, bool maximizingPlayer) {
+void threadManager(std::queue<std::string> & boards, std::mutex & mtx, MinimaxWithAlphaBeta *self, NeuralNet *net, std::vector<std::pair<float,std::string>> &results, uint depth)
+{
+	while(boards.size() > 0)
+	{
+		std::string myBoard;
+		mtx.lock();
+		if(boards.size() > 0)
+		{
+			myBoard = boards.front();
+			boards.pop();
+		}
+		else
+		{
+			mtx.unlock();
+			return;
+		}
+		mtx.unlock();
 
+		float temp = threadedMinimaxWithAlphaBetaRecursive(self, net, myBoard, depth, -10000, 10000, false);
+		
+		mtx.lock();
+		results.push_back(std::make_pair(temp,myBoard));
+		mtx.unlock();
+	}
+}
+
+float threadedMinimaxWithAlphaBetaRecursive(MinimaxWithAlphaBeta *self, NeuralNet *net, std::string &theBoard, uint depth, float alpha, float beta, bool maximizingPlayer)
+{
+	// std::cout << retVal << std::endl;
+	// net->printData();
 	if(depth == 0) 
 	{
-		
-		// bestVector_.push_back(theBoard);
-		if(!usingPieceCount_) {
-			return net_->evaluateNN(theBoard, redPlayerTurn_);
+		// std::cout << "got to bottom" << std::endl;
+		// self->bestVector_.self->push_back(theBoard);
+		if(!self->usingPieceCount_) {
+			return self->net_->evaluateNN(theBoard, self->redPlayerTurn_);
 		} else {
-			return basicBoardEval(theBoard, redPlayerTurn_);
+			return basicBoardEval(theBoard, self->redPlayerTurn_);
 		}
 	}
 
-	if (std::chrono::duration<double>(std::chrono::system_clock::now() - timer_).count() >= 14.0 && !TESTING)
+	if (std::chrono::duration<double>(std::chrono::system_clock::now() - self->timer_).count() >= 14.0 && !TESTING)
 	{
-		if(!usingPieceCount_) {
-			return net_->evaluateNN(theBoard, redPlayerTurn_);
+		if(!self->usingPieceCount_) {
+			return self->net_->evaluateNN(theBoard, self->redPlayerTurn_);
 		} else {
-			return basicBoardEval(theBoard, redPlayerTurn_);
+			return basicBoardEval(theBoard, self->redPlayerTurn_);
 		}
 	}
 
 	if (maximizingPlayer) {
-		std::vector<std::string> possBoards = std::move(CheckerBoard(theBoard, redPlayerTurn_).getAllRandoMoves());
+		std::vector<std::string> possBoards = std::move(CheckerBoard(theBoard, self->redPlayerTurn_).getAllRandoMoves());
 
-		boardExpansions_ += possBoards.size();
+		// self->boardExpansions_ += possBoards.size();
 
 		float bestVal = -10000;
 
@@ -172,19 +248,19 @@ float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard,
 			return bestVal;
 
 		for(auto it = possBoards.begin(); it != possBoards.end(); ++it) {
-			bestVal = std::max(bestVal, minimaxWithAlphaBetaRecursive(*it, depth-1, alpha, beta, false));
+			bestVal = std::max(bestVal, threadedMinimaxWithAlphaBetaRecursive(self, net, *it, depth-1, alpha, beta, false));
 			alpha = std::max(alpha,bestVal);
 			if(beta <= alpha) {
-				breakBeta_++;
+				// self->breakBeta_++;
 				break;
 			}
 		}
 		return bestVal;
 	}
 	else {
-		std::vector<std::string> possBoards = std::move(CheckerBoard(theBoard, !redPlayerTurn_).getAllRandoMoves());
+		std::vector<std::string> possBoards = std::move(CheckerBoard(theBoard, !self->redPlayerTurn_).getAllRandoMoves());
 
-		boardExpansions_ += possBoards.size();
+		// self->boardExpansions_ += possBoards.size();
 
 		float worstVal = 10000;
 
@@ -192,10 +268,10 @@ float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard,
 			return worstVal;
 
 		for(auto it = possBoards.begin(); it != possBoards.end(); ++it) {
-			worstVal = std::min(worstVal, minimaxWithAlphaBetaRecursive(*it, depth-1, alpha, beta, true));
+			worstVal = std::min(worstVal, threadedMinimaxWithAlphaBetaRecursive(self, net, *it, depth-1, alpha, beta, true));
 			beta = std::min(beta,worstVal);
 			if(beta <= alpha) {
-				breakAlpha_++;
+				// self->breakAlpha_++;
 				break;
 			}
 		}
@@ -203,7 +279,79 @@ float MinimaxWithAlphaBeta::minimaxWithAlphaBetaRecursive(std::string &theBoard,
 	}
 }
 
-float MinimaxWithAlphaBeta::threadedMinimaxWithAlphaBetaRecursive(NeuralNet *net, std::string &theBoard, uint depth, float alpha, float beta, bool maximizingPlayer)
+float minimaxWithAlphaBetaRecursive(MinimaxWithAlphaBeta *self, std::string &theBoard, uint depth, float alpha, float beta, bool maximizingPlayer)
 {
-	
+
+	if (depth == 0)
+	{
+
+		// self->bestVector_.self->push_back(theBoard);
+		if (!self->usingPieceCount_)
+		{
+			return self->net_->evaluateNN(theBoard, self->redPlayerTurn_);
+		}
+		else
+		{
+			return basicBoardEval(theBoard, self->redPlayerTurn_);
+		}
+	}
+
+	if (std::chrono::duration<double>(std::chrono::system_clock::now() - self->timer_).count() >= 14.0 && !TESTING)
+	{
+		if (!self->usingPieceCount_)
+		{
+			return self->net_->evaluateNN(theBoard, self->redPlayerTurn_);
+		}
+		else
+		{
+			return basicBoardEval(theBoard, self->redPlayerTurn_);
+		}
+	}
+
+	if (maximizingPlayer)
+	{
+		std::vector<std::string> possBoards = std::move(CheckerBoard(theBoard, self->redPlayerTurn_).getAllRandoMoves());
+
+		self->boardExpansions_ += possBoards.size();
+
+		float bestVal = -10000;
+
+		if (possBoards.size() == 0)
+			return bestVal;
+
+		for (auto it = possBoards.begin(); it != possBoards.end(); ++it)
+		{
+			bestVal = std::max(bestVal, minimaxWithAlphaBetaRecursive(self, *it, depth - 1, alpha, beta, false));
+			alpha = std::max(alpha, bestVal);
+			if (beta <= alpha)
+			{
+				self->breakBeta_++;
+				break;
+			}
+		}
+		return bestVal;
+	}
+	else
+	{
+		std::vector<std::string> possBoards = std::move(CheckerBoard(theBoard, !self->redPlayerTurn_).getAllRandoMoves());
+
+		self->boardExpansions_ += possBoards.size();
+
+		float worstVal = 10000;
+
+		if (possBoards.size() == 0)
+			return worstVal;
+
+		for (auto it = possBoards.begin(); it != possBoards.end(); ++it)
+		{
+			worstVal = std::min(worstVal, minimaxWithAlphaBetaRecursive(self, *it, depth - 1, alpha, beta, true));
+			beta = std::min(beta, worstVal);
+			if (beta <= alpha)
+			{
+				self->breakAlpha_++;
+				break;
+			}
+		}
+		return worstVal;
+	}
 }
