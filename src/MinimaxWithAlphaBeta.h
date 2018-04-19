@@ -19,13 +19,14 @@
 
 class MinimaxWithAlphaBeta {
 public:
-    MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net);
-	MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer);
-	MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, bool usingIDS);
-	MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net, bool usingIDS);
+  MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net);
+  MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net, uint threads);
+  MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer);
+  MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, bool usingIDS);
+  MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net, bool usingIDS);
 
-	std::string getBestBoard(std::ostream *os = &std::cout);
-    void printABStats(std::ostream *os = &std::cout);
+  std::string getBestBoard(std::ostream *os = &std::cout);
+  void printABStats(std::ostream *os = &std::cout);
 
 private:
 	MinimaxWithAlphaBeta(bool redPlayer, NeuralNet *net, bool usingPieceCount, bool usingIDS = USING_ITERATIVE_DEEPENING) : 
@@ -39,10 +40,12 @@ private:
 	{};
 
 	void init(std::string &theBoard, uint depth, bool redPlayer);
+	void threadedInit(std::string &theBoard, uint depth, bool redPlayer, uint threads);
 
 	float minimaxWithAlphaBetaRecursive(std::string &theBoard, uint depth, float alpha, float beta, bool maximizingPlayer);
+	float threadedMinimaxWithAlphaBetaRecursive(NeuralNet *net, std::string &theBoard, uint depth, float alpha, float beta, bool maximizingPlayer);
 
-private:
+  private:
 	std::string bestBoard_;
 
 	bool redPlayerTurn_;
