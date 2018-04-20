@@ -28,12 +28,12 @@
 #include "BoardEval.h"
 
 
-class BasicNN 
+class BasicNN
 {
 public:
     BasicNN(std::ifstream &ifs);
     /*
-    Network start values: 
+    Network start values:
         K = U(1.0, 3.0) == kingValue_
         w = U(-0.2, 0.2) == edges_[i] where i = 0, 1, ... ,n-1
         s = 0.05 == sigma_[i] where i = 0, 1, ... ,n-1
@@ -60,9 +60,12 @@ private:
     // Looks at the checkerboard, and sets first set of weights
     // based on whose team you're on
     void setFirstWeights(const std::string &theBoard);
-    
+
     // Does resizes on network creation to avoid lots of push_backs later
     void setNeuralSizes(const std::vector<uint> &layerSizes);
+
+    // Fast square root
+    float Q_rsqrt(float number);
 
 private:
     std::vector<float, alignocator<float, 32>> nodes_;
@@ -74,7 +77,7 @@ private:
     bool redTeam_;
     uint EdgesUsed_;
     uint NodesUsed_;
-    
+
 };
 
 

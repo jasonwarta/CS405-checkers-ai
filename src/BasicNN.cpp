@@ -61,7 +61,7 @@ BasicNN::BasicNN(std::ifstream &ifs)
 	}
 }
 /*
-    Network start values: 
+    Network start values:
         K = U(1.0, 3.0) == kingValue_
         w = U(-0.2, 0.2) == edges_[i] where i = 0, 1, ... ,n-1
         s = 0.05 == sigma_[i] where i = 0, 1, ... ,n-1
@@ -107,6 +107,8 @@ void BasicNN::evolve()
 	kingValue_ += changeKingVal(random);
 
 	float t = 1 / sqrt(2 * sqrt(nodes_.size()));
+	//float t = (Q_rsqrt(2 * Q_rsqrt(nodes_.size()))); //TESTING THIS CODE
+
 	std::normal_distribution<float> distribute(0.0, 1.0);
 	for (uint i = 0; i < edges_.size(); ++i)
 	{
@@ -251,4 +253,21 @@ void BasicNN::setNeuralSizes(const std::vector<uint> &layerSizes)
 		totalEdges += layerSizes[i] * layerSizes[i + 1];
 	}
 	edges_.resize(totalEdges);
+}
+
+float BasicNN::Q_rsqrt( float number )
+{
+	long i;
+	float x2, y;
+	const float threehalfs = 1.5F;
+
+	x2 = number * 0.5F;
+	y  = number;
+	i  = * ( long * ) &y;                       // evil floating point bit level hacking
+	i  = 0x5f3759df - ( i >> 1 );               // what the fuck?
+	y  = * ( float * ) &i;
+	y  = y * ( threehalfs - ( x2 * y * y ) );   // 1st iteration
+//	y  = y * ( threehalfs - ( x2 * y * y ) );   // 2nd iteration, this can be removed
+
+	return y;
 }
