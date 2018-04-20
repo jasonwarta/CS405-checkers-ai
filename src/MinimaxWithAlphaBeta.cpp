@@ -6,30 +6,10 @@
 	#include <cuda_minmaxFunctions.h>
 #endif //CUDA
 
-
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net) : MinimaxWithAlphaBeta(redPlayer, net, false)
+MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, bool redPlayer, uint minDepth, uint maxDepth, NeuralNet *net) :
+	MinimaxWithAlphaBeta(redPlayer, net, net != nullptr ? false : true, minDepth == maxDepth ? false : true)
 {
-	init(theBoard, depth, redPlayer);
-}
-
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net, uint numThreads, bool trash) : MinimaxWithAlphaBeta(redPlayer, net, false)
-{
-	threadedInit(theBoard, depth, redPlayer, numThreads);
-}
-
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer) : MinimaxWithAlphaBeta(redPlayer, nullptr, true)
-{
-	init(theBoard, depth, redPlayer);
-}
-
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, bool usingIDS) : MinimaxWithAlphaBeta(redPlayer, nullptr, false, usingIDS)
-{
-	init(theBoard, depth, redPlayer);
-}
-
-MinimaxWithAlphaBeta::MinimaxWithAlphaBeta(std::string &theBoard, uint depth, bool redPlayer, NeuralNet *net, bool usingIDS) : MinimaxWithAlphaBeta(redPlayer, net, false, usingIDS)
-{
-	init(theBoard, depth, redPlayer);
+	init(theBoard, minDepth, maxDepth, redPlayer);
 }
 
 std::string MinimaxWithAlphaBeta::getBestBoard(std::ostream *os) {
@@ -49,14 +29,21 @@ void MinimaxWithAlphaBeta::printABStats(std::ostream *os) {
 	(*os) << "\",";
 }
 
-void MinimaxWithAlphaBeta::init(std::string &theBoard, uint depth, bool redPlayer) {
-
+void MinimaxWithAlphaBeta::init(std::string &theBoard, uint minDepth, uint maxDepth, bool redPlayer) 
+{
 	std::vector<std::string> possBoards = std::move(CheckerBoard(theBoard, redPlayer).getAllRandoMoves());
 	timer_ = std::chrono::system_clock::now();
 	if(possBoards.size() == 0) {
 		bestBoard_ = "";
 		return;
 	}
+
+	if(minDepth%2 != 0 || maxDepth%2 != 0)
+	{
+		std::cout << "Don't touch things you don't know how to use!" << std::endl;
+		minDepth = 8, maxDepth = 8, usingIterativeDeepening_ = false;
+	}
+
 	if (usingIterativeDeepening_)
 	{
 		std::vector<std::pair<float,std::string>> boardScores(possBoards.size());
@@ -74,49 +61,45 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, uint depth, bool redPlaye
 			float beta = 10000.0;
 			for(uint i=0; i<boardScores.size(); ++i)
 			{
-				boardScores[i].first = minimaxWithAlphaBetaRecursive(this, boardScores[i].second, depth - 1, alpha, beta, false);
+				boardScores[i].first = minimaxWithAlphaBetaRecursive(this, boardScores[i].second, minDepth - 1, alpha, beta, false);
 				// std::cout << "valid state: " << bool(boardScores[i].second.compare(possBoards[i])==0) << std::endl;
 			}
 
+			if (std::chrono::duration<double>(std::chrono::system_clock::now() - timer_).count() >= 14.0)
+			{
+				std::cout << "hit \"unreachable\" state" << std::endl;
+				return;
+			}
+
 			std::sort(boardScores.begin(), boardScores.end(), [](auto &a, auto &b) {
-				// std::cout << a.first << " " << a.second << std::endl;
-				// std::cout << b.first << " " << b.second << std::endl;
-				// std::cout << std::endl;
 				return a.first > b.first;
 			});
 
-			if(!TESTING)
-				if( std::chrono::duration<double>(std::chrono::system_clock::now() - timer_).count() >= 14.0)
-				{
-					std::cout << "hit \"unreachable\" state" << std::endl;
-					return;
-				}
-
 			bestBoard_ = boardScores[0].second;
 			
-			if (TESTING && depth == 12)
+			if (minDepth == maxDepth)
 			{
 				for(auto &item : boardScores)
 				{
 					std::cout << item.first << " " << item.second << std::endl;
 				}
-				std::cout << "depth" << depth << std::endl;
+				std::cout << "depth" << minDepth << std::endl;
 				return;
 			}
 
-			depth += 2;
+			minDepth += 2;
 		}
 	}
 	else
 	{
 		float alpha = -10000.0;
 		float beta = 10000.0;
-		float bestVal = minimaxWithAlphaBetaRecursive(this, possBoards[0], depth-1, alpha, beta, false);
+		float bestVal = minimaxWithAlphaBetaRecursive(this, possBoards[0], minDepth-1, alpha, beta, false);
 		bestBoard_ = possBoards[0];
 
 		for(auto it = possBoards.begin()+1; it != possBoards.end(); ++it) {
 			// std::cout << alpha << " " << beta << std::endl;
-			float val = minimaxWithAlphaBetaRecursive(this, *it, depth-1, alpha, beta, false);
+			float val = minimaxWithAlphaBetaRecursive(this, *it, minDepth-1, bestVal, beta, false);
 			if ( val > bestVal ) {
 				bestVal = val;
 				bestBoard_ = *it;
