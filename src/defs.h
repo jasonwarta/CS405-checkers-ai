@@ -8,8 +8,8 @@
 #include "NN91_Basic.h"
 #include "BasicNN.h"
 
-// typedef NN91_Basic NeuralNet;
-typedef BasicNN NeuralNet;
+typedef NN91_Basic NeuralNet;
+// typedef BasicNN NeuralNet;
 
 typedef std::chrono::time_point<std::chrono::system_clock> Clock;
 

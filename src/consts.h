@@ -19,7 +19,7 @@ const int8_t LOSS_VAL = -1;
 const int8_t DRAW_VAL = 0;
 const int8_t WIN_VAL = 2;
 
-const int8_t NUM_THREADS = 3;
+const int8_t NUM_THREADS = 7;
 const int POPULATION_SIZE = 30;
 
 const int8_t MATCHES = 5;
@@ -27,8 +27,8 @@ const int8_t MATCHES = 5;
 const int8_t TOTAL_MOVES = 100;
 
 // blondie24
-const std::vector<uint> NET_SIZE {32, 40, 10, 1};
-// const std::vector<uint> NET_SIZE {6,5,4,3};
+// const std::vector<uint> NET_SIZE {32, 40, 10, 1};
+const std::vector<uint> NET_SIZE {6,5,4,3};
 
 typedef const std::vector<std::vector<int>> MoveTable;
 extern const std::string START_BOARD_STRING;
