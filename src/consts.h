@@ -11,7 +11,6 @@
 typedef unsigned int uint;
 
 const bool USING_ITERATIVE_DEEPENING = false;
-const bool TESTING = true; // used for IDS
 
 const uint START_DEPTH = 8;
 
@@ -19,12 +18,12 @@ const int8_t LOSS_VAL = -1;
 const int8_t DRAW_VAL = 0;
 const int8_t WIN_VAL = 2;
 
-const int8_t NUM_THREADS = 7;
+const int8_t NUM_THREADS = 12;
 const int POPULATION_SIZE = 30;
 
 const int8_t MATCHES = 5;
 
-const int8_t TOTAL_MOVES = 100;
+const uint TOTAL_MOVES = 200;
 
 // blondie24
 // const std::vector<uint> NET_SIZE {32, 40, 10, 1};

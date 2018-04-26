@@ -20,7 +20,7 @@ public:
 		net_(net),
 		usingPieceCount_(usingPieceCount) {};
 
-	std::string getMove(std::string &theBoard, std::ostream *os, uint depth = 4);
+	std::string getMove(std::string &theBoard, std::ostream *os, uint minDepth, uint maxDepth);
 private:
 	bool redTeam_;
 	NeuralNet *net_;

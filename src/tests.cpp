@@ -133,11 +133,11 @@ TEST_CASE("MatchHandling")
 				REQUIRE(MinimaxTree(s, i, redTeam, &nn).getBestBoard() == MinimaxWithAlphaBeta(s, redTeam, i, i, &nn).getBestBoard());
 			}
 
-			for (uint i = 2; i <= 8; i += 2)
-			{
-				INFO("MinimaxTree and MinimaxAlphaBeta with threading return the same move at varied depths: " + std::to_string(i));
-				REQUIRE(MinimaxTree(s, i, redTeam, &nn).getBestBoard() == MinimaxWithAlphaBeta(s, redTeam, i, i, &nn).getBestBoard());
-			}
+			// for (uint i = 2; i <= 8; i += 2)
+			// {
+			// 	INFO("MinimaxTree and MinimaxAlphaBeta with threading return the same move at varied depths: " + std::to_string(i));
+			// 	REQUIRE(MinimaxTree(s, i, redTeam, &nn).getBestBoard() == MinimaxWithAlphaBeta(s, redTeam, i, i, &nn).getBestBoard());
+			// }
 		}
 	}
 
@@ -158,9 +158,9 @@ TEST_CASE("MatchHandling")
 
 		for(std::string &board : boards)
 		{
-			std::string withoutIDS = MinimaxWithAlphaBeta(board, redTeam, 8, 8, &nn).getBestBoard(nullptr);
+			std::string withoutIDS = MinimaxWithAlphaBeta(board, redTeam, 10, 10, &nn).getBestBoard(nullptr);
 			// std::cout << withoutIDS << std::endl;
-			std::string withIDS = MinimaxWithAlphaBeta(board, redTeam, 6, 8, &nn).getBestBoard(nullptr);
+			std::string withIDS = MinimaxWithAlphaBeta(board, redTeam, 6, 10, &nn).getBestBoard(nullptr);
 
 			INFO("MinimaxAB compared to IDS:\n" 
 				+ board + "\n\n"

@@ -38,14 +38,15 @@ private:
 		boardExpansions_(0),
 		net_(net),
 		usingPieceCount_(usingPieceCount),
-		usingIterativeDeepening_(usingIDS)
+		usingIterativeDeepening_(usingIDS),
+		maxDepthReached_(0)
 	{};
 
 	void init(std::string &theBoard, uint minDepth, uint maxDepth, bool redPlayer);
 	void init(std::string &theBoard, uint depth, bool redPlayer);
 	void threadedInit(std::string &theBoard, uint depth, bool redPlayer, uint numThreads);
 
-	friend void threadManager(std::queue<std::string> & boards, std::mutex & mtx, MinimaxWithAlphaBeta *self, NeuralNet *net, std::vector<std::pair<float,std::string>> &results, uint depth);
+	friend void threadManager(std::string &board, MinimaxWithAlphaBeta *self, NeuralNet &net, float &result, uint depth);
 	friend float minimaxWithAlphaBetaRecursive(MinimaxWithAlphaBeta *self, std::string &theBoard, uint depth, float alpha, float beta, bool maximizingPlayer);
 	friend float threadedMinimaxWithAlphaBetaRecursive(MinimaxWithAlphaBeta *self, NeuralNet *net, std::string &theBoard, uint depth, float alpha, float beta, bool maximizingPlayer);
 
@@ -62,8 +63,10 @@ private:
 	Clock timer_;
 	std::ostream *os_;
 	std::vector<std::string> bestVector_;
+	uint maxDepthReached_;
 };
-extern void threadManager(std::queue<std::string> & boards, std::mutex & mtx, MinimaxWithAlphaBeta *self, NeuralNet *net, std::vector<std::pair<float,std::string>> &results, uint depth);
+
+extern void threadManager(std::string &board, MinimaxWithAlphaBeta *self, NeuralNet &net, float &result, uint depth);
 extern float minimaxWithAlphaBetaRecursive(MinimaxWithAlphaBeta *self, std::string &theBoard, uint depth, float alpha, float beta, bool maximizingPlayer);
 extern float threadedMinimaxWithAlphaBetaRecursive(MinimaxWithAlphaBeta *self, NeuralNet *net, std::string &theBoard, uint depth, float alpha, float beta, bool maximizingPlayer);
 
