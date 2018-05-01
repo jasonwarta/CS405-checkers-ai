@@ -63,7 +63,7 @@ int main(int argc, char const *argv[]) {
 			NeuralNet * net = new NeuralNet(ifs);
 			ifs.close();
 
-			net->printData();
+			// net->printData();
 
 			Player p1(true, net);
 			Player p2(false, nullptr, true);

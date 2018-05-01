@@ -133,11 +133,11 @@ TEST_CASE("MatchHandling")
 				REQUIRE(MinimaxTree(s, i, redTeam, &nn).getBestBoard() == MinimaxWithAlphaBeta(s, redTeam, i, i, &nn).getBestBoard());
 			}
 
-			// for (uint i = 2; i <= 8; i += 2)
-			// {
-			// 	INFO("MinimaxTree and MinimaxAlphaBeta with threading return the same move at varied depths: " + std::to_string(i));
-			// 	REQUIRE(MinimaxTree(s, i, redTeam, &nn).getBestBoard() == MinimaxWithAlphaBeta(s, redTeam, i, i, &nn).getBestBoard());
-			// }
+			for (uint i = 4; i <= 8; i += 2)
+			{
+				INFO("MinimaxWithAlphaBeta and MinimaxAlphaBeta with threading return the same move at varied depths: " + std::to_string(i));
+				REQUIRE(MinimaxWithAlphaBeta(s, redTeam, i, i, &nn).getBestBoard() == MinimaxWithAlphaBeta(s, redTeam, i - 2, i, &nn).getBestBoard());
+			}
 		}
 	}
 

@@ -23,9 +23,9 @@ void MinimaxWithAlphaBeta::printABStats(std::ostream *os) {
 	(*os) << "\"expansions\":\"";
 	(*os) << std::setfill('0') << std::setw(10) << boardExpansions_;
 	(*os) << "\",\"alpha\":\"";
-	(*os) << std::setfill('0') << std::setw(6) << breakAlpha_;
+	(*os) << std::setfill('0') << std::setw(8) << breakAlpha_;
 	(*os) << "\",\"beta\":\"";
-	(*os) << std::setfill('0') << std::setw(6) << breakBeta_;
+	(*os) << std::setfill('0') << std::setw(8) << breakBeta_;
 	(*os) << "\",";
 
 	if (maxDepthReached_ != 0) {
@@ -66,7 +66,7 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, uint minDepth, uint maxDe
 
 		std::vector<std::thread> threads;
 		std::vector<NeuralNet> nets;
-		std::cout << possBoards.size() << std::endl;
+		// std::cout << possBoards.size() << std::endl;
 
 		for(uint i = 0; i < possBoards.size(); ++i)
 			nets.push_back(*net_);
@@ -100,14 +100,19 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, uint minDepth, uint maxDe
 				return a.first > b.first;
 			});
 
+			// for (auto &p : boardScores)
+			// 	std::cout << p.first << " " << p.second << std::endl;
+			// std::cout << std::endl;
+
 			bestBoard_ = boardScores[0].second;
 			
 			if (minDepth == maxDepth)
 			{
+				maxDepthReached_ = minDepth;
 				return;
 			}
 
-			minDepth += 2;
+			minDepth += 4;
 			threads.clear();
 		}
 	}
@@ -131,7 +136,7 @@ void MinimaxWithAlphaBeta::init(std::string &theBoard, uint minDepth, uint maxDe
 
 void threadManager(std::string &board, MinimaxWithAlphaBeta *self, NeuralNet &net, float &result, uint depth)
 {	
-	std::cout << "launching thread" << std::endl;
+	// std::cout << "launching thread" << std::endl;
 	result = threadedMinimaxWithAlphaBetaRecursive(self, &net, board, depth, -10000, 10000, false);
 }
 

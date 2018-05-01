@@ -2,12 +2,12 @@
 
 NN_DIR="NN"
 POP_SIZE=`grep POPULATION_SIZE src/consts.h|sed 's/.*= \?\([0-9]*\);/\1/'`
-LS_CMD="ls $NN_DIR"
+LS_CMD="ls -tr $NN_DIR"
 
 for i in "$@"; do
     case $i in
         -b|--brief)
-        LS_CMD="ls \"$NN_DIR\" | tail"
+        LS_CMD="ls -tr \"$NN_DIR\" | tail"
         shift # past argument=value
         ;;
     esac
